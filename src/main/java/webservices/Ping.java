@@ -1,5 +1,8 @@
 package webservices;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Ping {
 
     private final long id;
@@ -16,5 +19,13 @@ public class Ping {
 
     public String getContent() {
         return content;
+    }
+
+    @Override
+    public String toString() {
+        return "Ping{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                '}';
     }
 }
