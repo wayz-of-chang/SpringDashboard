@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -36,5 +37,27 @@ public class Application implements CommandLineRunner {
         RestTemplate restTemplate = new RestTemplate();
         Pong pong = restTemplate.getForObject("http://localhost:8080/ping", Pong.class);
         log.info(pong.toString());
+    }
+
+    @Bean
+    public CommandLineRunner demo(DashboardRepository repository) {
+        return (args) -> {
+            repository.save(new Dashboard("Home"));
+            repository.save(new Dashboard("Websites"));
+
+            log.info("Dashboards found with findAll():");
+            for (Dashboard dashboard : repository.findAll()) {
+                log.info(dashboard.toString());
+            }
+
+            Dashboard dashboard = repository.findOne(1L);
+            log.info("Dashboard found with findOne(1L):");
+            log.info(dashboard.toString());
+
+            log.info("Dashboard found with findByName('Home'):");
+            for (Dashboard home : repository.findByName("Home")) {
+                log.info(home.toString());
+            }
+        };
     }
 }
