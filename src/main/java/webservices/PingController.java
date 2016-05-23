@@ -12,8 +12,8 @@ public class PingController {
     private static final String template = "Hello, %s!";
     private final AtomicLong counter = new AtomicLong();
 
-    @RequestMapping("/ping")
-    public Ping ping(@RequestParam(value="name", defaultValue="World") String name) {
+    @RequestMapping("/test")
+    public Ping test(@RequestParam(value="name", defaultValue="World") String name) {
         return new Ping(counter.incrementAndGet(), String.format(template, name));
     }
 }

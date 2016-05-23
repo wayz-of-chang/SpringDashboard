@@ -24,6 +24,9 @@ import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
+    private static final String TYPE_SERVER = "server";
+    private static final String TYPE_CLIENT = "client";
+
     private static final String queueName = "dashboard-mq";
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
@@ -47,7 +50,7 @@ public class Application implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
-        Pong pong = restTemplate.getForObject("http://localhost:8080/ping", Pong.class);
+        Pong pong = restTemplate.getForObject("http://localhost:8080/test", Pong.class);
         log.info(pong.toString());
 
         System.out.println("Waiting five seconds...");
