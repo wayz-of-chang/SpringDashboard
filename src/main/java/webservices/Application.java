@@ -1,7 +1,5 @@
 package webservices;
 
-//imports from the webservice consumer tutorial
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
@@ -24,20 +22,16 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-//imports from the web service producer tutorial
-//common to all other tutorials
-//imports from the spring-boot tutorial
-
 @SpringBootApplication
 public class Application implements CommandLineRunner {
-    final static String queueName = "dashboard-mq";
+    private static final String queueName = "dashboard-mq";
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+    private AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
     @Autowired
-    RabbitTemplate rabbitTemplate;
+    private RabbitTemplate rabbitTemplate;
 
     public static void main(String[] args) {
         ApplicationContext application_context = SpringApplication.run(Application.class, args);
@@ -87,22 +81,22 @@ public class Application implements CommandLineRunner {
     }
 
     @Bean
-    Queue queue() {
+    public Queue queue() {
         return new Queue(queueName, false);
     }
 
     @Bean
-    TopicExchange exchange() {
+    public TopicExchange exchange() {
         return new TopicExchange("spring-boot-exchange");
     }
 
     @Bean
-    Binding binding(Queue queue, TopicExchange exchange) {
+    public Binding binding(Queue queue, TopicExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with(queueName);
     }
 
     @Bean
-    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter
+    public SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter
             listenerAdapter) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
@@ -112,12 +106,12 @@ public class Application implements CommandLineRunner {
     }
 
     @Bean
-    MessageQueueReceiver receiver() {
+    public MessageQueueReceiver receiver() {
         return new MessageQueueReceiver();
     }
 
     @Bean
-    MessageListenerAdapter listenerAdapter(MessageQueueReceiver receiver) {
+    public MessageListenerAdapter listenerAdapter(MessageQueueReceiver receiver) {
         return new MessageListenerAdapter(receiver, "receiveMessage");
     }
 }
