@@ -9,24 +9,14 @@ public class Parameters {
     protected String statType;
     protected String server;
     protected String port;
-    protected int type;
-
-    public static final int TYPE_REST = 1;
-    public static final int TYPE_MQ = 2;
+    protected String type;
+    public static final String TYPE_REST = "REST";
+    public static final String TYPE_MQ = "MQ";
 
     public String getInterval() { return interval; }
     public String getName() { return name; }
     public String getStatType() { return statType; }
     public String getServer() { return server; }
     public String getPort() { return port; }
-    public String getType() {
-        switch (this.type) {
-            case TYPE_REST:
-                return "REST";
-            case TYPE_MQ:
-                return "MQ";
-            default:
-                return "UNKNOWN";
-        }
-    }
+    public String getType() { return type; }
 }

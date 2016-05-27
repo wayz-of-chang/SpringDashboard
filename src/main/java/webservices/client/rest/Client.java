@@ -9,12 +9,12 @@ import webservices.Message;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
-public class Client {
+class Client {
 
     @Value("${name}")
-    private String name;
-    private static final String template = "%s";
-    private final AtomicLong counter = new AtomicLong();
+    String name;
+    static final String template = "%s";
+    final AtomicLong counter = new AtomicLong();
 
     @RequestMapping("/ping")
     public Message ping(@RequestParam(value="value", defaultValue="ping") String value) {

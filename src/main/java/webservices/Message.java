@@ -2,6 +2,7 @@ package webservices;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import webservices.client.base.Parameters;
+import webservices.error.BaseError;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -20,6 +21,15 @@ public class Message {
         this.id = id;
         this.data = data;
         this.status = "success";
+        this.source = source;
+        this.parameters = parameters;
+        this.date = Calendar.getInstance().getTime();
+    }
+
+    public Message(long id, BaseError error, String source, Parameters parameters) {
+        this.id = id;
+        this.data = error;
+        this.status = "failure";
         this.source = source;
         this.parameters = parameters;
         this.date = Calendar.getInstance().getTime();
