@@ -14,6 +14,8 @@ public class SystemData {
     private long memTotal;
     private long fsUsed;
     private long fsTotal;
+    private long bytesSent;
+    private long bytesRecv;
 
     public SystemData(CentralProcessor cpu, GlobalMemory mem, OSFileStore[] fs, NetworkIF[] network) {
         this.cpuUsed = cpu.getSystemCpuLoad();
@@ -24,6 +26,14 @@ public class SystemData {
             this.fsTotal += fileSystem.getTotalSpace();
             this.fsUsed += fileSystem.getTotalSpace() - fileSystem.getUsableSpace();
         }
+        for (NetworkIF net : network) {
+            if (this.bytesSent < net.getBytesSent()) {
+                this.bytesSent = net.getBytesSent();
+            }
+            if (this.bytesRecv < net.getBytesRecv()) {
+                this.bytesRecv = net.getBytesRecv();
+            }
+        }
 
     }
 
@@ -31,11 +41,15 @@ public class SystemData {
 
     public double getCpuTotal() { return cpuTotal; }
 
-    public double getMemUsed() { return memUsed; }
+    public long getMemUsed() { return memUsed; }
 
-    public double getMemTotal() { return memTotal; }
+    public long getMemTotal() { return memTotal; }
 
-    public double getfsUsed() { return fsUsed; }
+    public long getFsUsed() { return fsUsed; }
 
-    public double getfsTotal() { return fsTotal; }
+    public long getFsTotal() { return fsTotal; }
+
+    public long getBytesSent() { return bytesSent; }
+
+    public long getBytesRecv() { return bytesRecv; }
 }

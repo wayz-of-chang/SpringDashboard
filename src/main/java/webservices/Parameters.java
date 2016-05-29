@@ -1,4 +1,4 @@
-package webservices.client.base;
+package webservices;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -12,6 +12,7 @@ public class Parameters {
     protected String type;
     public static final String TYPE_REST = "REST";
     public static final String TYPE_MQ = "MQ";
+    public static final String TYPE_SERVER = "SERVER";
 
     public String getInterval() { return interval; }
     public String getName() { return name; }

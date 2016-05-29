@@ -1,6 +1,6 @@
 package webservices.client.rest;
 
-public class Parameters extends webservices.client.base.Parameters {
+public class Parameters extends webservices.Parameters {
     public Parameters(String name, String statType) {
         this.name = name;
         this.statType = statType;

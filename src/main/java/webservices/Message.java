@@ -1,7 +1,6 @@
 package webservices;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import webservices.client.base.Parameters;
 import webservices.error.BaseError;
 
 import java.util.Calendar;
