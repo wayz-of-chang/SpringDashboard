@@ -3,16 +3,23 @@
 <head>
     <title>System Dashboard</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="/css/font-awesome.min.css" />
+    <script src="/js/jquery-1.12.4.js"></script>
     <script src="/js/sockjs-1.1.1.js"></script>
     <script src="/js/stomp.js"></script>
+    <script src="/js/angular.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/d3.js"></script>
     <script type="text/javascript">
         var stompClient = null;
 
         function setConnected(connected) {
-            document.getElementById('connect').disabled = connected;
-            document.getElementById('disconnect').disabled = !connected;
-            document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
-            document.getElementById('response').innerHTML = '';
+            $('#connect').attr('disabled', connected);
+            $('#disconnect').attr('disabled', !connected);
+            $('#conversationDiv').css('visibility', connected ? 'visible' : 'hidden');
+            $('#response').html('');
         }
 
         function connect() {
@@ -36,16 +43,13 @@
         }
 
         function sendName() {
-            var name = document.getElementById('name').value;
+            var name = $('#name').val();
             stompClient.send("/app/stats", {}, JSON.stringify({ 'name': name, 'statType': 'system', 'url': 'localhost:8080', 'interval': '1s' }));
         }
 
         function showGreeting(message) {
-            var response = document.getElementById('response');
-            var p = document.createElement('p');
-            p.style.wordWrap = 'break-word';
-            p.appendChild(document.createTextNode(message));
-            response.appendChild(p);
+            var response = $('#response');
+            response.append('<p style="word-wrap:break-word;">' + message + '</p>');
         }
     </script>
 </head>
@@ -54,12 +58,12 @@
 <p th:text="'Dashboard'" />
 <div>
     <div>
-        <button id="connect" onclick="connect();">Connect</button>
-        <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
+        <button class="btn" id="connect" onclick="connect();">Connect</button>
+        <button class="btn" id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
     </div>
     <div id="conversationDiv">
         <label>What is your name?</label><input type="text" id="name" />
-        <button id="sendName" onclick="sendName();">Send</button>
+        <button class="btn" id="sendName" onclick="sendName();">Send</button>
         <p id="response"></p>
     </div>
 </div>

@@ -22,6 +22,6 @@ public class DashboardController {
     @MessageMapping("/stats")
     @SendTo("/topic/greetings")
     public Message statistics(Parameters parameters) throws Exception {
-        return new Message(counter.incrementAndGet(), "hello, world", parameters.getName(), parameters);
+        return new Message(counter.incrementAndGet(), String.format("hello, %s", parameters.getName()), parameters.getName(), parameters);
     }
 }
