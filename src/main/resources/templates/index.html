@@ -3,6 +3,7 @@
 <head>
     <title>System Dashboard</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css" />
     <link rel="stylesheet" href="/css/font-awesome.min.css" />
@@ -12,46 +13,7 @@
     <script src="/js/angular.js"></script>
     <script src="/js/bootstrap.js"></script>
     <script src="/js/d3.js"></script>
-    <script type="text/javascript">
-        var stompClient = null;
-
-        function setConnected(connected) {
-            $('#connect').attr('disabled', connected);
-            $('#disconnect').attr('disabled', !connected);
-            $('#conversationDiv').css('visibility', connected ? 'visible' : 'hidden');
-            $('#response').html('');
-        }
-
-        function connect() {
-            var socket = new SockJS('/stats');
-            stompClient = Stomp.over(socket);
-            stompClient.connect({}, function(frame) {
-                setConnected(true);
-                console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/greetings', function(greeting) {
-                    showGreeting(JSON.parse(greeting.body).data);
-                });
-            });
-        }
-
-        function disconnect() {
-            if (stompClient != null) {
-                stompClient.disconnect();
-            }
-            setConnected(false);
-            console.log("Disconnected");
-        }
-
-        function sendName() {
-            var name = $('#name').val();
-            stompClient.send("/app/stats", {}, JSON.stringify({ 'name': name, 'statType': 'system', 'url': 'localhost:8080', 'interval': '1s' }));
-        }
-
-        function showGreeting(message) {
-            var response = $('#response');
-            response.append('<p style="word-wrap:break-word;">' + message + '</p>');
-        }
-    </script>
+    <script src="/js/application.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-default">
@@ -83,18 +45,27 @@
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Users <span class="caret"></span></a>
-                    <div class="dropdown-menu">
-                        <form class="navbar-form navbar-left">
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Username" />
-                            </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Password" />
-                            </div>
-                            <button type="submit" class="btn btn-default navbar-btn">Login</button>
-                            <button type="submit" class="btn btn-default navbar-btn">Register</button>
-                        </form>
-                    </div>
+                    <ul class="dropdown-menu">
+                        <li class="container-fluid">
+                            <form>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Username" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control" placeholder="Password" />
+                                </div>
+                                <div class="form-group checkbox pull-right">
+                                    <label>
+                                        <input type="checkbox" /> Show Password
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary navbar-btn">Login</button>
+                                    <button type="submit" class="btn btn-default navbar-btn">Register</button>
+                                </div>
+                            </form>
+                        </li>
+                    </ul>
                 </li>
                 <li><a href="#"><i class="fa fa-cog" aria-hidden="true" title="Settings"></i></a></li>
             </ul>
