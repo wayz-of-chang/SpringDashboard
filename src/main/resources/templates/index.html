@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html ng-app="dashboardApp" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>System Dashboard</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -14,6 +14,7 @@
     <script src="/js/bootstrap.js"></script>
     <script src="/js/d3.js"></script>
     <script src="/js/application.js"></script>
+    <script src="/js/dashboardController.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-default">
@@ -28,12 +29,12 @@
             <a class="navbar-brand" href="#">Dashboard</a>
         </div>
 
-        <div class="collapse navbar-collapse" id="main-nav">
+        <div class="collapse navbar-collapse" id="main-nav" ng-controller="DashboardController as dashboard">
             <ul class="nav navbar-nav">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dashboard 1<span class="sr-only">(current)</span><span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Dashboard 2</a></li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{dashboard.selected.name}}<span class="sr-only">(current)</span><span class="caret"></span></a>
+                    <ul class="dropdown-menu" >
+                        <li ng-repeat="board in dashboard.unselected"><a href="" ng-click="dashboard.select(board.id)">{{board.name}}</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="#"><i class="fa fa-plus"></i> New Dashboard</a></li>
                         <li><a href="#"><i class="fa fa-clone"></i> Copy Dashboard</a></li>
