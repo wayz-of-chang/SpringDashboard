@@ -1,14 +1,14 @@
 package webservices.server;
 
-public class Parameters extends webservices.Parameters {
+public class MonitorParameters extends webservices.Parameters {
     protected String url;
 
-    public Parameters() {
+    public MonitorParameters() {
         super();
         this.type = Type.SERVER;
     }
 
-    public Parameters(String name, String statType, String interval, String url) {
+    public MonitorParameters(String name, String statType, String interval, String url) {
         this.name = name;
         this.statType = statType;
         this.interval = interval;

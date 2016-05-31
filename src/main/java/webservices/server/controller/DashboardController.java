@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import webservices.Message;
-import webservices.server.Parameters;
+import webservices.server.MonitorParameters;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -22,7 +22,7 @@ public class DashboardController {
 
     @MessageMapping("/stats")
     @SendTo("/topic/greetings")
-    public Message statistics(Parameters parameters) throws Exception {
+    public Message statistics(MonitorParameters parameters) throws Exception {
         return new Message(counter.incrementAndGet(), String.format("hello, %s", parameters.getName()), parameters.getName(), parameters);
     }
 }
