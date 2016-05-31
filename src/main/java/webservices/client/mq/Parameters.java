@@ -7,6 +7,6 @@ public class Parameters extends webservices.Parameters {
         this.statType = statType;
         this.server = server;
         this.port = port;
-        this.type = TYPE_MQ;
+        this.type = Type.MQ;
     }
 }

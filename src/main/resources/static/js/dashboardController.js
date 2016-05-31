@@ -2,6 +2,7 @@ angular.module('dashboardApp', [])
     .controller('DashboardController', function() {
         var dashboard = this;
         dashboard.current = "1";
+        dashboard.index = "4";
         dashboard.dashboards = [
             {
                 id: '1',
@@ -41,6 +42,34 @@ angular.module('dashboardApp', [])
                 }
             });
             dashboard.unselected = unselected;
+        };
+        dashboard.open_new_popup = function() {
+            /*dashboard.dashboards.push({
+                id: dashboard.index,
+                name: "New Dashboard"
+            });
+            dashboard.index += 1;*/
+        };
+        dashboard.copy = function() {
+            dashboard.dashboards.push({
+                id: dashboard.index,
+                name: dashboard.selected.name
+            });
+            dashboard.select(dashboard.index);
+            dashboard.index += 1;
+        };
+        dashboard.delete = function() {
+            $.each(dashboard.dashboards, function(index, value) {
+                if (value.id == dashboard.current) {
+                    dashboard.dashboards.splice(index, 1);
+                    return false;
+                }
+            });
+            if (dashboard.dashboards.length > 0) {
+                dashboard.select(dashboard.dashboards[0].id);
+            }
+        };
+        dashboard.open_edit_popup = function() {
         };
     }
 );

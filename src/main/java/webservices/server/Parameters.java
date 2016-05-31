@@ -5,7 +5,7 @@ public class Parameters extends webservices.Parameters {
 
     public Parameters() {
         super();
-        this.type = TYPE_SERVER;
+        this.type = Type.SERVER;
     }
 
     public Parameters(String name, String statType, String interval, String url) {
@@ -13,7 +13,7 @@ public class Parameters extends webservices.Parameters {
         this.statType = statType;
         this.interval = interval;
         this.url = url;
-        this.type = TYPE_SERVER;
+        this.type = Type.SERVER;
     }
 
     public String getUrl() { return url; }

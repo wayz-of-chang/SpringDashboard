@@ -18,6 +18,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
+import webservices.server.model.Dashboard;
+import webservices.server.service.DashboardRepository;
 
 import java.util.concurrent.TimeUnit;
 

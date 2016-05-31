@@ -36,10 +36,10 @@
                     <ul class="dropdown-menu" >
                         <li ng-repeat="board in dashboard.unselected"><a href="" ng-click="dashboard.select(board.id)">{{board.name}}</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="#"><i class="fa fa-plus"></i> New Dashboard</a></li>
-                        <li><a href="#"><i class="fa fa-clone"></i> Copy Dashboard</a></li>
-                        <li><a href="#"><i class="fa fa-edit"></i> Edit Dashboard</a></li>
-                        <li><a href="#"><i class="fa fa-minus"></i> Delete Dashboard</a></li>
+                        <li><a href="" ng-click="dashboard.open_new_popup()"><i class="fa fa-plus"></i> New Dashboard</a></li>
+                        <li><a href="" ng-click="dashboard.copy()"><i class="fa fa-clone"></i> Copy Dashboard</a></li>
+                        <li><a href="" ng-click="dashboard.open_edit_popup()"><i class="fa fa-edit"></i> Edit Dashboard</a></li>
+                        <li><a href="" ng-click="dashboard.delete()"><i class="fa fa-minus"></i> Delete Dashboard</a></li>
                     </ul>
                 </li>
             </ul>

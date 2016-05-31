@@ -1,6 +1,7 @@
-package webservices;
+package webservices.server.service;
 
 import org.springframework.data.repository.CrudRepository;
+import webservices.server.model.Dashboard;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package webservices.server;
+package webservices.server.controller;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import webservices.Message;
+import webservices.server.Parameters;
 
 import java.util.concurrent.atomic.AtomicLong;
 
