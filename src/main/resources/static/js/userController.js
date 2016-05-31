@@ -11,6 +11,7 @@ app.controller('UserController', function($http) {
         register: false,
         login: true
     };
+    user.logged_in = false;
     user.user = {
         id: '',
         username: '',
@@ -39,12 +40,14 @@ app.controller('UserController', function($http) {
         user.success = false;
         user.error = false;
         $http.post('/users/create', data).then(function(response) {
+            console.log(response);
             //success
             user.user.id = response.data.data.id;
             user.success = true;
             user.success_message = "User successfully registered: " + response.data.data.username;
-            setTimeout(function() {user.success = false;}, 5000);
+            setTimeout(function() { user.success = false; }, 5000);
         }, function(response) {
+            console.log(response);
             //fail
             user.error = true;
             user.error_message = response.data.error + ": " + response.data.message;
@@ -54,10 +57,20 @@ app.controller('UserController', function($http) {
         user.mode.login = true;
         user.mode.register = false;
         var data = user.user;
+        user.success = false;
+        user.error = false;
         $http.post('/users/login', data).then(function(response) {
-
+            console.log(response);
+            //success
+            user.logged_in = true;
+            user.success = true;
+            user.success_message = "User successfully logged in: " + response.data.data.username;
+            setTimeout(function() { user.success = false; }, 5000);
         }, function(response) {
-
+            console.log(response);
+            //fail
+            user.error = true;
+            user.error_message = response.data.error + ": " + response.data.message;
         })
     };
     user.validate = function() {
