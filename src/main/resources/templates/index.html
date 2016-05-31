@@ -50,23 +50,43 @@
             <ul class="nav navbar-nav navbar-right" ng-controller="UserController as user">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Users <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" style="min-width:200px;">
                         <li class="container-fluid">
+                            <div class="alert alert-danger" ng-show="user.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{user.error_message}}</div>
+                            <div class="alert alert-success" ng-show="user.success" role="alert">{{user.success_message}}</div>
                             <form>
                                 <div class="form-group">
                                     <input type="text" ng-model="user.user.username" class="form-control" placeholder="Username" />
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" ng-hide="user.show_password">
                                     <input type="password" ng-model="user.user.password" class="form-control" placeholder="Password" />
+                                </div>
+                                <div class="form-group" ng-show="user.show_password">
+                                    <input type="text" ng-model="user.user.password" class="form-control" placeholder="Password" />
+                                </div>
+                                <div class="form-group" ng-show="user.mode.register &amp;&amp; !user.show_password">
+                                    <input type="password" ng-model="user.confirm_password" class="form-control" placeholder="Repeat Password" />
+                                </div>
+                                <div class="form-group" ng-show="user.mode.register &amp;&amp; user.show_password">
+                                    <input type="text" ng-model="user.confirm_password" class="form-control" placeholder="Repeat Password" />
                                 </div>
                                 <div class="form-group checkbox pull-right">
                                     <label>
-                                        <input type="checkbox" /> Show Password
+                                        <input type="checkbox" ng-model="user.show_password" /> Show Password
                                     </label>
                                 </div>
+                                <div class="form-group" ng-show="user.mode.register">
+                                    <input type="text" ng-model="user.user.email" class="form-control" placeholder="Email" />
+                                </div>
+                                <div class="form-group" ng-show="user.mode.register">
+                                    <select ng-model="user.user.role" class="form-control">
+                                        <option value="R_USER">Regular User</option>
+                                        <option value="RW_USER">Power User</option>
+                                    </select>
+                                </div>
                                 <div class="form-group">
-                                    <button type="submit" ng-click="user.login()" class="btn btn-primary navbar-btn">Login</button>
-                                    <button type="submit" ng-click="user.create()" class="btn btn-default navbar-btn">Register</button>
+                                    <button type="submit" ng-click="user.login()" ng-class="{'btn-primary': user.mode.login, 'btn-default': user.mode.register}" class="btn navbar-btn">Login</button>
+                                    <button type="submit" ng-click="user.register()" ng-class="{'btn-primary': user.mode.register, 'btn-default': user.mode.login}" class="btn navbar-btn">Register</button>
                                 </div>
                             </form>
                         </li>

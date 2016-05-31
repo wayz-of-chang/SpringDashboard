@@ -25,8 +25,6 @@ public class UserController {
 
     @RequestMapping(value="/users/create", method=RequestMethod.POST)
     public Message create(@RequestBody UserParameters parameters) throws Exception {
-        System.out.println("Username: " + parameters.getUsername());
-        System.out.println("Role: " + parameters.getRole());
         User user = service.create(parameters.getUsername(), parameters.getPassword(), parameters.getRole(), parameters.getEmail());
         return new Message(counter.incrementAndGet(), user, "create user", parameters);
     }
