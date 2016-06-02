@@ -8,9 +8,10 @@ function setConnected(connected) {
 }
 
 function connect() {
+    var cookie = JSON.parse($.cookie('csrf'));
     var socket = new SockJS('/stats');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function(frame) {
+    stompClient.connect({'X-CSRF-TOKEN': cookie.csrf}, function(frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/greetings', function(greeting) {
