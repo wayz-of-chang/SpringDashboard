@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import webservices.Message;
 import webservices.server.UserParameters;
+import webservices.server.model.CurrentUser;
 import webservices.server.model.User;
+import webservices.server.service.UserDetailsService;
 import webservices.server.service.UserService;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -17,10 +19,12 @@ public class UserController {
 
     final AtomicLong counter = new AtomicLong();
     private final UserService service;
+    private final UserDetailsService detailsService;
 
     @Autowired
-    public UserController(UserService service) {
+    public UserController(UserService service, UserDetailsService detailsService) {
         this.service = service;
+        this.detailsService = detailsService;
     }
 
     @RequestMapping(value="/users/create", method=RequestMethod.POST)
@@ -38,15 +42,15 @@ public class UserController {
     public Message login(@RequestBody UserParameters parameters) throws Exception {
         String errorMessage = "";
         try {
-            User user = service.getUserByName(parameters.getUsername()).get();
-            if (!user.getPassword().equals(parameters.getPassword())) {
+            CurrentUser user = detailsService.loadUserByUsername(parameters.getUsername());
+            if (!user.comparePasswords(parameters.getPassword())) {
                 errorMessage = "Invalid password";
             }
             if (errorMessage.equals("")) {
                 return new Message(counter.incrementAndGet(), user, "login user", parameters);
             }
         } catch (Exception e) {
-            errorMessage = "User " + parameters.getUsername() + " does not exist";
+            errorMessage = e.getMessage();
         }
         throw new Exception("Could not log in: " + errorMessage);
     }
