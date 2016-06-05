@@ -1,4 +1,4 @@
-app.controller('UserController', function($http) {
+app.controller('UserController', function(users) {
     var user = this;
     user.show_password = false;
     user.confirm_password = "";
@@ -39,19 +39,16 @@ app.controller('UserController', function($http) {
         };
         user.success = false;
         user.error = false;
-        $http.post('/users/create', data, {headers: {'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')}}).then(function(response) {
-            console.log(response);
-            //success
-            user.user.id = response.data.data.id;
-            user.success = true;
-            user.success_message = "User successfully registered: " + response.data.data.username;
-            setTimeout(function() { user.success = false; }, 5000);
-        }, function(response) {
-            console.log(response);
-            //fail
-            user.error = true;
-            user.error_message = response.data.error + ": " + response.data.message;
-        })
+        users.create(data, function(response) {
+            if (response.status >= 200 && response.status < 300) {
+                user.success = true;
+                user.success_message = "User successfully registered: " + response.data.data.username;
+                setTimeout(function() { user.success = false; }, 5000);
+            } else {
+                user.error = true;
+                user.error_message = response.data.error + ": " + response.data.message;
+            }
+        });
     };
     user.login = function() {
         user.mode.login = true;
@@ -62,21 +59,19 @@ app.controller('UserController', function($http) {
         var data = user.user;
         user.success = false;
         user.error = false;
-        $http.post('/users/login', data, {headers: {'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')}}).then(function(response) {
-            console.log(response);
-            //success
-            user.logged_in = true;
-            var cookie = JSON.stringify({csrf: response.headers('X-CSRF-TOKEN')});
-            $.cookie('csrf', cookie);
-            user.success = true;
-            user.success_message = "User successfully logged in: " + response.data.data.username;
-            setTimeout(function() { user.success = false; }, 5000);
-        }, function(response) {
-            console.log(response);
-            //fail
-            user.error = true;
-            user.error_message = response.data.error + ": " + response.data.message;
-        })
+        users.login(data, function(response) {
+            if (response.status >= 200 && response.status < 300) {
+                user.logged_in = true;
+                var cookie = JSON.stringify({csrf: response.headers('X-CSRF-TOKEN')});
+                $.cookie('csrf', cookie);
+                user.success = true;
+                user.success_message = "User successfully logged in: " + response.data.data.username;
+                setTimeout(function() { user.success = false; }, 5000);
+            } else {
+                user.error = true;
+                user.error_message = response.data.error + ": " + response.data.message;
+            }
+        });
     };
     user.validate = function() {
         if (user.user.username == "" || user.user.password == "") {
