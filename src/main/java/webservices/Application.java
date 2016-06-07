@@ -109,10 +109,10 @@ public class Application implements CommandLineRunner {
             log.info("Dashboard found with findOne(1L):");
             log.info(dashboard.toString());
 
-            log.info("Dashboard found with findByName('Home'):");
+            /*log.info("Dashboard found with findByName('Home'):");
             for (Dashboard home : repository.findByName("Home")) {
                 log.info(home.toString());
-            }
+            }*/
         };
     }
 

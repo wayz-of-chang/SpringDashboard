@@ -3,6 +3,7 @@ package webservices.server.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -26,6 +27,14 @@ public class User {
 
     @Column(name = "email", nullable = false)
     private String email;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_dashboard",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "dashboard_id")
+    )
+    private Set<Dashboard> dashboards;
 
     public enum Role {
         R_USER, RW_USER, ADMIN
@@ -64,4 +73,13 @@ public class User {
     public String getEmail() {
         return email;
     }
+
+    public Set<Dashboard> getDashboards() {
+        return this.dashboards;
+    }
+
+    public void setDashboards(Set<Dashboard> dashboards) {
+        this.dashboards = dashboards;
+    }
+
 }

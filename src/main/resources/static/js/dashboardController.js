@@ -1,4 +1,4 @@
-app.controller('DashboardController', function($http) {
+app.controller('DashboardController', function($http, users) {
     var dashboard = this;
     dashboard.current = "1";
     dashboard.index = "4";

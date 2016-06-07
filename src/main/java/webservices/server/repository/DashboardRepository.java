@@ -3,8 +3,8 @@ package webservices.server.repository;
 import org.springframework.data.repository.CrudRepository;
 import webservices.server.model.Dashboard;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface DashboardRepository extends CrudRepository<Dashboard, Long> {
-    List<Dashboard> findByName(String name);
+    Optional<Dashboard> findByName(String name, long userId);
 }
