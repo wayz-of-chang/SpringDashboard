@@ -1,53 +1,29 @@
-app.controller('DashboardController', function($http, users) {
+app.controller('DashboardController', function(dashboards, users) {
     var dashboard = this;
     dashboard.current = "1";
     dashboard.index = "4";
-    dashboard.dashboards = [
-        {
-            id: '1',
-            name: 'Dashboard 1'
-        },
-        {
-            id: '2',
-            name: 'Dashboard 2'
-        },
-        {
-            id: '3',
-            name: 'Dashboard 3'
-        }
-    ];
-    dashboard.selected = {
-        id: '1',
-        name: 'Dashboard 1'
-    };
-    dashboard.unselected = [
-        {
-            id: '2',
-            name: 'Dashboard 2'
-        },
-        {
-            id: '3',
-            name: 'Dashboard 3'
-        }
-    ];
-    dashboard.select = function(id) {
-        dashboard.current = id;
+    dashboard.dashboards = dashboards.get_dashboards();
+    dashboard.unselected = function() {
         var unselected = [];
         $.each(dashboard.dashboards, function(index, value) {
-            if (value.id == dashboard.current) {
-                dashboard.selected = value;
-            } else {
-                unselected.push(value);
+            if (index != dashboard.current) {
+                unselected.push(index);
             }
         });
-        dashboard.unselected = unselected;
+        return unselected;
+    };
+    dashboard.select = function(id) {
+        dashboard.current = id;
     };
     dashboard.open_new_popup = function() {
-        /*dashboard.dashboards.push({
-            id: dashboard.index,
+        var data = {
+            userId: users.get_property('id'),
             name: "New Dashboard"
+        };
+        dashboards.create(data, function(response) {
+            dashboard.select(response.data.data.id);
+            dashboard.dashboards[dashboard.current] = dashboards.get_dashboard(dashboard.current);
         });
-        dashboard.index += 1;*/
     };
     dashboard.copy = function() {
         dashboard.dashboards.push({

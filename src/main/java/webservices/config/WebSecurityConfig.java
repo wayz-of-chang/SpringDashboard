@@ -24,7 +24,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/", "/ping", "/system", "/test", "/fonts/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/users/create", "/users/login").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers(HttpMethod.POST, "/dashboards/get").hasAnyAuthority("R_USER","RW_USER","ADMIN")
+                .antMatchers(HttpMethod.POST, "/dashboards/create").hasAnyAuthority("RW_USER","ADMIN")
+                .anyRequest().fullyAuthenticated()
                 .and()
                 .logout()
                 .permitAll();

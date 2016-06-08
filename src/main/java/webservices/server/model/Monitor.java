@@ -1,7 +1,6 @@
 package webservices.server.model;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 public class Monitor {
@@ -12,14 +11,6 @@ public class Monitor {
 
     @Column(name = "name", nullable = false)
     private String name;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "dashboard_monitor",
-            joinColumns = @JoinColumn(name = "monitor_id"),
-            inverseJoinColumns = @JoinColumn(name = "dashboard_id")
-    )
-    private Dashboard dashboard;
 
     protected Monitor() {}
 
@@ -41,20 +32,12 @@ public class Monitor {
         return this.name;
     }
 
-    public Dashboard getDashboard() {
-        return this.dashboard;
-    }
-
     public void setId(long id) {
         this.id = id;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setDashboard(Dashboard dashboard) {
-        this.dashboard = dashboard;
     }
 
 }

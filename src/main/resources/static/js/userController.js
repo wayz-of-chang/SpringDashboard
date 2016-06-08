@@ -1,4 +1,4 @@
-app.controller('UserController', function(users) {
+app.controller('UserController', function(users, dashboards) {
     var user = this;
     user.show_password = false;
     user.confirm_password = "";
@@ -66,7 +66,11 @@ app.controller('UserController', function(users) {
                 $.cookie('csrf', cookie);
                 user.success = true;
                 user.success_message = "User successfully logged in: " + response.data.data.username;
+                var data = {
+                    userId: users.get_property('id')
+                };
                 setTimeout(function() { user.success = false; }, 5000);
+                dashboards.query_dashboards(data, function() {});
             } else {
                 user.error = true;
                 user.error_message = response.data.error + ": " + response.data.message;

@@ -13,14 +13,6 @@ public class Dashboard {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_dashboard",
-            joinColumns = @JoinColumn(name = "dashboard_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> users;
-
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "dashboard_monitor",
@@ -47,10 +39,6 @@ public class Dashboard {
 
     public String getName() {
         return this.name;
-    }
-
-    public Set<User> getUsers() {
-        return this.users;
     }
 
     public Set<Monitor> getMonitors() {

@@ -1,25 +1,20 @@
 package webservices.server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import webservices.Message;
 import webservices.server.DashboardParameters;
-import webservices.server.MonitorParameters;
 import webservices.server.model.Dashboard;
 import webservices.server.model.User;
 import webservices.server.service.DashboardService;
 import webservices.server.service.UserService;
 
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Controller
+@RestController
 public class DashboardController {
 
     final AtomicLong counter = new AtomicLong();
@@ -30,11 +25,6 @@ public class DashboardController {
     public DashboardController(DashboardService service, UserService userService) {
         this.service = service;
         this.userService = userService;
-    }
-
-    @RequestMapping("/")
-    public String index(Model model) {
-        return "index";
     }
 
     @RequestMapping(value="/dashboards/create", method=RequestMethod.POST)
@@ -50,9 +40,14 @@ public class DashboardController {
         }
     }
 
-    @MessageMapping("/stats")
-    @SendTo("/topic/greetings")
-    public Message statistics(MonitorParameters parameters) throws Exception {
-        return new Message(counter.incrementAndGet(), String.format("hello, %s", parameters.getName()), parameters.getName(), parameters);
+    @RequestMapping(value="/dashboards/get", method=RequestMethod.POST)
+    public Message get(@RequestBody DashboardParameters parameters) throws Exception {
+        User user;
+        try {
+            user = userService.getUserById(parameters.getUserId()).get();
+            return new Message(counter.incrementAndGet(), user.getDashboards(), "get dashboard", parameters);
+        } catch (Exception e) {
+            throw new Exception("Could not get dashboards: " + e.getMessage());
+        }
     }
 }

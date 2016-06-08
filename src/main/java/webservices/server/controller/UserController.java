@@ -1,6 +1,8 @@
 package webservices.server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,6 +49,8 @@ public class UserController {
                 errorMessage = "Invalid password";
             }
             if (errorMessage.equals("")) {
+                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, parameters.getPassword(), user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(token);
                 return new Message(counter.incrementAndGet(), user, "login user", parameters);
             }
         } catch (Exception e) {
