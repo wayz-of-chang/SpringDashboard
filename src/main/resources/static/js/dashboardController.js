@@ -1,8 +1,7 @@
-app.controller('DashboardController', function(dashboards, users) {
+app.controller('DashboardController', function($scope, service) {
     var dashboard = this;
     dashboard.current = "1";
-    dashboard.index = "4";
-    dashboard.dashboards = dashboards.get_dashboards();
+    dashboard.dashboards = {};
     dashboard.unselected = function() {
         var unselected = [];
         $.each(dashboard.dashboards, function(index, value) {
@@ -17,21 +16,25 @@ app.controller('DashboardController', function(dashboards, users) {
     };
     dashboard.open_new_popup = function() {
         var data = {
-            userId: users.get_property('id'),
+            userId: service.get_user_property('id'),
             name: "New Dashboard"
         };
-        dashboards.create(data, function(response) {
+        service.create_dashboard(data, function(response) {
             dashboard.select(response.data.data.id);
-            dashboard.dashboards[dashboard.current] = dashboards.get_dashboard(dashboard.current);
         });
     };
     dashboard.copy = function() {
+        var data = {
+            userId: service.get_user_property('id'),
+            name: dashboard.dashboards[dashboard.current].name
+        };
         dashboard.dashboards.push({
             id: dashboard.index,
             name: dashboard.selected.name
         });
-        dashboard.select(dashboard.index);
-        dashboard.index += 1;
+        service.create_dashboard(data, function(response) {
+            dashboard.select(response.data.data.id);
+        });
     };
     dashboard.delete = function() {
         $.each(dashboard.dashboards, function(index, value) {
@@ -46,4 +49,11 @@ app.controller('DashboardController', function(dashboards, users) {
     };
     dashboard.open_edit_popup = function() {
     };
+
+    $scope.$watch(function(scope) { return service.get_dashboards(); },
+        function(new_val, old_val) { dashboard.dashboards = new_val; }
+    );
+    $scope.$watch(function(scope) { return service.get_user_settings().current_dashboard; },
+        function(new_val, old_val) { dashboard.current = new_val; }
+    );
 });

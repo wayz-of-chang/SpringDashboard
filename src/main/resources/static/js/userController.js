@@ -1,4 +1,4 @@
-app.controller('UserController', function(users, dashboards) {
+app.controller('UserController', function(service) {
     var user = this;
     user.show_password = false;
     user.confirm_password = "";
@@ -12,13 +12,7 @@ app.controller('UserController', function(users, dashboards) {
         login: true
     };
     user.logged_in = false;
-    user.user = {
-        id: '',
-        username: '',
-        password: '',
-        email: '',
-        role: ''
-    };
+    user.user = service.user;
     user.register = function() {
         if (user.mode.register) {
             user.create();
@@ -39,7 +33,7 @@ app.controller('UserController', function(users, dashboards) {
         };
         user.success = false;
         user.error = false;
-        users.create(data, function(response) {
+        service.create_user(data, function(response) {
             if (response.status >= 200 && response.status < 300) {
                 user.success = true;
                 user.success_message = "User successfully registered: " + response.data.data.username;
@@ -59,7 +53,7 @@ app.controller('UserController', function(users, dashboards) {
         var data = user.user;
         user.success = false;
         user.error = false;
-        users.login(data, function(response) {
+        service.login(data, function(response) {
             if (response.status >= 200 && response.status < 300) {
                 user.logged_in = true;
                 var cookie = JSON.stringify({csrf: response.headers('X-CSRF-TOKEN')});
@@ -67,10 +61,10 @@ app.controller('UserController', function(users, dashboards) {
                 user.success = true;
                 user.success_message = "User successfully logged in: " + response.data.data.username;
                 var data = {
-                    userId: users.get_property('id')
+                    userId: service.get_user_property('id')
                 };
                 setTimeout(function() { user.success = false; }, 5000);
-                dashboards.query_dashboards(data, function() {});
+                service.query_dashboards(data, function() {});
             } else {
                 user.error = true;
                 user.error_message = response.data.error + ": " + response.data.message;
