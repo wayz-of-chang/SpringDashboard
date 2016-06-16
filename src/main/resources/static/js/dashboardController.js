@@ -17,7 +17,7 @@ app.controller('DashboardController', function($scope, service) {
         return unselected;
     };
     dashboard.select = function(id) {
-        dashboard.current = id;
+        service.get_user_settings().current_dashboard = id;
     };
     dashboard.open_new_popup = function() {
         $('#new_dashboard_modal').modal('show');
