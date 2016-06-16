@@ -52,12 +52,11 @@ app.controller('DashboardController', function($scope, service) {
             userId: service.get_user_property('id'),
             name: dashboard.dashboards[dashboard.current].name
         };
-        dashboard.dashboards.push({
-            id: dashboard.index,
-            name: dashboard.selected.name
-        });
         service.create_dashboard(data, function(response) {
-            dashboard.select(response.data.data.id);
+            if (response.status >= 200 && response.status < 300) {
+                dashboard.select(response.data.data.id);
+            } else {
+            }
         });
     };
     dashboard.delete = function() {

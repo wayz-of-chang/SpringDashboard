@@ -98,7 +98,9 @@ app.factory('service', function($http) {
     };
 
     service.set_dashboards = function(data) {
-        service.dashboards = data;
+        $.each(data, function(index, value) {
+            service.set_dashboard(value);
+        });
     };
 
     service.get_dashboard = function(id) {
