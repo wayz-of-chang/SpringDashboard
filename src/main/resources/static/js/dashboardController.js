@@ -2,6 +2,11 @@ app.controller('DashboardController', function($scope, service) {
     var dashboard = this;
     dashboard.current = "1";
     dashboard.dashboards = {};
+    dashboard.new_dashboard = {
+        name: '',
+        error: false,
+        error_message: ''
+    };
     dashboard.unselected = function() {
         var unselected = [];
         $.each(dashboard.dashboards, function(index, value) {
@@ -15,13 +20,32 @@ app.controller('DashboardController', function($scope, service) {
         dashboard.current = id;
     };
     dashboard.open_new_popup = function() {
+        $('#new_dashboard_modal').modal('show');
+    };
+
+    dashboard.create_new_dashboard = function() {
         var data = {
             userId: service.get_user_property('id'),
-            name: "New Dashboard"
+            name: dashboard.new_dashboard.name
         };
         service.create_dashboard(data, function(response) {
-            dashboard.select(response.data.data.id);
+            if (response.status >= 200 && response.status < 300) {
+                dashboard.new_dashboard.error = false;
+                dashboard.new_dashboard.error_message = '';
+                dashboard.new_dashboard.success = true;
+                dashboard.new_dashboard.success_message = "Successfully created dashboard: " + response.data.data.name;
+                dashboard.select(response.data.data.id);
+                setTimeout(function() { dashboard.new_dashboard.success = false; $('#new_dashboard_modal').modal('hide'); }, 5000);
+            } else {
+                dashboard.new_dashboard.error = true;
+                dashboard.new_dashboard.error_message = response.data.error + ": " + response.data.message;
+                dashboard.new_dashboard.success = false;
+            }
         });
+    };
+
+    dashboard.cancel_new_dashboard_modal = function() {
+        $('#new_dashboard_modal').modal('hide');
     };
     dashboard.copy = function() {
         var data = {

@@ -117,5 +117,29 @@
         </div>
     </div>
 </div>
+
+<div id="new_dashboard_modal" class="modal fade" tabindex="-1" role="dialog" ng-controller="DashboardController as dashboard">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Create a New Dashboard</h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" ng-show="dashboard.new_dashboard.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{dashboard.new_dashboard.error_message}}</div>
+                <div class="alert alert-success" ng-show="dashboard.new_dashboard.success" role="alert">{{dashboard.new_dashboard.success_message}}</div>
+                <form>
+                    <div class="form-group">
+                        <input type="text" ng-model="dashboard.new_dashboard.name" class="form-control" placeholder="Name" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dashboard.cancel_new_dashboard_modal()">Cancel</button>
+                <button type="submit" class="btn btn-primary" ng-click="dashboard.create_new_dashboard()">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
