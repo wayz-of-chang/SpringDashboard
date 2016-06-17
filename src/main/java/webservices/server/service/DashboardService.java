@@ -1,12 +1,9 @@
 package webservices.server.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import webservices.server.model.Dashboard;
-import webservices.server.model.User;
 import webservices.server.repository.DashboardRepository;
-import webservices.server.repository.UserRepository;
 
 import java.util.Optional;
 
@@ -35,5 +32,17 @@ public class DashboardService {
         Dashboard dashboard = new Dashboard();
         dashboard.setName(name);
         return repository.save(dashboard);
+    }
+
+    public Dashboard save(Dashboard dashboard) {
+        return repository.save(dashboard);
+    }
+
+    public void remove(Dashboard dashboard) {
+        repository.delete(dashboard);
+    }
+
+    public void remove(long id) {
+        repository.delete(id);
     }
 }

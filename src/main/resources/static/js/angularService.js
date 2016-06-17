@@ -86,6 +86,35 @@ app.factory('service', function($http) {
         });
     };
 
+    service.edit_dashboard = function(data, callback) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        return $http.post('/dashboards/edit', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
+            console.log(response);
+            //success
+            service.set_dashboard(response.data.data);
+            return callback(response);
+        }, function(response) {
+            console.log(response);
+            //fail
+            return callback(response);
+        });
+    };
+
+    service.delete_dashboard = function(data, callback) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        return $http.post('/dashboards/delete', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
+            console.log(response);
+            //success
+            delete service.dashboards[response.data.data];
+            service.user_settings.current_dashboard = Object.keys(service.get_dashboards())[0];
+            return callback(response);
+        }, function(response) {
+            console.log(response);
+            //fail
+            return callback(response);
+        });
+    };
+
     service.set_dashboard = function(data) {
         service.dashboards[data.id] = {
             id: data.id,

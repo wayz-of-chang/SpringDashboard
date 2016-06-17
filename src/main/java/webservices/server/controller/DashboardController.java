@@ -36,7 +36,7 @@ public class DashboardController {
             userService.addDashboard(parameters.getUserId(), dashboard.getId());
             return new Message(counter.incrementAndGet(), dashboard, "create dashboard", parameters);
         } catch (Exception e) {
-            throw new Exception("Could not create user: " + e.getMessage());
+            throw new Exception("Could not create dashboard: " + e.getMessage());
         }
     }
 
@@ -48,6 +48,34 @@ public class DashboardController {
             return new Message(counter.incrementAndGet(), user.getDashboards(), "get dashboard", parameters);
         } catch (Exception e) {
             throw new Exception("Could not get dashboards: " + e.getMessage());
+        }
+    }
+
+    @RequestMapping(value="/dashboards/edit", method=RequestMethod.POST)
+    public Message edit(@RequestBody DashboardParameters parameters) throws Exception {
+        Dashboard dashboard;
+        User user;
+        try {
+            dashboard = service.getDashboardById(parameters.getId()).get();
+            dashboard.setName(parameters.getName());
+            user = userService.getUserById(parameters.getUserId()).get();
+            return new Message(counter.incrementAndGet(), service.save(dashboard), "edit dashboard", parameters);
+        } catch (Exception e) {
+            throw new Exception("Could not update dashboard: " + e.getMessage());
+        }
+    }
+
+    @RequestMapping(value="/dashboards/delete", method=RequestMethod.POST)
+    public Message delete(@RequestBody DashboardParameters parameters) throws Exception {
+        long id;
+        User user;
+        try {
+            id = parameters.getId();
+            System.out.println(id);
+            service.remove(id);
+            return new Message(counter.incrementAndGet(), id, "delete dashboard", parameters);
+        } catch (Exception e) {
+            throw new Exception("Could not delete dashboard: " + e.getMessage());
         }
     }
 }

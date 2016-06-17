@@ -46,7 +46,7 @@
                         <li><a href="" ng-click="dashboard.open_new_popup()"><i class="fa fa-plus"></i> New Dashboard</a></li>
                         <li><a href="" ng-click="dashboard.copy()"><i class="fa fa-clone"></i> Copy Dashboard</a></li>
                         <li><a href="" ng-click="dashboard.open_edit_popup()"><i class="fa fa-edit"></i> Edit Dashboard</a></li>
-                        <li><a href="" ng-click="dashboard.delete()"><i class="fa fa-minus"></i> Delete Dashboard</a></li>
+                        <li><a href="" ng-click="dashboard.confirm_delete_popup()"><i class="fa fa-minus"></i> Delete Dashboard</a></li>
                     </ul>
                 </li>
             </ul>
@@ -137,6 +137,58 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dashboard.cancel_new_dashboard_modal()">Cancel</button>
                 <button type="submit" class="btn btn-primary" ng-click="dashboard.create_new_dashboard()">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="edit_dashboard_modal" class="modal fade" tabindex="-1" role="dialog" ng-controller="DashboardController as dashboard">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Edit Dashboard</h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" ng-show="dashboard.edit_dashboard.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{dashboard.edit_dashboard.error_message}}</div>
+                <div class="alert alert-success" ng-show="dashboard.edit_dashboard.success" role="alert">{{dashboard.edit_dashboard.success_message}}</div>
+                <form>
+                    <div class="form-group">
+                        <input type="hidden" id="edit_dashboard_id" ng-model="dashboard.edit_dashboard.id" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="edit_dashboard_name" ng-model="dashboard.edit_dashboard.name" class="form-control" placeholder="Name" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dashboard.cancel_edit_dashboard_modal()">Cancel</button>
+                <button type="submit" class="btn btn-primary" ng-click="dashboard.update()">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="delete_dashboard_modal" class="modal fade" tabindex="-1" role="dialog" ng-controller="DashboardController as dashboard">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Delete Dashboard</h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" ng-show="dashboard.delete_dashboard.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{dashboard.delete_dashboard.error_message}}</div>
+                <div class="alert alert-success" ng-show="dashboard.delete_dashboard.success" role="alert">{{dashboard.delete_dashboard.success_message}}</div>
+                <form>
+                    <div class="form-group">
+                        <input type="hidden" id="delete_dashboard_id" ng-model="dashboard.delete_dashboard.id" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <h4>Delete <span id="delete_dashboard_name"></span>?</h4>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dashboard.cancel_delete_dashboard_modal()">Cancel</button>
+                <button type="submit" class="btn btn-danger" ng-click="dashboard.delete()">Delete</button>
             </div>
         </div>
     </div>
