@@ -10,16 +10,12 @@ app.controller('DashboardController', function($scope, service) {
         success_message: ''
     };
     dashboard.edit_dashboard = {
-        id: '',
-        name: '',
         error: false,
         error_message: '',
         success: false,
         success_message: ''
     };
     dashboard.delete_dashboard = {
-        id: '',
-        name: '',
         error: false,
         error_message: '',
         success: false,
@@ -36,6 +32,9 @@ app.controller('DashboardController', function($scope, service) {
     };
     dashboard.select = function(id) {
         service.get_user_settings().current_dashboard = id;
+        dashboard.new_dashboard.error = false;
+        dashboard.edit_dashboard.error = false;
+        dashboard.delete_dashboard.error = false;
     };
     dashboard.open_new_popup = function() {
         $('#new_dashboard_modal').modal('show');
@@ -52,7 +51,7 @@ app.controller('DashboardController', function($scope, service) {
                 dashboard.new_dashboard.success = true;
                 dashboard.new_dashboard.success_message = "Successfully created dashboard: " + response.data.data.name;
                 dashboard.select(response.data.data.id);
-                setTimeout(function() { dashboard.new_dashboard.success = false; $('#new_dashboard_modal').modal('hide'); }, 5000);
+                setTimeout(function() { dashboard.new_dashboard.success = false; $('#new_dashboard_modal').modal('hide'); }, 3000);
             } else {
                 dashboard.new_dashboard.error = true;
                 dashboard.new_dashboard.error_message = response.data.error + ": " + response.data.message;
@@ -76,16 +75,13 @@ app.controller('DashboardController', function($scope, service) {
         });
     };
     dashboard.open_edit_popup = function() {
-        $('#edit_dashboard_id').val(dashboard.current);
-        $('#edit_dashboard_name').val(dashboard.dashboards[dashboard.current].name);
         $('#edit_dashboard_modal').modal('show');
     };
     dashboard.update = function() {
-        // dashboard.edit_dashboard.id should work, but dashboard is a separate DashboardController
         var data = {
             userId: service.get_user_property('id'),
-            id: $('#edit_dashboard_id').val(), //TODO: figure out why dashboard.edit_dashboard.id doesn't work
-            name: dashboard.edit_dashboard.name
+            id: dashboard.current,
+            name: dashboard.dashboards[dashboard.current].name
         };
         service.edit_dashboard(data, function(response) {
             if (response.status >= 200 && response.status < 300) {
@@ -94,7 +90,7 @@ app.controller('DashboardController', function($scope, service) {
                 dashboard.edit_dashboard.success = true;
                 dashboard.edit_dashboard.success_message = "Successfully updated dashboard: " + response.data.data.name;
                 dashboard.select(response.data.data.id);
-                setTimeout(function() { dashboard.edit_dashboard.success = false; $('#edit_dashboard_modal').modal('hide'); }, 5000);
+                setTimeout(function() { dashboard.edit_dashboard.success = false; $('#edit_dashboard_modal').modal('hide'); }, 3000);
             } else {
                 dashboard.edit_dashboard.error = true;
                 dashboard.edit_dashboard.error_message = response.data.error + ": " + response.data.message;
@@ -106,15 +102,12 @@ app.controller('DashboardController', function($scope, service) {
         $('#edit_dashboard_modal').modal('hide');
     };
     dashboard.confirm_delete_popup = function() {
-        $('#delete_dashboard_id').val(dashboard.current);
-        $('#delete_dashboard_name').html(dashboard.dashboards[dashboard.current].name);
         $('#delete_dashboard_modal').modal('show');
     };
     dashboard.delete = function() {
-        // dashboard.edit_dashboard.id should work, but dashboard is a separate DashboardController
         var data = {
             userId: service.get_user_property('id'),
-            id: $('#delete_dashboard_id').val() //TODO: figure out why dashboard.delete_dashboard.id doesn't work
+            id: dashboard.current
         };
         service.delete_dashboard(data, function(response) {
             if (response.status >= 200 && response.status < 300) {
@@ -122,10 +115,13 @@ app.controller('DashboardController', function($scope, service) {
                 dashboard.delete_dashboard.error_message = '';
                 dashboard.delete_dashboard.success = true;
                 dashboard.delete_dashboard.success_message = "Successfully updated dashboard: " + response.data.data.name;
-                if (dashboard.dashboards.length > 0) {
-                    dashboard.select(dashboard.dashboards[0].id);
-                }
-                setTimeout(function() { dashboard.delete_dashboard.success = false; $('#delete_dashboard_modal').modal('hide'); }, 5000);
+                setTimeout(function() {
+                    dashboard.delete_dashboard.success = false;
+                    $('#delete_dashboard_modal').modal('hide');
+                    if (dashboard.dashboards.length > 0) {
+                        dashboard.select(dashboard.dashboards[0].id);
+                    }
+                }, 3000);
             } else {
                 dashboard.delete_dashboard.error = true;
                 dashboard.delete_dashboard.error_message = response.data.error + ": " + response.data.message;
