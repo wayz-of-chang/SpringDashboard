@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import webservices.Message;
-import webservices.server.UserParameters;
+import webservices.server.parameters.UserParameters;
 import webservices.server.model.CurrentUser;
 import webservices.server.model.User;
 import webservices.server.service.UserDetailsService;

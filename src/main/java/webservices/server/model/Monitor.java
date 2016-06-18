@@ -7,12 +7,13 @@ public class Monitor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
     private long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = true)
     private String name;
 
-    protected Monitor() {}
+    public Monitor() {}
 
     public Monitor(String name) {
         this.name = name;

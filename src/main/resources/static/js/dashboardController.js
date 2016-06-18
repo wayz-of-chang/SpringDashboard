@@ -35,6 +35,10 @@ app.controller('DashboardController', function($scope, service) {
         dashboard.new_dashboard.error = false;
         dashboard.edit_dashboard.error = false;
         dashboard.delete_dashboard.error = false;
+        var data = {
+            dashboardId: id
+        };
+        service.query_monitors(data, function() {});
     };
     dashboard.open_new_popup = function() {
         $('#new_dashboard_modal').modal('show');

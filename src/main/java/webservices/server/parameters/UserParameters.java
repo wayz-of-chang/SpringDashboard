@@ -1,4 +1,4 @@
-package webservices.server;
+package webservices.server.parameters;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

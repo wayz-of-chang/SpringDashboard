@@ -1,4 +1,4 @@
-package webservices.server;
+package webservices.server.parameters;
 
 public class DashboardParameters extends webservices.Parameters {
     protected long id;

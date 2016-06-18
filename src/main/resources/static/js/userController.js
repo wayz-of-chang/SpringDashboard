@@ -64,7 +64,14 @@ app.controller('UserController', function(service) {
                     userId: service.get_user_property('id')
                 };
                 setTimeout(function() { user.success = false; }, 5000);
-                service.query_dashboards(data, function() {});
+                service.query_dashboards(data, function(response) {
+                    if (service.get_user_settings().current_dashboard != null) {
+                        var data = {
+                            dashboardId: service.get_user_settings().current_dashboard
+                        };
+                        service.query_monitors(data, function() {});
+                    }
+                });
             } else {
                 user.error = true;
                 user.error_message = response.data.error + ": " + response.data.message;

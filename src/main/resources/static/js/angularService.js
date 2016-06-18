@@ -8,6 +8,7 @@ app.factory('service', function($http) {
         role: ''
     };
     service.dashboards = {};
+    service.monitors = {};
     service.user_settings = {
         current_dashboard: ''
     };
@@ -115,6 +116,34 @@ app.factory('service', function($http) {
         });
     };
 
+    service.create_monitor = function(data, callback) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        return $http.post('/monitors/create', data, {headers: {'X-CSRF-TOKEN':cookie.csrf}}).then(function(response) {
+            console.log(response);
+            //success
+            service.set_monitor(response.data.data);
+            return callback(response);
+        }, function(response) {
+            console.log(response);
+            //fail
+            return callback(response);
+        });
+    };
+
+    service.query_monitors = function(data, callback) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        return $http.post('/monitors/get', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
+            console.log(response);
+            //success
+            service.set_monitors(response.data.data);
+            return callback(response);
+        }, function(response) {
+            console.log(response);
+            //fail
+            return callback(response);
+        });
+    };
+
     service.set_dashboard = function(data) {
         service.dashboards[data.id] = {
             id: data.id,
@@ -146,6 +175,35 @@ app.factory('service', function($http) {
 
     service.get_user_settings = function() {
         return service.user_settings;
+    };
+
+    service.set_monitor = function(data) {
+        service.monitors[data.id] = {
+            id: data.id,
+            name: data.name
+        };
+    };
+
+    service.set_monitor_property = function(id, key, value) {
+        service.monitors[id][key] = value;
+    };
+
+    service.set_monitors = function(data) {
+        $.each(data, function(index, value) {
+            service.set_monitor(value);
+        });
+    };
+
+    service.get_monitor = function(id) {
+        return service.monitors[id];
+    };
+
+    service.get_monitor_property = function(id, key) {
+        return service.monitors[id][key];
+    };
+
+    service.get_monitors = function() {
+        return service.monitors;
     };
 
     return service;

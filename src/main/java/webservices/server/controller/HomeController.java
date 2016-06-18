@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import webservices.Message;
-import webservices.server.MonitorParameters;
+import webservices.server.parameters.MonitorParameters;
 
 import java.util.concurrent.atomic.AtomicLong;
 

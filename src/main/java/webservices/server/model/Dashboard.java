@@ -8,6 +8,7 @@ public class Dashboard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
     private long id;
 
     @Column(name = "name", nullable = false)

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import webservices.Message;
-import webservices.server.DashboardParameters;
+import webservices.server.parameters.DashboardParameters;
 import webservices.server.model.Dashboard;
 import webservices.server.model.User;
 import webservices.server.service.DashboardService;
