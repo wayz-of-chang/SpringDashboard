@@ -48,4 +48,9 @@ public class UserService {
         user.getDashboards().add(dashboard);
         repository.save(user);
     }
+
+    public User save(User user) {
+        return repository.save(user);
+    }
+
 }

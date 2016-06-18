@@ -12,6 +12,7 @@ import webservices.server.model.User;
 import webservices.server.service.DashboardService;
 import webservices.server.service.UserService;
 
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
@@ -67,13 +68,16 @@ public class DashboardController {
 
     @RequestMapping(value="/dashboards/delete", method=RequestMethod.POST)
     public Message delete(@RequestBody DashboardParameters parameters) throws Exception {
-        long id;
+        Dashboard dashboard;
         User user;
         try {
-            id = parameters.getId();
-            System.out.println(id);
-            service.remove(id);
-            return new Message(counter.incrementAndGet(), id, "delete dashboard", parameters);
+            dashboard = service.getDashboardById(parameters.getId()).get();
+            user = userService.getUserById(parameters.getUserId()).get();
+            Set <Dashboard> dashboards = user.getDashboards();
+            if (dashboards.remove(dashboard)) {
+                userService.save(user);
+            }
+            return new Message(counter.incrementAndGet(), dashboard, "delete dashboard", parameters);
         } catch (Exception e) {
             throw new Exception("Could not delete dashboard: " + e.getMessage());
         }

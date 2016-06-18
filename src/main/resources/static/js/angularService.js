@@ -105,7 +105,7 @@ app.factory('service', function($http) {
         return $http.post('/dashboards/delete', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
             console.log(response);
             //success
-            delete service.dashboards[response.data.data];
+            delete service.dashboards[response.data.data.id];
             service.user_settings.current_dashboard = Object.keys(service.get_dashboards())[0];
             return callback(response);
         }, function(response) {

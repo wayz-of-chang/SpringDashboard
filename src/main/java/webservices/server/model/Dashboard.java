@@ -13,7 +13,7 @@ public class Dashboard {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(orphanRemoval = true)
     @JoinTable(
             name = "dashboard_monitor",
             joinColumns = @JoinColumn(name = "dashboard_id"),

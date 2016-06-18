@@ -28,7 +28,7 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(orphanRemoval = true)
     @JoinTable(
             name = "user_dashboard",
             joinColumns = @JoinColumn(name = "user_id"),
