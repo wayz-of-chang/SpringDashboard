@@ -97,19 +97,19 @@ public class Application implements CommandLineRunner {
     @Bean
     public CommandLineRunner demo(DashboardRepository repository) {
         return (args) -> {
-            repository.save(new Dashboard("Home"));
-            repository.save(new Dashboard("Websites"));
+            //repository.save(new Dashboard("Home"));
+            //repository.save(new Dashboard("Websites"));
 
             log.info("Dashboards found with findAll():");
             for (Dashboard dashboard : repository.findAll()) {
                 log.info(dashboard.toString());
             }
 
-            Dashboard dashboard = repository.findOne(1L);
+            /*Dashboard dashboard = repository.findOne(1L);
             log.info("Dashboard found with findOne(1L):");
             log.info(dashboard.toString());
 
-            /*log.info("Dashboard found with findByName('Home'):");
+            log.info("Dashboard found with findByName('Home'):");
             for (Dashboard home : repository.findByName("Home")) {
                 log.info(home.toString());
             }*/
