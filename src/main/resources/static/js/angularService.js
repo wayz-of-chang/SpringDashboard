@@ -77,6 +77,7 @@ app.factory('service', function($http) {
         return $http.post('/dashboards/get', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
             console.log(response);
             //success
+            service.clear_dashboards();
             service.set_dashboards(response.data.data);
             service.user_settings.current_dashboard = Object.keys(service.get_dashboards())[0];
             return callback(response);
@@ -135,6 +136,7 @@ app.factory('service', function($http) {
         return $http.post('/monitors/get', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
             console.log(response);
             //success
+            service.clear_monitors();
             service.set_monitors(response.data.data);
             return callback(response);
         }, function(response) {
@@ -153,6 +155,10 @@ app.factory('service', function($http) {
 
     service.set_dashboard_property = function(id, key, value) {
         service.dashboards[id][key] = value;
+    };
+
+    service.clear_dashboards = function() {
+        service.dashboards = {};
     };
 
     service.set_dashboards = function(data) {
@@ -186,6 +192,10 @@ app.factory('service', function($http) {
 
     service.set_monitor_property = function(id, key, value) {
         service.monitors[id][key] = value;
+    };
+
+    service.clear_monitors = function() {
+        service.monitors = {};
     };
 
     service.set_monitors = function(data) {

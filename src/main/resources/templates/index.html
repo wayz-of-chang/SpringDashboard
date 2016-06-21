@@ -14,6 +14,7 @@
     <script src="/js/sockjs-1.1.1.js"></script>
     <script src="/js/stomp.js"></script>
     <script src="/js/angular.js"></script>
+    <script src="/js/angular-touch.js"></script>
     <script src="/js/bootstrap.js"></script>
     <script src="/js/d3.js"></script>
     <script type="text/javascript">
@@ -106,16 +107,35 @@
 
 <div class="container-fluid" ng-controller="MonitorController as monitor">
     <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript!  Websocket relies on Javascript being enabled.  Please enable Javascript and reload this page!</h2></noscript>
-    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 monitor panel panel-default" ng-repeat="mon in monitor.monitors" id="{{mon.id}}">
-        <div class="panel-heading">
-            {{mon.name}}
-        </div>
-        <div class="panel-body">
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" ng-repeat="mon in monitor.monitors" id="{{mon.id}}">
+        <div class="panel panel-default monitor">
+            <div class="panel-heading">
+                {{mon.name}} <button type="button" ng-click="monitor.flip_monitor(mon.id);" class="btn right" ng-class="{'btn-default': !monitor.flipped[mon.id], 'btn-success': monitor.flipped[mon.id]}"><i class="fa" ng-class="{'fa-cog': !monitor.flipped[mon.id], 'fa-check-circle': monitor.flipped[mon.id]}"></i></button>
+            </div>
+            <div class="panel-body">
+                <div class="flip-container" ng-class="{'settings': monitor.flipped[mon.id]}">
+                    <div class="flipper">
+                        <div class="col-xs-12 ccl-sm-12 front" ng-click="monitor.flip_monitor(mon.id);">
+                            A
+                        </div>
+                        <div class="col-xs-12 ccl-sm-12 back">
+                            <form>
+                                <div class="form-group">
+                                    <label for="monitor_name_{{mon.id}}">Monitor Name</label>
+                                    <input id="monitor_name_{{mon.id}}" type="text" class="form-control" placeholder="Monitor Name" title="Monitor Name" ng-model="mon.name" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 monitor button panel panel-default" ng-click="monitor.add_monitor()">
-        <div class="panel-body">
-            <i class="fa fa-plus-circle"></i><b>Add Monitor</b>
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 monitor" ng-click="monitor.add_monitor()">
+        <div class="button panel panel-default monitor">
+            <div class="panel-body">
+                <i class="fa fa-plus-circle"></i><b>Add Monitor</b>
+            </div>
         </div>
     </div>
     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">

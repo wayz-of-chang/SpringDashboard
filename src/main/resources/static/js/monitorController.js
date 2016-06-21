@@ -2,6 +2,7 @@ app.controller('MonitorController', function($scope, service) {
     var monitor = this;
     monitor.current = "1";
     monitor.monitors = {};
+    monitor.flipped = {};
     monitor.new_monitor = {
         name: '',
         error: false,
@@ -38,6 +39,13 @@ app.controller('MonitorController', function($scope, service) {
                 monitor.new_monitor.success = false;
             }
         });
+    };
+
+    monitor.flip_monitor = function(id) {
+        if (monitor.flipped[id] == undefined) {
+            monitor.flipped[id] = false;
+        }
+        monitor.flipped[id] = !monitor.flipped[id];
     };
 
     $scope.$watch(function(scope) { return service.get_monitors(); },
