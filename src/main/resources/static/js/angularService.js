@@ -146,6 +146,20 @@ app.factory('service', function($http) {
         });
     };
 
+    service.update_monitor_settings = function(id, callback) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        var data = service.get_monitor(id);
+        return $http.post('/monitors/update_settings', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
+            console.log(response);
+            //success
+            return callback(response);
+        }, function(response) {
+            console.log(response);
+            //fail
+            return callback(response);
+        });
+    };
+
     service.set_dashboard = function(data) {
         service.dashboards[data.id] = {
             id: data.id,

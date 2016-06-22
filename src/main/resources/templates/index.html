@@ -116,13 +116,63 @@
                 <div class="flip-container" ng-class="{'settings': monitor.flipped[mon.id]}">
                     <div class="flipper">
                         <div class="col-xs-12 ccl-sm-12 front" ng-click="monitor.flip_monitor(mon.id);">
-                            A
+                            {{mon.monitor_type}}<br />{{mon.stat}}<br />{{mon.parser}}<br />{{mon.chart}}<br />{{mon.protocol}}<br />{{mon.interval}}
                         </div>
                         <div class="col-xs-12 ccl-sm-12 back">
                             <form>
                                 <div class="form-group">
-                                    <label for="monitor_name_{{mon.id}}">Monitor Name</label>
-                                    <input id="monitor_name_{{mon.id}}" type="text" class="form-control" placeholder="Monitor Name" title="Monitor Name" ng-model="mon.name" />
+                                    <input id="monitor_name_{{mon.id}}" type="text" class="form-control input-sm" placeholder="Monitor Name" title="Monitor Name" ng-model="mon.name" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="monitor_type_{{mon.id}}">Monitor Type</label>
+                                    <select id="monitor_type_{{mon.id}}" class="form-control input-sm" title="Monitor Type" ng-model="mon.monitor_type">
+                                        <option value="system">System</option>
+                                        <option value="script">Script</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" ng-show="mon.type == 'system'">
+                                    <label for="monitor_stat_{{mon.id}}">System Stat</label>
+                                    <select id="monitor_stat_{{mon.id}}" class="form-control input-sm" title="System Stat" ng-model="mon.stat">
+                                        <option value="cpu">CPU</option>
+                                        <option value="ram">Memory</option>
+                                        <option value="hdd">Disk Space</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" ng-show="mon.type == 'script'">
+                                    <label for="monitor_parser_{{mon.id}}">Output Parser</label>
+                                    <textarea id="monitor_parser_{{mon.id}}" class="form-control input-sm" title="Output Parser" ng-model="mon.parser">
+                                    </textarea>
+                                </div>
+                                <div class="form-group" ng-show="mon.type == 'script'">
+                                    <label for="monitor_chart_{{mon.id}}">Chart Type</label>
+                                    <select id="monitor_chart_{{mon.id}}" class="form-control input-sm" title="Chart Type" ng-model="mon.chart">
+                                        <option value="number">Number</option>
+                                        <option value="binary">Binary</option>
+                                        <option value="pie">Pie Chart</option>
+                                        <option value="bar">Bar Graph</option>
+                                        <option value="line">Line Graph</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="monitor_protocol_{{mon.id}}">Protocol</label>
+                                    <select id="monitor_protocol_{{mon.id}}" class="form-control input-sm" title="Protocol" ng-model="mon.protocol">
+                                        <option value="rest">REST</option>
+                                        <option value="mq">MQ</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="monitor_interval_{{mon.id}}">Interval</label>
+                                    <select id="monitor_interval_{{mon.id}}" class="form-control input-sm" title="Interval" ng-model="mon.interval">
+                                        <option value="2s">2 seconds</option>
+                                        <option value="10s">10 seconds</option>
+                                        <option value="30s">30 seconds</option>
+                                        <option value="1m">1 minute</option>
+                                        <option value="2m">2 minutes</option>
+                                        <option value="10m">10 minutes</option>
+                                        <option value="30m">30 minutes</option>
+                                        <option value="1h">1 hour</option>
+                                        <option value="2h">2 hours</option>
+                                    </select>
                                 </div>
                             </form>
                         </div>

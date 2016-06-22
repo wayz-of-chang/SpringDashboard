@@ -50,4 +50,17 @@ public class MonitorController {
         }
     }
 
+    @RequestMapping(value="/monitors/update_settings", method=RequestMethod.POST)
+    public Message update(@RequestBody MonitorParameters parameters) throws Exception {
+        Monitor monitor;
+        try {
+            monitor = service.getMonitorById(parameters.getId()).get();
+            monitor.setName(parameters.getName());
+            service.save(monitor);
+            return new Message(counter.incrementAndGet(), monitor, "update monitor", parameters);
+        } catch (Exception e) {
+            throw new Exception("Could not get monitors: " + e.getMessage());
+        }
+    }
+
 }

@@ -45,6 +45,9 @@ app.controller('MonitorController', function($scope, service) {
         if (monitor.flipped[id] == undefined) {
             monitor.flipped[id] = false;
         }
+        if (monitor.flipped[id]) {
+            service.update_monitor_settings(id, function(response) {});
+        }
         monitor.flipped[id] = !monitor.flipped[id];
     };
 
