@@ -24,7 +24,7 @@ app.controller('MonitorController', function($scope, service) {
     };
     monitor.add_monitor = function() {
         var data = {
-            dashboardId: service.get_user_settings().current_dashboard
+            dashboardId: monitor.current_dashboard()
         };
         service.create_monitor(data, function(response) {
             if (response.status >= 200 && response.status < 300) {
@@ -50,11 +50,14 @@ app.controller('MonitorController', function($scope, service) {
         }
         monitor.flipped[id] = !monitor.flipped[id];
     };
+    monitor.current_dashboard = function() {
+        return service.get_user_settings().current_dashboard;
+    };
 
     $scope.$watch(function(scope) { return service.get_monitors(); },
         function(new_val, old_val) { monitor.monitors = new_val; }
     );
-    $scope.$watch(function(scope) { return service.get_user_settings().current_dashboard; },
+    $scope.$watch(function(scope) { return monitor.current_dashboard(); },
         function(new_val, old_val) { service.get_monitors(); }
     );
 });

@@ -55,15 +55,14 @@
             </ul>
             <ul class="nav navbar-nav navbar-right" ng-controller="UserController as user">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" ng-show="user.logged_in" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.user.username}} <span class="caret"></span></a>
-                    <a href="#" class="dropdown-toggle" ng-hide="user.logged_in" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Log in <span class="caret"></span></a>
+                    <a id="login_dropdown_button" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.logged_in ? user.user.username : "Log In"}} <span class="caret"></span></a>
                     <ul class="dropdown-menu" style="min-width:200px;">
                         <li class="container-fluid">
                             <div class="alert alert-danger" ng-show="user.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{user.error_message}}</div>
                             <div class="alert alert-success" ng-show="user.success" role="alert">{{user.success_message}}</div>
                             <form>
                                 <div class="form-group">
-                                    <input type="text" ng-model="user.user.username" class="form-control" placeholder="Username" />
+                                    <input id="login_username_input" type="text" ng-model="user.user.username" class="form-control" placeholder="Username" />
                                 </div>
                                 <div class="form-group" ng-hide="user.show_password">
                                     <input type="password" ng-model="user.user.password" class="form-control" placeholder="Password" />
@@ -181,7 +180,7 @@
             </div>
         </div>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 monitor" ng-click="monitor.add_monitor()">
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 monitor" ng-show="monitor.current_dashboard() > ''" ng-click="monitor.add_monitor()">
         <div class="button panel panel-default monitor">
             <div class="panel-body">
                 <i class="fa fa-plus-circle"></i><b>Add Monitor</b>

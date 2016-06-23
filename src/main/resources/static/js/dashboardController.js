@@ -35,10 +35,14 @@ app.controller('DashboardController', function($scope, service) {
         dashboard.new_dashboard.error = false;
         dashboard.edit_dashboard.error = false;
         dashboard.delete_dashboard.error = false;
-        var data = {
-            dashboardId: id
-        };
-        service.query_monitors(data, function() {});
+        if (id > '') {
+            var data = {
+                dashboardId: id
+            };
+            service.query_monitors(data, function() {});
+        } else {
+            service.clear_monitors();
+        }
     };
     dashboard.open_new_popup = function() {
         $('#new_dashboard_modal').modal('show');
@@ -119,12 +123,14 @@ app.controller('DashboardController', function($scope, service) {
                 dashboard.delete_dashboard.error_message = '';
                 dashboard.delete_dashboard.success = true;
                 dashboard.delete_dashboard.success_message = "Successfully updated dashboard: " + response.data.data.name;
+                if (dashboard.dashboards.length > 0) {
+                    dashboard.select(dashboard.dashboards[0].id);
+                } else {
+                    dashboard.select('');
+                }
                 setTimeout(function() {
                     dashboard.delete_dashboard.success = false;
                     $('#delete_dashboard_modal').modal('hide');
-                    if (dashboard.dashboards.length > 0) {
-                        dashboard.select(dashboard.dashboards[0].id);
-                    }
                 }, 3000);
             } else {
                 dashboard.delete_dashboard.error = true;

@@ -37,3 +37,9 @@ function showGreeting(message) {
     var response = $('#response');
     response.append('<p style="word-wrap:break-word;">' + message + '</p>');
 }
+
+$(function () {
+    $('#login_dropdown_button').click(function() {
+        setTimeout(function() { $('#login_username_input').focus(); }, 10);
+    });
+});

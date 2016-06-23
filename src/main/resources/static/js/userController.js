@@ -1,4 +1,4 @@
-app.controller('UserController', function(service) {
+app.controller('UserController', function($scope, service) {
     var user = this;
     user.show_password = false;
     user.confirm_password = "";
@@ -37,7 +37,7 @@ app.controller('UserController', function(service) {
             if (response.status >= 200 && response.status < 300) {
                 user.success = true;
                 user.success_message = "User successfully registered: " + response.data.data.username;
-                setTimeout(function() { user.success = false; }, 5000);
+                setTimeout(function() { $('body').trigger('click'); user.success = false; $scope.$digest(); }, 3000);
             } else {
                 user.error = true;
                 user.error_message = response.data.error + ": " + response.data.message;
@@ -63,7 +63,7 @@ app.controller('UserController', function(service) {
                 var data = {
                     userId: service.get_user_property('id')
                 };
-                setTimeout(function() { user.success = false; }, 5000);
+                setTimeout(function() { $('body').trigger('click'); user.success = false; $scope.$digest(); }, 3000);
                 service.query_dashboards(data, function(response) {
                     if (service.get_user_settings().current_dashboard != null) {
                         var data = {
