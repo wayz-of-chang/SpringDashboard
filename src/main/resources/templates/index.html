@@ -90,9 +90,9 @@
                                         <option value="RW_USER">Power User</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <button type="submit" ng-click="user.login()" ng-class="{'btn-primary': user.mode.login, 'btn-default': user.mode.register}" class="btn navbar-btn">Login</button>
-                                    <button type="submit" ng-click="user.register()" ng-class="{'btn-primary': user.mode.register, 'btn-default': user.mode.login}" class="btn navbar-btn">Register</button>
+                                <div class="form-group clearfix btn-toolbar">
+                                    <button type="submit" ng-click="user.login()" ng-class="{'btn-primary': user.mode.login, 'btn-default': user.mode.register}" class="btn pull-right">Login</button>&nbsp;
+                                    <button type="submit" ng-click="user.register()" ng-class="{'btn-primary': user.mode.register, 'btn-default': user.mode.login}" class="btn pull-right">Register</button>
                                 </div>
                             </form>
                         </li>
@@ -108,8 +108,8 @@
     <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript!  Websocket relies on Javascript being enabled.  Please enable Javascript and reload this page!</h2></noscript>
     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" ng-repeat="mon in monitor.monitors" id="{{mon.id}}">
         <div class="panel panel-default monitor">
-            <div class="panel-heading">
-                {{mon.name}} <button type="button" ng-click="monitor.flip_monitor(mon.id);" class="btn right" ng-class="{'btn-default': !monitor.flipped[mon.id], 'btn-success': monitor.flipped[mon.id]}"><i class="fa" ng-class="{'fa-cog': !monitor.flipped[mon.id], 'fa-check-circle': monitor.flipped[mon.id]}"></i></button>
+            <div class="panel-heading clearfix">
+                {{mon.name ? mon.name : "Unnamed"}} <button type="button" ng-click="monitor.flip_monitor(mon.id);" class="btn pull-right btn-xs" ng-class="{'btn-default': !monitor.flipped[mon.id], 'btn-success': monitor.flipped[mon.id]}"><i class="fa" ng-class="{'fa-cog': !monitor.flipped[mon.id], 'fa-check-circle': monitor.flipped[mon.id]}"></i></button>
             </div>
             <div class="panel-body">
                 <div class="flip-container" ng-class="{'settings': monitor.flipped[mon.id]}">
@@ -219,13 +219,13 @@
                     <div class="alert alert-success" ng-show="dashboard.new_dashboard.success" role="alert">{{dashboard.new_dashboard.success_message}}</div>
                     <form>
                         <div class="form-group">
-                            <input type="text" ng-model="dashboard.new_dashboard.name" class="form-control" placeholder="Name" />
+                            <input id="new_dashboard_name" type="text" ng-model="dashboard.new_dashboard.name" class="form-control" placeholder="Name" />
+                        </div>
+                        <div class="form-group clearfix btn-toolbar">
+                            <button type="submit" class="btn btn-primary pull-right" ng-click="dashboard.create_new_dashboard()">Create</button>&nbsp;
+                            <button type="button" class="btn btn-default pull-right" data-dismiss="modal" ng-click="dashboard.cancel_new_dashboard_modal()">Cancel</button>
                         </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dashboard.cancel_new_dashboard_modal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary" ng-click="dashboard.create_new_dashboard()">Create</button>
                 </div>
             </div>
         </div>
@@ -247,11 +247,11 @@
                         <div class="form-group">
                             <input type="text" id="edit_dashboard_name" ng-model="dashboard.dashboards[dashboard.current].name" class="form-control" placeholder="Name" />
                         </div>
+                        <div class="form-group clearfix btn-toolbar">
+                            <button type="submit" class="btn btn-primary pull-right" ng-click="dashboard.update()">Edit</button>&nbsp;
+                            <button type="button" class="btn btn-default pull-right" data-dismiss="modal" ng-click="dashboard.cancel_edit_dashboard_modal()">Cancel</button>
+                        </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dashboard.cancel_edit_dashboard_modal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary" ng-click="dashboard.update()">Edit</button>
                 </div>
             </div>
         </div>
@@ -271,13 +271,13 @@
                             <input type="hidden" id="delete_dashboard_id" ng-model="dashboard.current" class="form-control" />
                         </div>
                         <div class="form-group">
-                            <h4>Delete <span id="delete_dashboard_name">{{dashboard.dashboards[dashboard.current].name}}</span>?</h4>
+                            <h4 ng-show="dashboard.current">Delete <span id="delete_dashboard_name">{{dashboard.dashboards[dashboard.current].name}}</span>?</h4>
+                        </div>
+                        <div class="form-group clearfix btn-toolbar">
+                            <button type="submit" class="btn btn-danger pull-right" ng-click="dashboard.delete()">Delete</button>&nbsp;
+                            <button type="button" class="btn btn-default pull-right" data-dismiss="modal" ng-click="dashboard.cancel_delete_dashboard_modal()">Cancel</button>
                         </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dashboard.cancel_delete_dashboard_modal()">Cancel</button>
-                    <button type="submit" class="btn btn-danger" ng-click="dashboard.delete()">Delete</button>
                 </div>
             </div>
         </div>

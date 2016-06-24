@@ -42,4 +42,10 @@ $(function () {
     $('#login_dropdown_button').click(function() {
         setTimeout(function() { $('#login_username_input').focus(); }, 10);
     });
+    $('#new_dashboard_modal').on('shown.bs.modal', function () {
+        $('#new_dashboard_name').focus();
+    })
+    $('#edit_dashboard_modal').on('shown.bs.modal', function () {
+        $('#edit_dashboard_name').focus();
+    })
 });
