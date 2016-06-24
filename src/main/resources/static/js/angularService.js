@@ -9,6 +9,15 @@ app.factory('service', function($http) {
     };
     service.dashboards = {};
     service.monitors = {};
+    service.monitors_settings_map = {
+        TYPE: 'monitorType',
+        STAT: 'statType',
+        URL: 'url',
+        PROTOCOL: 'protocol',
+        PARSER: 'parser',
+        CHART: 'chart',
+        INTERVAL: 'interval'
+    };
     service.user_settings = {
         current_dashboard: ''
     };
@@ -202,6 +211,9 @@ app.factory('service', function($http) {
             id: data.id,
             name: data.name
         };
+        $.each(data.settings, function(index, value) {
+            service.monitors[data.id][service.monitors_settings_map[value.key]] = value.value;
+        });
     };
 
     service.set_monitor_property = function(id, key, value) {

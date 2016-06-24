@@ -56,6 +56,7 @@ public class MonitorController {
         try {
             monitor = service.getMonitorById(parameters.getId()).get();
             monitor.setName(parameters.getName());
+            service.setSettings(monitor, parameters);
             service.save(monitor);
             return new Message(counter.incrementAndGet(), monitor, "update monitor", parameters);
         } catch (Exception e) {

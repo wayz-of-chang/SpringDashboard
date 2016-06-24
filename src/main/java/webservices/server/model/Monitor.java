@@ -1,6 +1,7 @@
 package webservices.server.model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Monitor {
@@ -19,6 +20,14 @@ public class Monitor {
         this.name = name;
     }
 
+    @OneToMany(orphanRemoval = true)
+    @JoinTable(
+            name = "monitor_monitor_setting",
+            joinColumns = @JoinColumn(name = "monitor_id"),
+            inverseJoinColumns = @JoinColumn(name = "monitor_setting_id")
+    )
+    private Set<MonitorSetting> settings;
+
     @Override
     public String toString() {
         return String.format(
@@ -33,6 +42,8 @@ public class Monitor {
         return this.name;
     }
 
+    public Set<MonitorSetting> getSettings() { return this.settings; }
+
     public void setId(long id) {
         this.id = id;
     }
@@ -40,5 +51,7 @@ public class Monitor {
     public void setName(String name) {
         this.name = name;
     }
+
+    public void setSettings(Set<MonitorSetting> settings) { this.settings = settings; }
 
 }
