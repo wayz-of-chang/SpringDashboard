@@ -82,7 +82,7 @@
                                     </label>
                                 </div>
                                 <div class="form-group" ng-show="user.mode.register">
-                                    <input type="text" ng-model="user.user.email" class="form-control" placeholder="Email" />
+                                    <input type="email" ng-model="user.user.email" class="form-control" placeholder="Email" />
                                 </div>
                                 <div class="form-group" ng-show="user.mode.register">
                                     <select ng-model="user.user.role" class="form-control">
@@ -106,18 +106,18 @@
 
 <div class="container-fluid" ng-controller="MonitorController as monitor">
     <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript!  Websocket relies on Javascript being enabled.  Please enable Javascript and reload this page!</h2></noscript>
-    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" ng-repeat="mon in monitor.monitors" id="{{mon.id}}">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4" ng-repeat="mon in monitor.monitors" id="{{mon.id}}">
         <div class="panel panel-default monitor">
             <div class="panel-heading clearfix">
                 {{mon.name ? mon.name : "Unnamed"}} <button type="button" ng-click="monitor.flip_monitor(mon.id);" class="btn pull-right btn-xs" ng-class="{'btn-default': !monitor.flipped[mon.id], 'btn-success': monitor.flipped[mon.id]}"><i class="fa" ng-class="{'fa-cog': !monitor.flipped[mon.id], 'fa-check-circle': monitor.flipped[mon.id]}"></i></button>
             </div>
-            <div class="panel-body">
-                <div class="flip-container" ng-class="{'settings': monitor.flipped[mon.id]}">
-                    <div class="flipper">
-                        <div class="col-xs-12 ccl-sm-12 front" ng-click="monitor.flip_monitor(mon.id);">
+            <div class="panel-body flex">
+                <div class="flip-container flex" ng-class="{'settings': monitor.flipped[mon.id]}">
+                    <div class="flipper flex">
+                        <div class="col-xs-12 ccl-sm-12 front monitor-content" ng-click="monitor.flip_monitor(mon.id);">
                             {{mon.url}}<br />{{mon.monitorType}}<br />{{mon.statType}}<br />{{mon.parser}}<br />{{mon.chart}}<br />{{mon.protocol}}<br />{{mon.interval}}
                         </div>
-                        <div class="col-xs-12 ccl-sm-12 back">
+                        <div class="col-xs-12 ccl-sm-12 back monitor-content">
                             <form>
                                 <div class="form-group">
                                     <input id="monitor_name_{{mon.id}}" type="text" class="form-control input-sm" placeholder="Monitor Name" title="Monitor Name" ng-model="mon.name" />
@@ -134,7 +134,7 @@
                                 </div>
                                 <div class="form-group" ng-show="mon.monitorType == 'system'">
                                     <label for="monitor_stat_{{mon.id}}">System Stat</label>
-                                    <select id="monitor_stat_{{mon.id}}" class="form-control input-sm" title="System Stat" ng-model="mon.statType">
+                                    <select id="monitor_stat_{{mon.id}}" class="form-control" title="System Stat" ng-model="mon.statType">
                                         <option value="cpu">CPU</option>
                                         <option value="ram">Memory</option>
                                         <option value="hdd">Disk Space</option>
@@ -164,7 +164,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="monitor_interval_{{mon.id}}">Interval</label>
-                                    <select id="monitor_interval_{{mon.id}}" class="form-control input-sm" title="Interval" ng-model="mon.interval">
+                                    <select id="monitor_interval_{{mon.id}}" class="form-control" title="Interval" ng-model="mon.interval">
                                         <option value="2s">2 seconds</option>
                                         <option value="10s">10 seconds</option>
                                         <option value="30s">30 seconds</option>

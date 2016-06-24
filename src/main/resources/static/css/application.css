@@ -1,5 +1,18 @@
 .monitor {
+    display: flex;
+    flex-flow: column;
     height: 300px;
+}
+
+.flex {
+    display: flex;
+    flex-flow: column;
+    flex: 1 0 auto;
+}
+
+.monitor-content {
+    height: 100%;
+    overflow-y: auto;
 }
 
 .right {
@@ -37,6 +50,7 @@
 /* hide back of pane during swap */
 .front, .back {
 	backface-visibility: hidden;
+	background: white;
 
 	position: absolute;
 	top: 0;
