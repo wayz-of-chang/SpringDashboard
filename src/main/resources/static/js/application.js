@@ -30,7 +30,7 @@ function disconnect() {
 
 function sendName() {
     var name = $('#name').val();
-    stompClient.send("/app/stats", {}, JSON.stringify({ 'name': name, 'statType': 'system', 'url': 'localhost:8080', 'interval': '1s' }));
+    stompClient.send("/monitoring/stats", {}, JSON.stringify({ 'name': name, 'statType': 'system', 'url': 'localhost:8080', 'interval': '1s' }));
 }
 
 function showGreeting(message) {

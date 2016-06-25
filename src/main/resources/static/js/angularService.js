@@ -21,6 +21,7 @@ app.factory('service', function($http) {
     service.user_settings = {
         current_dashboard: ''
     };
+    service.stompClient = null;
 
     service.create_user = function(data, callback) {
         return $http.post('/users/create', data, {headers: {'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')}}).then(function(response) {
@@ -88,7 +89,7 @@ app.factory('service', function($http) {
             //success
             service.clear_dashboards();
             service.set_dashboards(response.data.data);
-            service.user_settings.current_dashboard = Object.keys(service.get_dashboards())[0];
+            service.select_dashboard(Object.keys(service.get_dashboards())[0]);
             return callback(response);
         }, function(response) {
             console.log(response);
@@ -201,6 +202,21 @@ app.factory('service', function($http) {
     service.get_dashboards = function() {
         return service.dashboards;
     };
+    service.select_dashboard = function(id) {
+        if (service.user_settings.current_dashboard > '') {
+            service.disconnect_monitors();
+        }
+        service.user_settings.current_dashboard = id;
+        if (id > '') {
+            var data = {
+                dashboardId: id
+            };
+            service.query_monitors(data, function() {});
+            service.connect_monitors();
+        } else {
+            service.clear_monitors();
+        }
+    };
 
     service.get_user_settings = function() {
         return service.user_settings;
@@ -241,6 +257,31 @@ app.factory('service', function($http) {
     service.get_monitors = function() {
         return service.monitors;
     };
+
+    service.connect_monitors = function() {
+        var cookie = JSON.parse($.cookie('csrf'));
+        var socket = new SockJS('/monitor_socket');
+        service.stompClient = Stomp.over(socket);
+        service.stompClient.connect({'X-CSRF-TOKEN': cookie.csrf}, function(frame) {
+            console.log('Connected: ' + frame);
+            service.stompClient.subscribe('/results/instant', function(response) {
+                service.updateMonitorResults(JSON.parse(response.body).data);
+            });
+            service.stompClient.send("/monitoring/connect", {}, JSON.stringify({ 'name': name, 'dashboardId': service.user_settings.current_dashboard }));
+        });
+    }
+
+    service.disconnect_monitors = function() {
+        if (service.stompClient != null) {
+            service.stompClient.send("/monitoring/disconnect", {}, JSON.stringify({ 'name': name, 'dashboardId': service.user_settings.current_dashboard }));
+            service.stompClient.disconnect();
+        }
+        console.log("Disconnected");
+    }
+
+    service.updateMonitorResults = function(response) {
+        console.log(response);
+    }
 
     return service;
 });

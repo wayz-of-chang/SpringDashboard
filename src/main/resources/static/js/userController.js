@@ -64,14 +64,7 @@ app.controller('UserController', function($scope, service) {
                     userId: service.get_user_property('id')
                 };
                 setTimeout(function() { $('body').trigger('click'); user.success = false; $scope.$digest(); }, 3000);
-                service.query_dashboards(data, function(response) {
-                    if (service.get_user_settings().current_dashboard != null) {
-                        var data = {
-                            dashboardId: service.get_user_settings().current_dashboard
-                        };
-                        service.query_monitors(data, function() {});
-                    }
-                });
+                service.query_dashboards(data, function(response) {});
             } else {
                 user.error = true;
                 user.error_message = response.data.error + ": " + response.data.message;

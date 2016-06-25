@@ -1,5 +1,7 @@
 package webservices.server.controller;
 
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,9 @@ import webservices.server.model.Monitor;
 import webservices.server.service.DashboardService;
 import webservices.server.service.MonitorService;
 
+import java.util.HashMap;
+import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
@@ -27,7 +32,7 @@ public class MonitorController {
         this.dashboardService = dashboardService;
     }
 
-    @RequestMapping(value="/monitors/create", method=RequestMethod.POST)
+    @RequestMapping(value = "/monitors/create", method = RequestMethod.POST)
     public Message create(@RequestBody MonitorParameters parameters) throws Exception {
         Monitor monitor;
         try {
@@ -39,7 +44,7 @@ public class MonitorController {
         }
     }
 
-    @RequestMapping(value="/monitors/get", method=RequestMethod.POST)
+    @RequestMapping(value = "/monitors/get", method = RequestMethod.POST)
     public Message get(@RequestBody MonitorParameters parameters) throws Exception {
         Dashboard dashboard;
         try {
@@ -50,7 +55,7 @@ public class MonitorController {
         }
     }
 
-    @RequestMapping(value="/monitors/update_settings", method=RequestMethod.POST)
+    @RequestMapping(value = "/monitors/update_settings", method = RequestMethod.POST)
     public Message update(@RequestBody MonitorParameters parameters) throws Exception {
         Monitor monitor;
         try {
@@ -63,5 +68,4 @@ public class MonitorController {
             throw new Exception("Could not get monitors: " + e.getMessage());
         }
     }
-
 }

@@ -31,18 +31,10 @@ app.controller('DashboardController', function($scope, service) {
         return unselected;
     };
     dashboard.select = function(id) {
-        service.get_user_settings().current_dashboard = id;
         dashboard.new_dashboard.error = false;
         dashboard.edit_dashboard.error = false;
         dashboard.delete_dashboard.error = false;
-        if (id > '') {
-            var data = {
-                dashboardId: id
-            };
-            service.query_monitors(data, function() {});
-        } else {
-            service.clear_monitors();
-        }
+        service.select_dashboard(id);
     };
     dashboard.open_new_popup = function() {
         $('#new_dashboard_modal').modal('show');
