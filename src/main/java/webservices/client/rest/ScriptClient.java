@@ -26,7 +26,14 @@ public class ScriptClient extends Client {
         ArrayList<String> output = new ArrayList<String>();
         ArrayList<String> error = new ArrayList<String>();
         try {
-            ProcessBuilder builder = new ProcessBuilder(getClass().getClassLoader().getResource(String.format("scripts/%s", name)).getPath());
+            String prefix = "";
+            String osName = System.getProperty("os.name");
+            if (osName.equals( "Windows NT" )) {
+                prefix = "cmd.exe /C ";
+            } else if (osName.equals( "Windows 95" )) {
+                prefix = "command.com /C ";
+            }
+            ProcessBuilder builder = new ProcessBuilder(prefix + getClass().getClassLoader().getResource(String.format("scripts/%s", name)).getPath());
             Process process = builder.start();
             Callable<ArrayList<String>> outputCallable = new StreamGobbler(process.getInputStream());
             Callable<ArrayList<String>> errorCallable = new StreamGobbler(process.getErrorStream());
