@@ -13,6 +13,7 @@
 .monitor-content {
     height: 100%;
     overflow-y: auto;
+    word-wrap: break-word;
 }
 
 .right {

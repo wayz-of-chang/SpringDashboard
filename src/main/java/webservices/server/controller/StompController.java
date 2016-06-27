@@ -8,9 +8,11 @@ import org.springframework.ui.Model;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestTemplate;
 import webservices.Message;
 import webservices.server.model.Dashboard;
 import webservices.server.model.Monitor;
+import webservices.server.model.MonitorSetting;
 import webservices.server.parameters.MonitorParameters;
 import webservices.server.service.DashboardService;
 import webservices.server.service.MonitorService;
@@ -39,13 +41,29 @@ public class StompController {
     private void getStats(long dashboardId) throws Exception {
         Dashboard dashboard;
         Set<Monitor> monitors;
+        HashMap<Long, Message> responses = new HashMap<Long, Message>();
         try {
             dashboard = dashboardService.getDashboardById(dashboardId).get();
             monitors = dashboard.getMonitors();
+            RestTemplate restTemplate = new RestTemplate();
+            for (Monitor monitor: monitors) {
+                HashMap<MonitorSetting.Setting, String> settings = monitor.settingsMap();
+                String monitorUrl = "";
+                if(settings != null) {
+                    monitorUrl = settings.getOrDefault(MonitorSetting.Setting.URL, "");
+                }
+                if (!monitorUrl.equals("")) {
+                    Message response = restTemplate.getForObject(monitorUrl, Message.class);
+                    responses.put(monitor.getId(), response);
+                    //System.out.println(monitorUrl);
+                    //System.out.println(response.toString());
+                }
+            }
         } catch (Exception e) {
-            throw new Exception("Could not get dashboard: " + e.getMessage());
+            e.printStackTrace();
+            throw new Exception("Could not get stats: " + e.getMessage());
         }
-        template.convertAndSend("/results/instant", new Message(counter.incrementAndGet(), String.format("monitor results for %s", Long.toString(dashboardId)), dashboard.getName(), new MonitorParameters()));
+        template.convertAndSend("/results/instant", new Message(counter.incrementAndGet(), responses, String.format("monitor results for %s (%s)", dashboard.getName(), Long.toString(dashboardId)), new MonitorParameters()));
     }
 
 
@@ -67,7 +85,7 @@ public class StompController {
                     try {
                         getStats(dashboardId);
                     } catch(Exception e) {
-                        System.out.println("Error occurred while getting stats for " + Long.toString(dashboardId));
+                        System.out.println("Error occurred while getting stats for " + Long.toString(dashboardId) + ": " + e.getMessage());
                     }
                 }
             }, 2000);

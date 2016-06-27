@@ -115,7 +115,7 @@
                 <div class="flip-container flex" ng-class="{'settings': monitor.flipped[mon.id]}">
                     <div class="flipper flex">
                         <div class="col-xs-12 ccl-sm-12 front monitor-content" ng-click="monitor.flip_monitor(mon.id);">
-                            {{mon.url}}<br />{{mon.monitorType}}<br />{{mon.statType}}<br />{{mon.parser}}<br />{{mon.chart}}<br />{{mon.protocol}}<br />{{mon.interval}}
+                            {{mon.url}}&nbsp;{{mon.monitorType}}&nbsp;{{mon.statType}}&nbsp;{{mon.parser}}&nbsp;{{mon.chart}}&nbsp;{{mon.protocol}}&nbsp;{{mon.interval}}<br />{{monitor.get_results(mon.id)}}
                         </div>
                         <div class="col-xs-12 ccl-sm-12 back monitor-content">
                             <form>

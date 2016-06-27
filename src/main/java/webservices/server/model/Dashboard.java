@@ -1,6 +1,7 @@
 package webservices.server.model;
 
 import javax.persistence.*;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
 
 @Entity
@@ -42,6 +43,7 @@ public class Dashboard {
         return this.name;
     }
 
+    @Transactional
     public Set<Monitor> getMonitors() {
         return this.monitors;
     }

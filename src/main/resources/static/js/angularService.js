@@ -1,4 +1,4 @@
-app.factory('service', function($http) {
+app.factory('service', function($http, $rootScope) {
     var service = {};
 
     service.user = {
@@ -18,6 +18,7 @@ app.factory('service', function($http) {
         CHART: 'chart',
         INTERVAL: 'interval'
     };
+    service.monitor_results = {};
     service.user_settings = {
         current_dashboard: ''
     };
@@ -258,6 +259,10 @@ app.factory('service', function($http) {
         return service.monitors;
     };
 
+    service.get_monitor_results = function() {
+        return service.monitor_results;
+    };
+
     service.connect_monitors = function() {
         var cookie = JSON.parse($.cookie('csrf'));
         var socket = new SockJS('/monitor_socket');
@@ -265,7 +270,8 @@ app.factory('service', function($http) {
         service.stompClient.connect({'X-CSRF-TOKEN': cookie.csrf}, function(frame) {
             console.log('Connected: ' + frame);
             service.stompClient.subscribe('/results/instant', function(response) {
-                service.updateMonitorResults(JSON.parse(response.body).data);
+                service.update_monitor_results(JSON.parse(response.body).data);
+                $rootScope.$apply();
             });
             service.stompClient.send("/monitoring/connect", {}, JSON.stringify({ 'name': name, 'dashboardId': service.user_settings.current_dashboard }));
         });
@@ -279,8 +285,10 @@ app.factory('service', function($http) {
         console.log("Disconnected");
     }
 
-    service.updateMonitorResults = function(response) {
-        console.log(response);
+    service.update_monitor_results = function(response) {
+        if (typeof response == 'object') {
+            service.monitor_results = response;
+        }
     }
 
     return service;

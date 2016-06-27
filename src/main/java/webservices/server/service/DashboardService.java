@@ -2,12 +2,15 @@ package webservices.server.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import webservices.server.model.Dashboard;
 import webservices.server.model.Monitor;
 import webservices.server.repository.DashboardRepository;
 import webservices.server.repository.MonitorRepository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class DashboardService {
@@ -56,4 +59,5 @@ public class DashboardService {
     public void remove(long id) {
         repository.delete(id);
     }
+
 }

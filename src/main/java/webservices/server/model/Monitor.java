@@ -1,6 +1,7 @@
 package webservices.server.model;
 
 import javax.persistence.*;
+import java.util.HashMap;
 import java.util.Set;
 
 @Entity
@@ -13,6 +14,8 @@ public class Monitor {
 
     @Column(name = "name", nullable = true)
     private String name;
+
+    private HashMap<MonitorSetting.Setting, String> settingsMap;
 
     public Monitor() {}
 
@@ -53,5 +56,16 @@ public class Monitor {
     }
 
     public void setSettings(Set<MonitorSetting> settings) { this.settings = settings; }
+
+    public HashMap<MonitorSetting.Setting, String> settingsMap() {
+        if (settingsMap == null) {
+            settingsMap = new HashMap<MonitorSetting.Setting, String>();
+            Set<MonitorSetting> settings = getSettings();
+            for (MonitorSetting setting: settings) {
+                settingsMap.put(setting.getKey(), setting.getValue());
+            }
+        }
+        return settingsMap;
+    }
 
 }
