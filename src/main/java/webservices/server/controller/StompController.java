@@ -1,13 +1,12 @@
 package webservices.server.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 import webservices.Message;
 import webservices.server.model.Dashboard;
@@ -94,7 +93,7 @@ public class StompController {
         return new Message(counter.incrementAndGet(), String.format("started monitoring, %s", Long.toString(parameters.getDashboardId())), parameters.getName(), parameters);
     }
 
-    @MessageMapping("/disoonnect")
+    @MessageMapping("/disconnect")
     @SendTo("/results/instant")
     public Message stopMonitoring(MonitorParameters parameters) throws Exception {
         long dashboardId = parameters.getDashboardId();

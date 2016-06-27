@@ -183,10 +183,14 @@
             </div>
         </div>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2 monitor" ng-show="monitor.current_dashboard() > ''" ng-click="monitor.add_monitor()">
-        <div class="button panel panel-default monitor">
-            <div class="panel-body">
-                <i class="fa fa-plus-circle"></i><b>Add Monitor</b>
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" ng-show="monitor.current_dashboard() > ''" >
+        <div class="panel panel-default monitor">
+            <div class="panel-heading clearfix">
+                Monitor Actions
+            </div>
+            <div class="panel-body flex">
+                <button type="button" ng-click="monitor.add_monitor()" class="btn btn-default"><i class="fa fa-plus-circle"></i><b>Add Monitor</b></button>
+                <button type="button" ng-click="monitor.toggle_monitoring()" class="btn" ng-class="{'btn-success': !monitor.monitoring, 'btn-danger': monitor.monitoring}"><i class="fa" ng-class="{'fa-play-circle': !monitor.monitoring, 'fa-stop-circle': monitor.monitoring}"></i><b>{{monitor.monitoring ? "Stop Monitoring" : "Start Monitoring"}}</b></button>
             </div>
         </div>
     </div>

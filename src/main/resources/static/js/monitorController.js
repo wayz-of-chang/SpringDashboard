@@ -1,6 +1,7 @@
 app.controller('MonitorController', function($scope, service) {
     var monitor = this;
     monitor.current = "1";
+    monitor.monitoring = false;
     monitor.monitors = {};
     monitor.flipped = {};
     monitor.new_monitor = {
@@ -61,6 +62,10 @@ app.controller('MonitorController', function($scope, service) {
         return '';
     };
 
+    monitor.toggle_monitoring = function() {
+        service.toggle_monitoring_status();
+    };
+
     $scope.$watch(function(scope) { return service.get_monitors(); },
         function(new_val, old_val) { monitor.monitors = new_val; }
     );
@@ -69,5 +74,8 @@ app.controller('MonitorController', function($scope, service) {
     );
     $scope.$watch(function(scope) { return service.get_monitor_results(); },
         function(new_val, old_val) { monitor.stats = new_val; }
+    );
+    $scope.$watch(function(scope) { return service.get_monitoring_status(); },
+        function(new_val, old_val) { monitor.monitoring = new_val; }
     );
 });
