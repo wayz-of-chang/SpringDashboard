@@ -46,10 +46,10 @@
                     <ul class="dropdown-menu" >
                         <li ng-repeat="board in dashboard.unselected()"><a href="" ng-click="dashboard.select(board)">{{dashboard.dashboards[board].name}}</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="" ng-click="dashboard.open_new_popup()"><i class="fa fa-plus"></i> New Dashboard</a></li>
-                        <li><a href="" ng-click="dashboard.copy()"><i class="fa fa-clone"></i> Copy Dashboard</a></li>
-                        <li><a href="" ng-click="dashboard.open_edit_popup()"><i class="fa fa-edit"></i> Edit Dashboard</a></li>
-                        <li><a href="" ng-click="dashboard.confirm_delete_popup()"><i class="fa fa-minus"></i> Delete Dashboard</a></li>
+                        <li><a href="" ng-click="dashboard.open_new_popup()"><i class="fa fa-plus fa-fw"></i> New Dashboard</a></li>
+                        <li><a href="" ng-click="dashboard.copy()"><i class="fa fa-clone fa-fw"></i> Copy Dashboard</a></li>
+                        <li><a href="" ng-click="dashboard.open_edit_popup()"><i class="fa fa-edit fa-fw"></i> Edit Dashboard</a></li>
+                        <li><a href="" ng-click="dashboard.confirm_delete_popup()"><i class="fa fa-minus fa-fw"></i> Delete Dashboard</a></li>
                     </ul>
                 </li>
             </ul>
@@ -176,6 +176,9 @@
                                         <option value="2h">2 hours</option>
                                     </select>
                                 </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-danger" ng-click="monitor.confirm_delete_popup(mon.id, mon.name)"><i class="fa fa-minus"></i> Remove Monitor</button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -189,8 +192,8 @@
                 Monitor Actions
             </div>
             <div class="panel-body flex">
-                <button type="button" ng-click="monitor.add_monitor()" class="btn btn-default"><i class="fa fa-plus-circle"></i><b>Add Monitor</b></button>
-                <button type="button" ng-click="monitor.toggle_monitoring()" class="btn" ng-class="{'btn-success': !monitor.monitoring, 'btn-danger': monitor.monitoring}"><i class="fa" ng-class="{'fa-play-circle': !monitor.monitoring, 'fa-stop-circle': monitor.monitoring}"></i><b>{{monitor.monitoring ? "Stop Monitoring" : "Start Monitoring"}}</b></button>
+                <button type="button" ng-click="monitor.add_monitor()" class="btn btn-default"><i class="fa fa-plus-circle"></i> Add Monitor</button>
+                <button type="button" ng-click="monitor.toggle_monitoring()" class="btn" ng-class="{'btn-success': !monitor.monitoring, 'btn-danger': monitor.monitoring}"><i class="fa" ng-class="{'fa-play-circle': !monitor.monitoring, 'fa-stop-circle': monitor.monitoring}"></i> {{monitor.monitoring ? "Stop Monitoring" : "Start Monitoring"}}</button>
             </div>
         </div>
     </div>
@@ -280,6 +283,34 @@
                         <div class="form-group clearfix btn-toolbar">
                             <button type="submit" class="btn btn-danger pull-right" ng-click="dashboard.delete()">Delete</button>&nbsp;
                             <button type="button" class="btn btn-default pull-right" data-dismiss="modal" ng-click="dashboard.cancel_delete_dashboard_modal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="monitor_modals_container" ng-controller="MonitorController as monitor">
+    <div id="delete_monitor_modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Delete Monitor</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" ng-show="monitor.delete_monitor.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{monitor.delete_monitor.error_message}}</div>
+                    <div class="alert alert-success" ng-show="monitor.delete_monitor.success" role="alert">{{monitor.delete_monitor.success_message}}</div>
+                    <form>
+                        <div class="form-group">
+                            <input type="hidden" id="delete_monitor_id" value="{{monitor.delete_monitor.id}}" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <h4 ng-show="monitor.delete_monitor.id">Delete <span id="delete_monitor_name">{{monitor.delete_monitor.name}}</span>?</h4>
+                        </div>
+                        <div class="form-group clearfix btn-toolbar">
+                            <button type="submit" class="btn btn-danger pull-right" ng-click="monitor.delete(monitor.delete_monitor.id)">Delete</button>&nbsp;
+                            <button type="button" class="btn btn-default pull-right" data-dismiss="modal" ng-click="monitor.cancel_delete_monitor_modal()">Cancel</button>
                         </div>
                     </form>
                 </div>

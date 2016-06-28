@@ -20,6 +20,10 @@ app.factory('service', function($http, $rootScope) {
     };
     service.monitor_results = {};
     service.monitoring = false;
+    service.marked_delete_monitor = {
+        id: '',
+        name: ''
+    };
     service.user_settings = {
         current_dashboard: ''
     };
@@ -171,6 +175,22 @@ app.factory('service', function($http, $rootScope) {
         });
     };
 
+    service.delete_monitor = function(data, callback) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        return $http.post('/monitors/delete', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
+            console.log(response);
+            //success
+            delete service.monitors[response.data.data.id];
+            service.marked_delete_monitor.id = '';
+            service.marked_delete_monitor.name = '';
+            return callback(response);
+        }, function(response) {
+            console.log(response);
+            //fail
+            return callback(response);
+        });
+    };
+
     service.set_dashboard = function(data) {
         service.dashboards[data.id] = {
             id: data.id,
@@ -303,6 +323,14 @@ app.factory('service', function($http, $rootScope) {
         if (typeof response == 'object') {
             service.monitor_results = response;
         }
+    };
+
+    service.update_delete_monitor = function(id, name) {
+        service.marked_delete_monitor.id = id;
+        service.marked_delete_monitor.name = name;
+    };
+    service.get_monitor_marked_for_deletion = function() {
+        return service.marked_delete_monitor.id;
     };
 
     return service;

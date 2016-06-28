@@ -114,7 +114,7 @@ app.controller('DashboardController', function($scope, service) {
                 dashboard.delete_dashboard.error = false;
                 dashboard.delete_dashboard.error_message = '';
                 dashboard.delete_dashboard.success = true;
-                dashboard.delete_dashboard.success_message = "Successfully updated dashboard: " + response.data.data.name;
+                dashboard.delete_dashboard.success_message = "Successfully deleted dashboard: " + response.data.data.name;
                 if (Object.keys(dashboard.dashboards).length > 0) {
                     dashboard.select(Object.keys(dashboard.dashboards)[0]);
                 } else {

@@ -1,22 +1,18 @@
 package webservices.server.controller;
 
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import webservices.Message;
-import webservices.server.parameters.MonitorParameters;
 import webservices.server.model.Dashboard;
 import webservices.server.model.Monitor;
+import webservices.server.parameters.MonitorParameters;
 import webservices.server.service.DashboardService;
 import webservices.server.service.MonitorService;
 
-import java.util.HashMap;
 import java.util.Set;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
@@ -66,6 +62,23 @@ public class MonitorController {
             return new Message(counter.incrementAndGet(), monitor, "update monitor", parameters);
         } catch (Exception e) {
             throw new Exception("Could not get monitors: " + e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/monitors/delete", method = RequestMethod.POST)
+    public Message delete(@RequestBody MonitorParameters parameters) throws Exception {
+        Monitor monitor;
+        Dashboard dashboard;
+        try {
+            monitor = service.getMonitorById(parameters.getId()).get();
+            dashboard = dashboardService.getDashboardById(parameters.getDashboardId()).get();
+            Set <Monitor> monitors = dashboard.getMonitors();
+            if (monitors.remove(monitor)) {
+                dashboardService.save(dashboard);
+            }
+            return new Message(counter.incrementAndGet(), monitor, "delete monitor", parameters);
+        } catch (Exception e) {
+            throw new Exception("Could not delete monitor: " + e.getMessage());
         }
     }
 }
