@@ -35,6 +35,14 @@ public class MonitorSetting {
         TYPE, STAT, PARSER, CHART, PROTOCOL, INTERVAL, URL
     }
 
+    public enum Types {
+        system, script
+    }
+
+    public enum Stats {
+        cpu, ram, fs
+    }
+
     public long getId() {
         return this.id;
     }

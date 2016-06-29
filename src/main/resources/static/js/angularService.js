@@ -251,6 +251,7 @@ app.factory('service', function($http, $rootScope) {
         $.each(data.settings, function(index, value) {
             service.monitors[data.id][service.monitors_settings_map[value.key]] = value.value;
         });
+        service.monitors[data.id].parser_function = new Function('response', service.monitors[data.id].parser);
     };
 
     service.set_monitor_property = function(id, key, value) {

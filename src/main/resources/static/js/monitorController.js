@@ -26,6 +26,7 @@ app.controller('MonitorController', function($scope, service) {
         success_message: ''
     };
     monitor.stats = {};
+    monitor.parsers = {};
     monitor.add_monitor = function() {
         var data = {
             dashboardId: monitor.current_dashboard()
@@ -59,7 +60,11 @@ app.controller('MonitorController', function($scope, service) {
     };
     monitor.get_results = function(id) {
         if (monitor.stats) {
-            return monitor.stats[id];
+            if (monitor.monitors[id].parser_function && monitor.stats[id] && monitor.stats[id].data) {
+                return monitor.monitors[id].parser_function(monitor.stats[id]);
+            } else {
+                return monitor.stats[id];
+            }
         }
         return '';
     };
@@ -113,7 +118,9 @@ app.controller('MonitorController', function($scope, service) {
     $scope.$watch(function(scope) { return service.get_monitor_marked_for_deletion(); },
         function(new_val, old_val) {
             monitor.delete_monitor.id = new_val;
-            monitor.delete_monitor.name = monitor.monitors[new_val].name;
+            if (monitor.monitors[new_val]) {
+                monitor.delete_monitor.name = monitor.monitors[new_val].name;
+            }
         }
     );
 });

@@ -17,6 +17,7 @@
     <script src="/js/angular-touch.js"></script>
     <script src="/js/bootstrap.js"></script>
     <script src="/js/d3.js"></script>
+    <script src="/js/liquidFillGauge.js"></script>
     <script type="text/javascript">
         app = angular.module('dashboardApp', []);
     </script>
@@ -134,10 +135,10 @@
                                 </div>
                                 <div class="form-group" ng-show="mon.monitorType == 'system'">
                                     <label for="monitor_stat_{{mon.id}}">System Stat</label>
-                                    <select id="monitor_stat_{{mon.id}}" class="form-control" title="System Stat" ng-model="mon.statType">
+                                    <select id="monitor_stat_{{mon.id}}" class="form-control input-sm" title="System Stat" ng-model="mon.statType">
                                         <option value="cpu">CPU</option>
                                         <option value="ram">Memory</option>
-                                        <option value="hdd">Disk Space</option>
+                                        <option value="fs">Disk Space</option>
                                     </select>
                                 </div>
                                 <div class="form-group" ng-show="mon.monitorType == 'script'">
@@ -164,7 +165,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="monitor_interval_{{mon.id}}">Interval</label>
-                                    <select id="monitor_interval_{{mon.id}}" class="form-control" title="Interval" ng-model="mon.interval">
+                                    <select id="monitor_interval_{{mon.id}}" class="form-control input-sm" title="Interval" ng-model="mon.interval">
                                         <option value="2s">2 seconds</option>
                                         <option value="10s">10 seconds</option>
                                         <option value="30s">30 seconds</option>

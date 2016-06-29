@@ -55,10 +55,10 @@ public class MonitorService {
                     setting.setValue(parameters.getStatType());
                     break;
                 case PARSER:
-                    setting.setValue(parameters.getParser());
+                    setting.setValue(determineParser(parameters.getMonitorType(), parameters.getStatType(), parameters.getParser()));
                     break;
                 case CHART:
-                    setting.setValue(parameters.getChart());
+                    setting.setValue(determineChart(parameters.getMonitorType(), parameters.getStatType(), parameters.getChart()));
                     break;
                 case PROTOCOL:
                     setting.setValue(parameters.getProtocol());
@@ -84,10 +84,10 @@ public class MonitorService {
                     setting = new MonitorSetting(key, parameters.getStatType());
                     break;
                 case PARSER:
-                    setting = new MonitorSetting(key, parameters.getParser());
+                    setting = new MonitorSetting(key, determineParser(parameters.getMonitorType(), parameters.getStatType(), parameters.getParser()));
                     break;
                 case CHART:
-                    setting = new MonitorSetting(key, parameters.getChart());
+                    setting = new MonitorSetting(key, determineChart(parameters.getMonitorType(), parameters.getStatType(), parameters.getChart()));
                     break;
                 case PROTOCOL:
                     setting = new MonitorSetting(key, parameters.getProtocol());
@@ -104,6 +104,54 @@ public class MonitorService {
             }
         }
         repository.save(monitor);
+    }
+
+    protected String determineParser(String monitorType, String statType, String parser) {
+        String toReturn = "";
+        switch (MonitorSetting.Types.valueOf(monitorType)) {
+            case system:
+                switch (MonitorSetting.Stats.valueOf(statType)) {
+                    case cpu:
+                        toReturn = "return [response.data.cpuUsed, response.data.cpuTotal]";
+                        break;
+                    case ram:
+                        toReturn = "return [response.data.memUsed, response.data.memTotal]";
+                        break;
+                    case fs:
+                        toReturn = "return [response.data.fsUsed, response.data.fsTotal]";
+                        break;
+                    default:
+                        //TODO: add error-handling for invalid setting
+                }
+                break;
+            default: //script or other
+                toReturn = parser;
+        }
+        return toReturn;
+    }
+
+    protected String determineChart(String monitorType, String statType, String chart) {
+        String toReturn = "";
+        switch (MonitorSetting.Types.valueOf(monitorType)) {
+            case system:
+                switch (MonitorSetting.Stats.valueOf(statType)) {
+                    case cpu:
+                        toReturn = "gauge";
+                        break;
+                    case ram:
+                        toReturn = "gauge";
+                        break;
+                    case fs:
+                        toReturn = "gauge";
+                        break;
+                    default:
+                        //TODO: add error-handling for invalid setting
+                }
+                break;
+            default: //script or other
+                toReturn = chart;
+        }
+        return toReturn;
     }
 
     public Monitor save(Monitor monitor) {

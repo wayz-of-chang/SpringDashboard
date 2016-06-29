@@ -12,6 +12,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import webservices.server.controller.DashboardController;
+import webservices.server.service.DashboardService;
+import webservices.server.service.UserService;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -26,7 +28,7 @@ public class DashboardControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        mvc = MockMvcBuilders.standaloneSetup(new DashboardController()).build();
+        mvc = MockMvcBuilders.standaloneSetup(new DashboardController(null, null)).build();
     }
 
     @Test
