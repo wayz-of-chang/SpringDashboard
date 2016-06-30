@@ -60,6 +60,9 @@ app.controller('MonitorController', function($scope, service) {
     };
     monitor.get_results = function(id) {
         if (monitor.stats) {
+            if (!monitor.monitors[id].chart_render) {
+                monitor.setup_chart(id);
+            }
             if (monitor.monitors[id].parser_function && monitor.stats[id] && monitor.stats[id].data) {
                 var data = monitor.monitors[id].parser_function(monitor.stats[id]);
                 monitor.update_chart(id, data);
@@ -73,6 +76,9 @@ app.controller('MonitorController', function($scope, service) {
     };
     monitor.setup_chart = function(id) {
         if (monitor.monitors[id].chart == 'gauge') {
+            if ($('#chart_' + id).size() == 0) {
+                return;
+            }
             var config = liquidFillGaugeDefaultSettings();
             config.circleColor = "#77EE77";
             config.textColor = "#44EE44";
@@ -140,12 +146,7 @@ app.controller('MonitorController', function($scope, service) {
     };
 
     $scope.$watch(function(scope) { return service.get_monitors(); },
-        function(new_val, old_val) {
-            monitor.monitors = new_val;
-            $.each(monitor.monitors, function(key, value) {
-                monitor.setup_chart(key);
-            });
-        }
+        function(new_val, old_val) { monitor.monitors = new_val; }
     );
     $scope.$watch(function(scope) { return monitor.current_dashboard(); },
         function(new_val, old_val) { service.get_monitors(); }
