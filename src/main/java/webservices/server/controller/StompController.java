@@ -63,7 +63,7 @@ public class StompController {
             e.printStackTrace();
             throw new Exception("Could not get stats: " + e.getMessage());
         }
-        template.convertAndSend("/results/instant", new Message(counter.incrementAndGet(), responses, String.format("monitor results for %s (%s)", dashboard.getName(), Long.toString(dashboardId)), new MonitorParameters()));
+        template.convertAndSend("/results/" + dashboardId + "/instant", new Message(counter.incrementAndGet(), responses, String.format("monitor results for %s (%s)", dashboard.getName(), Long.toString(dashboardId)), new MonitorParameters()));
     }
 
 

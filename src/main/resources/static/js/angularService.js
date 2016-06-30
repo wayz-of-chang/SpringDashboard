@@ -303,7 +303,7 @@ app.factory('service', function($http, $rootScope) {
         service.stompClient.connect({'X-CSRF-TOKEN': cookie.csrf}, function(frame) {
             console.log('Connected: ' + frame);
             service.monitoring = true;
-            service.stompClient.subscribe('/results/instant', function(response) {
+            service.stompClient.subscribe('/results/' + service.user_settings.current_dashboard + '/instant', function(response) {
                 service.update_monitor_results(JSON.parse(response.body).data);
                 $rootScope.$apply();
             });
