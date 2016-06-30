@@ -43,6 +43,10 @@ public class MonitorSetting {
         cpu, ram, fs
     }
 
+    public enum Charts {
+        gauge
+    }
+
     public long getId() {
         return this.id;
     }

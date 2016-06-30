@@ -74,3 +74,45 @@
 	transform: rotateY(180deg);
 }
 
+.chart, .liquidFillGaugeCircle, .liquidFillGaugeText, .liquidFillGaugeWaveText, .liquidFillGaugeWave {
+    transition: fill .4s ease;
+}
+
+.chart.low .liquidFillGaugeCircle {
+    fill: #77DD77;
+}
+.chart.low .liquidFillGaugeText {
+    fill: #44DD44;
+}
+.chart.low .liquidFillGaugeWaveText {
+    fill: #99FF99;
+}
+.chart.low .liquidFillGaugeWave {
+    fill: #CCDDCC;
+}
+
+.chart.medium .liquidFillGaugeCircle {
+    fill: #DDDD77;
+}
+.chart.medium .liquidFillGaugeText {
+    fill: #DDDD44;
+}
+.chart.medium .liquidFillGaugeWaveText {
+    fill: #FFFF99;
+}
+.chart.medium .liquidFillGaugeWave {
+    fill: #DDDDCC;
+}
+
+.chart.high .liquidFillGaugeCircle {
+    fill: #FF7777;
+}
+.chart.high .liquidFillGaugeText {
+    fill: #FF4444;
+}
+.chart.high .liquidFillGaugeWaveText.liquidFillGaugeWaveText {
+    fill: #FF9999;
+}
+.chart.high .liquidFillGaugeWave {
+    fill: #FFDDDD;
+}

@@ -42,6 +42,8 @@ public class ScriptClient extends Client {
             exitValue = process.waitFor();
             output = outputFuture.get();
             error = errorFuture.get();
+            process.destroy();
+            pool.shutdown();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }

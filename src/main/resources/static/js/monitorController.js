@@ -61,12 +61,48 @@ app.controller('MonitorController', function($scope, service) {
     monitor.get_results = function(id) {
         if (monitor.stats) {
             if (monitor.monitors[id].parser_function && monitor.stats[id] && monitor.stats[id].data) {
-                return monitor.monitors[id].parser_function(monitor.stats[id]);
+                var data = monitor.monitors[id].parser_function(monitor.stats[id]);
+                monitor.update_chart(id, data);
+                return data;
             } else {
-                return monitor.stats[id];
+                var data = monitor.stats[id];
+                return data;
             }
         }
         return '';
+    };
+    monitor.setup_chart = function(id) {
+        if (monitor.monitors[id].chart == 'gauge') {
+            var config = liquidFillGaugeDefaultSettings();
+            config.circleColor = "#77EE77";
+            config.textColor = "#44EE44";
+            config.waveTextColor = "#AAEEAA";
+            config.waveColor = "#DDEEDD";
+            config.minValue = 0;
+            config.maxValue = 100;
+            config.circleThickness = 0.05;
+            config.textVertPosition = 0.5;
+            config.waveAnimateTime = 1000;
+            var gauge = loadLiquidFillGauge("chart_" + id, 0, config);
+            monitor.monitors[id].chart_config = config;
+            monitor.monitors[id].chart_render = gauge;
+        } else {
+            monitor.monitors[id].show_raw = true;
+        }
+    };
+    monitor.update_chart = function(id, data) {
+        if (monitor.monitors[id].chart == 'gauge') {
+            if ((100 * data[0] / data[1]) <= 50) {
+                $('#chart_' + id).removeClass('medium high').addClass('low');
+            }
+            if ((100 * data[0] / data[1]) > 50) {
+                $('#chart_' + id).removeClass('low high').addClass('medium');
+            }
+            if ((100 * data[0] / data[1]) > 90) {
+                $('#chart_' + id).removeClass('medium low').addClass('high');
+            }
+            monitor.monitors[id].chart_render.update(Math.round(100 * data[0] / data[1]));
+        }
     };
     monitor.confirm_delete_popup = function(id, name) {
         service.update_delete_monitor(id, name);
@@ -104,7 +140,12 @@ app.controller('MonitorController', function($scope, service) {
     };
 
     $scope.$watch(function(scope) { return service.get_monitors(); },
-        function(new_val, old_val) { monitor.monitors = new_val; }
+        function(new_val, old_val) {
+            monitor.monitors = new_val;
+            $.each(monitor.monitors, function(key, value) {
+                monitor.setup_chart(key);
+            });
+        }
     );
     $scope.$watch(function(scope) { return monitor.current_dashboard(); },
         function(new_val, old_val) { service.get_monitors(); }

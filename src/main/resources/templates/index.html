@@ -116,7 +116,12 @@
                 <div class="flip-container flex" ng-class="{'settings': monitor.flipped[mon.id]}">
                     <div class="flipper flex">
                         <div class="col-xs-12 ccl-sm-12 front monitor-content" ng-click="monitor.flip_monitor(mon.id);">
-                            {{mon.url}}&nbsp;{{mon.monitorType}}&nbsp;{{mon.statType}}&nbsp;{{mon.parser}}&nbsp;{{mon.chart}}&nbsp;{{mon.protocol}}&nbsp;{{mon.interval}}<br />{{monitor.get_results(mon.id)}}
+                            <div class="" ng-show="mon.show_raw">
+                                {{mon.url}}&nbsp;{{mon.monitorType}}&nbsp;{{mon.statType}}&nbsp;{{mon.parser}}&nbsp;{{mon.chart}}&nbsp;{{mon.protocol}}&nbsp;{{mon.interval}}<br />{{monitor.get_results(mon.id)}}
+                            </div>
+                            <div class="" ng-hide="mon.show_raw">
+                                <svg id="chart_{{mon.id}}" width="97%" height="200" class="chart" onclick="alert('hello');"></svg>
+                            </div>
                         </div>
                         <div class="col-xs-12 ccl-sm-12 back monitor-content">
                             <form>
@@ -149,6 +154,7 @@
                                 <div class="form-group" ng-show="mon.monitorType == 'script'">
                                     <label for="monitor_chart_{{mon.id}}">Chart Type</label>
                                     <select id="monitor_chart_{{mon.id}}" class="form-control input-sm" title="Chart Type" ng-model="mon.chart">
+                                        <option value="gauge">Gauge</option>
                                         <option value="number">Number</option>
                                         <option value="binary">Binary</option>
                                         <option value="pie">Pie Chart</option>
