@@ -51,7 +51,9 @@ app.controller('MonitorController', function($scope, service) {
             monitor.flipped[id] = false;
         }
         if (monitor.flipped[id]) {
-            service.update_monitor_settings(id, function(response) {});
+            service.update_monitor_settings(id, function(response) {
+                monitor.setup_chart(id);
+            });
         }
         monitor.flipped[id] = !monitor.flipped[id];
     };
@@ -80,15 +82,13 @@ app.controller('MonitorController', function($scope, service) {
                 return;
             }
             var config = liquidFillGaugeDefaultSettings();
-            config.circleColor = "#77EE77";
-            config.textColor = "#44EE44";
-            config.waveTextColor = "#AAEEAA";
-            config.waveColor = "#DDEEDD";
             config.minValue = 0;
             config.maxValue = 100;
             config.circleThickness = 0.05;
             config.textVertPosition = 0.5;
             config.waveAnimateTime = 1000;
+            config.textSize = 0.8;
+            d3.selectAll("#chart_" + id + " > *").remove();
             var gauge = loadLiquidFillGauge("chart_" + id, 0, config);
             monitor.monitors[id].chart_config = config;
             monitor.monitors[id].chart_render = gauge;
@@ -98,16 +98,38 @@ app.controller('MonitorController', function($scope, service) {
     };
     monitor.update_chart = function(id, data) {
         if (monitor.monitors[id].chart == 'gauge') {
-            if ((100 * data[0] / data[1]) <= 50) {
+            var value = data[0];
+            var max = data[1];
+            var unit = data[2];
+            var mediumThreshold = data[3];
+            var highThreshold = data[4];
+            if (typeof unit == 'undefined') {
+                unit = '';
+            }
+            if (typeof mediumThreshold == 'undefined') {
+                mediumThreshold = 0.5;
+            }
+            if (typeof highThreshold == 'undefined') {
+                highThreshold = 0.9;
+            }
+            var percentage = 1.0 * value / max;
+            if (percentage <= mediumThreshold) {
                 $('#chart_' + id).removeClass('medium high').addClass('low');
             }
-            if ((100 * data[0] / data[1]) > 50) {
+            if (percentage > mediumThreshold) {
                 $('#chart_' + id).removeClass('low high').addClass('medium');
             }
-            if ((100 * data[0] / data[1]) > 90) {
+            if (percentage > highThreshold) {
                 $('#chart_' + id).removeClass('medium low').addClass('high');
             }
-            monitor.monitors[id].chart_render.update(Math.round(100 * data[0] / data[1]));
+            if (unit == '%') {
+                value = Math.round(100 * percentage);
+                max = 100;
+            }
+
+            monitor.monitors[id].chart_config.maxValue = max;
+            monitor.monitors[id].chart_config.displayUnit = unit;
+            monitor.monitors[id].chart_render.update(value);
         }
     };
     monitor.confirm_delete_popup = function(id, name) {

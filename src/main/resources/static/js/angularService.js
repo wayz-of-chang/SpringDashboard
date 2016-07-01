@@ -166,6 +166,7 @@ app.factory('service', function($http, $rootScope) {
         var data = service.get_monitor(id);
         return $http.post('/monitors/update_settings', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
             console.log(response);
+            service.set_monitor(response.data.data);
             //success
             return callback(response);
         }, function(response) {

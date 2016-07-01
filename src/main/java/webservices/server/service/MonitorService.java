@@ -112,13 +112,13 @@ public class MonitorService {
             case system:
                 switch (MonitorSetting.Stats.valueOf(statType)) {
                     case cpu:
-                        toReturn = "return [response.data.cpuUsed, response.data.cpuTotal]";
+                        toReturn = "return [response.data.cpuUsed, response.data.cpuTotal, '%', 0.5, 0.9]";
                         break;
                     case ram:
-                        toReturn = "return [response.data.memUsed, response.data.memTotal]";
+                        toReturn = "var value = response.data.memUsed; var unit = 'MB'; var divider = 1000000; if (value > divider * 1000) { unit = 'GB'; divider = divider * 1000; } if (value > divider * 1000) { unit = 'TB'; divider = divider * 1000; } return [Math.round(10 * value / divider) / 10, response.data.memTotal / divider, unit, 0.5, 0.9]";
                         break;
                     case fs:
-                        toReturn = "return [response.data.fsUsed, response.data.fsTotal]";
+                        toReturn = "var value = response.data.fsUsed; var unit = 'MB'; var divider = 1000000; if (value > divider * 1000) { unit = 'GB'; divider = divider * 1000; } if (value > divider * 1000) { unit = 'TB'; divider = divider * 1000; } return [Math.round(10 * value / divider) / 10, response.data.fsTotal / divider, unit, 0.5, 0.9]";
                         break;
                     default:
                         //TODO: add error-handling for invalid setting

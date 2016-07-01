@@ -15,7 +15,7 @@ public class MonitorSetting {
     @Enumerated(EnumType.STRING)
     private Setting key;
 
-    @Column(name = "value", nullable = true)
+    @Column(length = 1023, name = "value", nullable = true)
     private String value;
 
     public MonitorSetting() {}
