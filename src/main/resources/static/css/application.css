@@ -74,6 +74,11 @@
 	transform: rotateY(180deg);
 }
 
+.droppable div.hovered {
+    border: 2px solid #777777;
+    border-style: dashed;
+}
+
 .chart, .liquidFillGaugeCircle, .liquidFillGaugeText, .liquidFillGaugeWaveText, .liquidFillGaugeWave {
     transition: fill .4s ease;
 }

@@ -48,4 +48,10 @@ $(function () {
     $('#edit_dashboard_modal').on('shown.bs.modal', function () {
         $('#edit_dashboard_name').focus();
     })
+    $('#dashboard_content').sortable({
+        containment: '#dashboard_content',
+        handle: '.panel-heading',
+        cursor: 'move'
+    });
 });
+

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/css/application.css" />
     <script src="/js/jquery-1.12.4.js"></script>
     <script src="/js/jquery.cookie.js"></script>
+    <script src="/js/jquery-ui.js"></script>
     <script src="/js/sockjs-1.1.1.js"></script>
     <script src="/js/stomp.js"></script>
     <script src="/js/angular.js"></script>
@@ -22,6 +23,7 @@
         app = angular.module('dashboardApp', []);
     </script>
     <script src="/js/application.js"></script>
+    <script src="/js/angularDirectives.js"></script>
     <script src="/js/angularService.js"></script>
     <script src="/js/userController.js"></script>
     <script src="/js/dashboardController.js"></script>
@@ -105,9 +107,9 @@
     </div>
 </nav>
 
-<div class="container-fluid" ng-controller="MonitorController as monitor">
+<div class="container-fluid" ng-controller="MonitorController as monitor" id="dashboard_content">
     <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript!  Websocket relies on Javascript being enabled.  Please enable Javascript and reload this page!</h2></noscript>
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4" ng-repeat="mon in monitor.monitors" id="{{mon.id}}">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4" ng-repeat="mon in monitor.monitors" repeat-final="" id="monitor_{{mon.id}}">
         <div class="panel panel-default monitor">
             <div class="panel-heading clearfix">
                 {{mon.name ? mon.name : "Unnamed"}} <button type="button" ng-click="monitor.flip_monitor(mon.id);" class="btn pull-right btn-xs" ng-class="{'btn-default': !monitor.flipped[mon.id], 'btn-success': monitor.flipped[mon.id]}"><i class="fa" ng-class="{'fa-cog': !monitor.flipped[mon.id], 'fa-check-circle': monitor.flipped[mon.id]}"></i></button>

@@ -62,9 +62,6 @@ app.controller('MonitorController', function($scope, service) {
     };
     monitor.get_results = function(id) {
         if (monitor.stats) {
-            if (!monitor.monitors[id].chart_render) {
-                monitor.setup_chart(id);
-            }
             if (monitor.monitors[id].parser_function && monitor.stats[id] && monitor.stats[id].data) {
                 var data = monitor.monitors[id].parser_function(monitor.stats[id]);
                 monitor.update_chart(id, data);
@@ -167,6 +164,15 @@ app.controller('MonitorController', function($scope, service) {
         service.toggle_monitoring_status();
     };
 
+    $scope.$on('end-repeat', function() {
+        setTimeout(function() {
+            $.each(monitor.monitors, function(key, value) {
+                if (!value.chart_render) {
+                    monitor.setup_chart(key);
+                }
+            });
+        }, 500);
+    });
     $scope.$watch(function(scope) { return service.get_monitors(); },
         function(new_val, old_val) { monitor.monitors = new_val; }
     );
