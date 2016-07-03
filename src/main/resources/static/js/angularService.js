@@ -176,6 +176,15 @@ app.factory('service', function($http, $rootScope) {
         });
     };
 
+    service.update_monitor_order = function(order) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        var data = {
+            dashboardId: service.user_settings.current_dashboard,
+            'order': order
+        };
+        
+    };
+
     service.delete_monitor = function(data, callback) {
         var cookie = JSON.parse($.cookie('csrf'));
         return $http.post('/monitors/delete', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {

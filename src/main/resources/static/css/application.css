@@ -78,8 +78,8 @@
 	transform: rotateY(180deg);
 }
 
-.droppable div.hovered {
-    border: 2px solid #777777;
+.droppable {
+    border: 1px solid #777777;
     border-style: dashed;
 }
 

@@ -109,7 +109,7 @@
 
 <div class="container-fluid" ng-controller="MonitorController as monitor" id="dashboard_content">
     <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript!  Websocket relies on Javascript being enabled.  Please enable Javascript and reload this page!</h2></noscript>
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4" ng-repeat="mon in monitor.monitors" repeat-final="" id="monitor_{{mon.id}}">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 sortable" ng-repeat="mon in monitor.monitors" repeat-final="" id="monitor_{{mon.id}}">
         <div class="panel panel-default monitor">
             <div class="panel-heading clearfix">
                 {{mon.name ? mon.name : "Unnamed"}} <button type="button" ng-click="monitor.flip_monitor(mon.id);" class="btn pull-right btn-xs" ng-class="{'btn-default': !monitor.flipped[mon.id], 'btn-success': monitor.flipped[mon.id]}"><i class="fa" ng-class="{'fa-cog': !monitor.flipped[mon.id], 'fa-check-circle': monitor.flipped[mon.id]}"></i></button>
@@ -207,16 +207,20 @@
         </div>
     </div>
     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <p th:text="'Dashboard'" />
-        <div>
-            <div>
-                <button class="btn" id="connect" onclick="connect();">Connect</button>
-                <button class="btn" id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
+        <div class="panel panel-default monitor">
+            <div class="panel-heading clearfix">
+                Chat
             </div>
-            <div id="conversationDiv">
-                <label>What is your name?</label><input type="text" id="name" />
-                <button class="btn" id="sendName" onclick="sendName();">Send</button>
-                <p id="response"></p>
+            <div class="panel-body flex">
+                <div>
+                    <button class="btn" id="connect" onclick="connect();">Connect</button>
+                    <button class="btn" id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
+                </div>
+                <div id="conversationDiv">
+                    <label>What is your name?</label><input type="text" id="name" />
+                    <button class="btn" id="sendName" onclick="sendName();">Send</button>
+                    <p id="response"></p>
+                </div>
             </div>
         </div>
     </div>

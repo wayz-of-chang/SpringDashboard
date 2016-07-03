@@ -98,6 +98,13 @@ app.controller('DashboardController', function($scope, service) {
             }
         });
     };
+    dashboard.update_monitor_order = function(order) {
+        var id_order = [];
+        $.each(order, function(index, value) {
+            id_order.push(value.replace("monitor_", ''));
+        });
+        service.update_monitor_order(id_order);
+    };
     dashboard.cancel_edit_dashboard_modal = function() {
         $('#edit_dashboard_modal').modal('hide');
     };
