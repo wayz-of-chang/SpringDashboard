@@ -16,6 +16,10 @@
     word-wrap: break-word;
 }
 
+.panel-heading {
+    cursor: pointer;
+}
+
 .panel-body .btn {
     margin-bottom: 5px;
 }
