@@ -17,7 +17,7 @@
 }
 
 .panel-heading {
-    cursor: pointer;
+    cursor: move;
 }
 
 .panel-body .btn {

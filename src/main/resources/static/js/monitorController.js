@@ -27,6 +27,23 @@ app.controller('MonitorController', function($scope, service) {
     };
     monitor.stats = {};
     monitor.parsers = {};
+    monitor.ordered_monitors = function() {
+        var ordered = [];
+        var monitors = [];
+        var user_settings = service.get_user_settings();
+        if (user_settings.current_dashboard > '' && user_settings.monitor_order != null && user_settings.monitor_order[user_settings.current_dashboard] != null) {
+            ordered = user_settings.monitor_order[user_settings.current_dashboard];
+        } else {
+            ordered = Object.keys(monitor.monitors);
+        }
+        $.each(ordered, function(index, value) {
+            if (monitor.monitors[value] != null) {
+                monitors.push(monitor.monitors[value]);
+            }
+        });
+        return monitors;
+    };
+
     monitor.add_monitor = function() {
         var data = {
             dashboardId: monitor.current_dashboard()

@@ -25,7 +25,8 @@ app.factory('service', function($http, $rootScope) {
         name: ''
     };
     service.user_settings = {
-        current_dashboard: ''
+        current_dashboard: '',
+        monitor_order: {}
     };
     service.stompClient = null;
 
@@ -55,11 +56,35 @@ app.factory('service', function($http, $rootScope) {
         });
     };
 
+    service.save_user_settings = function(callback) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        var data = {
+            userId: service.user.id,
+            currentDashboard: service.user_settings.current_dashboard,
+            monitorOrder: service.user_settings.monitor_order
+        };
+        return $http.post('/users/update_settings', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
+            console.log(response);
+            //success
+            return callback(response);
+        }, function(response) {
+            console.log(response);
+            //fail
+            return callback(response);
+        });
+    };
+
     service.set_user = function(data) {
         service.user.id = data.id;
         service.user.username = data.username;
         service.user.email = data.email;
         service.user.role = data.role;
+        service.user_settings.current_dashboard = data.userSetting.currentDashboard;
+        if (data.userSetting.monitorOrder == null) {
+            service.user_settings.monitor_order = {};
+        } else {
+            service.user_settings.monitor_order = data.userSetting.monitorOrder;
+        }
     };
 
     service.set_user_property = function(key, value) {
@@ -95,7 +120,11 @@ app.factory('service', function($http, $rootScope) {
             //success
             service.clear_dashboards();
             service.set_dashboards(response.data.data);
-            service.select_dashboard(Object.keys(service.get_dashboards())[0]);
+            var current_dashboard = service.user_settings.current_dashboard;
+            if (!(current_dashboard > '')) {
+                current_dashboard = Object.keys(service.get_dashboards())[0];
+            }
+            service.select_dashboard(current_dashboard);
             return callback(response);
         }, function(response) {
             console.log(response);
@@ -130,6 +159,12 @@ app.factory('service', function($http, $rootScope) {
             //fail
             return callback(response);
         });
+    };
+
+    service.update_monitor_order = function(order) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        service.user_settings.monitor_order[service.user_settings.current_dashboard] = order;
+        service.save_user_settings(function() {});
     };
 
     service.create_monitor = function(data, callback) {
@@ -174,15 +209,6 @@ app.factory('service', function($http, $rootScope) {
             //fail
             return callback(response);
         });
-    };
-
-    service.update_monitor_order = function(order) {
-        var cookie = JSON.parse($.cookie('csrf'));
-        var data = {
-            dashboardId: service.user_settings.current_dashboard,
-            'order': order
-        };
-        
     };
 
     service.delete_monitor = function(data, callback) {
@@ -237,7 +263,10 @@ app.factory('service', function($http, $rootScope) {
         if (service.user_settings.current_dashboard > '') {
             service.disconnect_monitors();
         }
-        service.user_settings.current_dashboard = id;
+        if (service.user_settings.current_dashboard != id) {
+            service.user_settings.current_dashboard = id;
+            service.save_user_settings(function() {});
+        }
         if (id > '') {
             var data = {
                 dashboardId: id
@@ -266,6 +295,10 @@ app.factory('service', function($http, $rootScope) {
 
     service.set_monitor_property = function(id, key, value) {
         service.monitors[id][key] = value;
+    };
+
+    service.set_monitor_order = function(data) {
+        service.monitor_order = data.order;
     };
 
     service.clear_monitors = function() {

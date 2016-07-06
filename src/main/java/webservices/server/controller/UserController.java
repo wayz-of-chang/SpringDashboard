@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import webservices.Message;
-import webservices.server.parameters.UserParameters;
 import webservices.server.model.CurrentUser;
 import webservices.server.model.User;
+import webservices.server.model.UserSetting;
+import webservices.server.parameters.UserParameters;
 import webservices.server.service.UserDetailsService;
 import webservices.server.service.UserService;
+import webservices.server.service.UserSettingService;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -21,11 +23,13 @@ public class UserController {
 
     final AtomicLong counter = new AtomicLong();
     private final UserService service;
+    private final UserSettingService userSettingService;
     private final UserDetailsService detailsService;
 
     @Autowired
-    public UserController(UserService service, UserDetailsService detailsService) {
+    public UserController(UserService service, UserSettingService userSettingService, UserDetailsService detailsService) {
         this.service = service;
+        this.userSettingService = userSettingService;
         this.detailsService = detailsService;
     }
 
@@ -57,5 +61,20 @@ public class UserController {
             errorMessage = e.getMessage();
         }
         throw new Exception("Could not log in: " + errorMessage);
+    }
+
+    @RequestMapping(value="/users/update_settings", method=RequestMethod.POST)
+    public Message update_settings(@RequestBody UserParameters parameters) throws Exception {
+        String errorMessage;
+        try {
+            UserSetting userSetting = userSettingService.getUserSettingByUserId(parameters.getUserId()).orElse(new UserSetting(parameters.getUserId()));
+            userSetting.setCurrentDashboard(parameters.getCurrentDashboard());
+            userSetting.setMonitorOrder(parameters.getMonitorOrder());
+            userSetting = userSettingService.save(userSetting);
+            return new Message(counter.incrementAndGet(), userSetting, "update user settings", parameters);
+        } catch (Exception e) {
+            errorMessage = e.getMessage();
+        }
+        throw new Exception("Could not update user settings: " + errorMessage);
     }
 }
