@@ -16,7 +16,7 @@
     word-wrap: break-word;
 }
 
-.panel-heading {
+.sortable .panel-heading {
     cursor: move;
 }
 
