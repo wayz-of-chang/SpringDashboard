@@ -10,5 +10,6 @@ To run the server: mvn spring-boot:run -Dtype=SERVER -Dname={system_name}
 Prerequisites (version used in parenthesis)
 - Java JDK (1.8)
 - MySQL (5.7)
+- MongoDB (3.2)
 - Erlang (18.3)
 - RabbitMQ (3.6)
