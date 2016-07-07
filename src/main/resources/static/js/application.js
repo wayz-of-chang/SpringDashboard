@@ -55,9 +55,7 @@ $(function () {
         cursor: 'move',
         placeholder: 'col-xs-12 col-sm-6 col-md-4 col-lg-2 panel panel-default droppable monitor',
         update: function(event, ui) {
-            angular.element($('#dashboard_modals_container')).scope().dashboard.update_monitor_order(
-                $('#dashboard_content').sortable('toArray', {attribute: 'data-id'})
-            );
+            angular.element($('#dashboard_modals_container')).scope().dashboard.update_monitor_order();
         }
     });
 });

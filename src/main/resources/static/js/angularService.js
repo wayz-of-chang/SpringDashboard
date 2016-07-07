@@ -161,9 +161,14 @@ app.factory('service', function($http, $rootScope) {
         });
     };
 
-    service.update_monitor_order = function(order) {
+    service.update_monitor_order = function() {
         var cookie = JSON.parse($.cookie('csrf'));
-        service.user_settings.monitor_order[service.user_settings.current_dashboard] = order;
+        var id_order = [];
+        var order = $('#dashboard_content').sortable('toArray', {attribute: 'data-id'});
+        $.each(order, function(index, value) {
+            id_order.push(value.replace("monitor_", ''));
+        });
+        service.user_settings.monitor_order[service.user_settings.current_dashboard] = id_order;
         service.save_user_settings(function() {});
     };
 
@@ -173,6 +178,7 @@ app.factory('service', function($http, $rootScope) {
             console.log(response);
             //success
             service.set_monitor(response.data.data);
+            service.user_settings.monitor_order[service.user_settings.current_dashboard] = [].concat(service.user_settings.monitor_order[service.user_settings.current_dashboard], response.data.data.id);
             return callback(response);
         }, function(response) {
             console.log(response);
@@ -263,8 +269,14 @@ app.factory('service', function($http, $rootScope) {
         if (service.user_settings.current_dashboard > '') {
             service.disconnect_monitors();
         }
+        if (service.user_settings.monitor_order == null) {
+            service.user_settings.monitor_order = {};
+        }
         if (service.user_settings.current_dashboard != id) {
             service.user_settings.current_dashboard = id;
+            if (id > '' && service.user_settings.monitor_order[service.user_settings.current_dashboard] == null) {
+                service.user_settings.monitor_order[service.user_settings.current_dashboard] = [];
+            }
             service.save_user_settings(function() {});
         }
         if (id > '') {
@@ -295,10 +307,6 @@ app.factory('service', function($http, $rootScope) {
 
     service.set_monitor_property = function(id, key, value) {
         service.monitors[id][key] = value;
-    };
-
-    service.set_monitor_order = function(data) {
-        service.monitor_order = data.order;
     };
 
     service.clear_monitors = function() {
@@ -337,6 +345,10 @@ app.factory('service', function($http, $rootScope) {
         } else {
             service.connect_monitors();
         }
+    };
+
+    service.get_monitor_order = function() {
+        return service.user_settings.monitor_order[service.user_settings.current_dashboard];
     };
 
     service.connect_monitors = function() {

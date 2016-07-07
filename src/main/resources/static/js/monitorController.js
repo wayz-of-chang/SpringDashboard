@@ -54,7 +54,10 @@ app.controller('MonitorController', function($scope, service) {
                 monitor.new_monitor.error_message = '';
                 monitor.new_monitor.success = true;
                 monitor.new_monitor.success_message = "Successfully created monitor";
-                setTimeout(function() { monitor.new_monitor.success = false; }, 3000);
+                setTimeout(function() {
+                    monitor.new_monitor.success = false;
+                    service.update_monitor_order();
+                }, 3000);
             } else {
                 monitor.new_monitor.error = true;
                 monitor.new_monitor.error_message = response.data.error + ": " + response.data.message;
@@ -69,7 +72,7 @@ app.controller('MonitorController', function($scope, service) {
         }
         if (monitor.flipped[id]) {
             service.update_monitor_settings(id, function(response) {
-                monitor.setup_chart(id);
+                //monitor.setup_chart(id);
             });
         }
         monitor.flipped[id] = !monitor.flipped[id];
@@ -141,6 +144,10 @@ app.controller('MonitorController', function($scope, service) {
                 max = 100;
             }
 
+            if (monitor.monitors[id].chart_config == null) {
+                monitor.setup_chart(id);
+                return;
+            }
             monitor.monitors[id].chart_config.maxValue = max;
             monitor.monitors[id].chart_config.displayUnit = unit;
             monitor.monitors[id].chart_render.update(value);
@@ -165,6 +172,7 @@ app.controller('MonitorController', function($scope, service) {
                 setTimeout(function() {
                     monitor.delete_monitor.success = false;
                     $('#delete_monitor_modal').modal('hide');
+                    service.update_monitor_order();
                 }, 3000);
             } else {
                 monitor.delete_monitor.error = true;
@@ -209,5 +217,8 @@ app.controller('MonitorController', function($scope, service) {
                 monitor.delete_monitor.name = monitor.monitors[new_val].name;
             }
         }
+    );
+    $scope.$watch(function(scope) { return service.get_monitor_order(); },
+        function(new_val, old_val) { monitor.ordered_monitors(); }
     );
 });
