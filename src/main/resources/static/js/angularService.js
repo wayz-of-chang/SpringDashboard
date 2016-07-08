@@ -14,6 +14,7 @@ app.factory('service', function($http, $rootScope) {
         STAT: 'statType',
         URL: 'url',
         PROTOCOL: 'protocol',
+        SCRIPT: 'script',
         PARSER: 'parser',
         CHART: 'chart',
         INTERVAL: 'interval'

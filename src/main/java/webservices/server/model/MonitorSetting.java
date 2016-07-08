@@ -32,7 +32,7 @@ public class MonitorSetting {
     }
 
     public enum Setting {
-        TYPE, STAT, PARSER, CHART, PROTOCOL, INTERVAL, URL
+        TYPE, STAT, SCRIPT, PARSER, CHART, PROTOCOL, INTERVAL, URL
     }
 
     public enum Types {

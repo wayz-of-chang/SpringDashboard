@@ -149,6 +149,11 @@
                                     </select>
                                 </div>
                                 <div class="form-group" ng-show="mon.monitorType == 'script'">
+                                    <label for="monitor_script_{{mon.id}}">Script Name</label>
+                                    <textarea id="monitor_script_{{mon.id}}" class="form-control input-sm" title="Script Name" ng-model="mon.script">
+                                    </textarea>
+                                </div>
+                                <div class="form-group" ng-show="mon.monitorType == 'script'">
                                     <label for="monitor_parser_{{mon.id}}">Output Parser</label>
                                     <textarea id="monitor_parser_{{mon.id}}" class="form-control input-sm" title="Output Parser" ng-model="mon.parser">
                                     </textarea>

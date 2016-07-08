@@ -8,6 +8,7 @@ public class MonitorParameters extends webservices.Parameters {
     protected String protocol;
     protected String monitorType;
     protected String statType;
+    protected String script;
     protected String parser;
     protected String chart;
 
@@ -16,7 +17,7 @@ public class MonitorParameters extends webservices.Parameters {
         this.type = Type.SERVER;
     }
 
-    public MonitorParameters(long id, String name, long dashboardId, String url, String protocol, String monitorType, String statType, String parser, String chart, String interval) {
+    public MonitorParameters(long id, String name, long dashboardId, String url, String protocol, String monitorType, String statType, String script, String parser, String chart, String interval) {
         this.id = id;
         this.name = name;
         this.dashboardId = dashboardId;
@@ -24,6 +25,7 @@ public class MonitorParameters extends webservices.Parameters {
         this.protocol = protocol;
         this.monitorType = monitorType;
         this.statType = statType;
+        this.script = script;
         this.parser = parser;
         this.chart = chart;
         this.interval = interval;
@@ -38,6 +40,7 @@ public class MonitorParameters extends webservices.Parameters {
     public String getProtocol() { return protocol; }
     public String getMonitorType() { return monitorType; }
     public String getStatType() { return statType; }
+    public String getScript() { return script; }
     public String getParser() { return parser; }
     public String getChart() { return chart; }
     public String getInterval() { return interval; }
@@ -50,6 +53,7 @@ public class MonitorParameters extends webservices.Parameters {
     public void setProtocol(String protocol) { this.protocol = protocol; }
     public void setMonitorType(String monitorType) { this.monitorType = monitorType; }
     public void setStatType(String statType) { this.statType = statType; }
+    public void setScript(String script) { this.script = script; }
     public void setParser(String parser) { this.parser = parser; }
     public void setChart(String chart) { this.chart = chart; }
     public void setInterval(String interval) { this.interval = interval; }

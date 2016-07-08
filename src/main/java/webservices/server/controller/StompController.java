@@ -52,7 +52,7 @@ public class StompController {
                     monitorUrl = settings.getOrDefault(MonitorSetting.Setting.URL, "");
                 }
                 if (monitorUrl != null && !monitorUrl.equals("")) {
-                    monitorUrl = monitorUrl + "/" + settings.getOrDefault(MonitorSetting.Setting.TYPE, "");
+                    monitorUrl = String.format("%s/%s?name=%s", monitorUrl, settings.getOrDefault(MonitorSetting.Setting.TYPE, ""), settings.getOrDefault(MonitorSetting.Setting.SCRIPT, ""));
                     Message response = restTemplate.getForObject(monitorUrl, Message.class);
                     responses.put(monitor.getId(), response);
                     //System.out.println(monitorUrl);

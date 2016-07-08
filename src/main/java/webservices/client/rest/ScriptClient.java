@@ -20,7 +20,7 @@ import java.util.concurrent.Future;
 public class ScriptClient extends Client {
 
     @RequestMapping("/script")
-    public Message script(@RequestParam(value="name", defaultValue="ping.bat") String name) {
+    public Message script(@RequestParam(value="name", defaultValue="") String name) {
         ExecutorService pool = Executors.newFixedThreadPool(2);
         int exitValue = -1;
         ArrayList<String> output = new ArrayList<String>();
@@ -30,8 +30,26 @@ public class ScriptClient extends Client {
             String osName = System.getProperty("os.name");
             if (osName.equals( "Windows NT" )) {
                 prefix = "cmd.exe /C ";
+                if (name.equals("")) {
+                    name = "ping.bat";
+                }
             } else if (osName.equals( "Windows 95" )) {
                 prefix = "command.com /C ";
+                if (name.equals("")) {
+                    name = "ping.bat";
+                }
+            } else if (osName.contains( "Windows" )) {
+                if (name.equals("")) {
+                    name = "ping.bat";
+                }
+            } else if (osName.contains( "Linux" )) {
+                if (name.equals("")) {
+                    name = "ping.sh";
+                }
+            } else if (osName.contains( "Mac OS X" )) {
+                if (name.equals("")) {
+                    name = "ping.sh";
+                }
             }
             ProcessBuilder builder = new ProcessBuilder(prefix + getClass().getClassLoader().getResource(String.format("scripts/%s", name)).getPath());
             Process process = builder.start();

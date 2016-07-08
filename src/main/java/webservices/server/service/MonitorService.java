@@ -54,6 +54,9 @@ public class MonitorService {
                 case STAT:
                     setting.setValue(parameters.getStatType());
                     break;
+                case SCRIPT:
+                    setting.setValue(parameters.getScript());
+                    break;
                 case PARSER:
                     setting.setValue(determineParser(parameters.getMonitorType(), parameters.getStatType(), parameters.getParser()));
                     break;
@@ -82,6 +85,9 @@ public class MonitorService {
                     break;
                 case STAT:
                     setting = new MonitorSetting(key, parameters.getStatType());
+                    break;
+                case SCRIPT:
+                    setting = new MonitorSetting(key, parameters.getScript());
                     break;
                 case PARSER:
                     setting = new MonitorSetting(key, determineParser(parameters.getMonitorType(), parameters.getStatType(), parameters.getParser()));
