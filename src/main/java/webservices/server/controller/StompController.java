@@ -88,7 +88,7 @@ public class StompController {
                         System.out.println("Error occurred while getting stats for " + Long.toString(dashboardId) + ": " + e.getMessage());
                     }
                 }
-            }, 2000);
+            }, 5000);
             schedulers.put(dashboardId, future);
         }
         return new Message(counter.incrementAndGet(), String.format("started monitoring, %s", Long.toString(parameters.getDashboardId())), parameters.getName(), parameters);
