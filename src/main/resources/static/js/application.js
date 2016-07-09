@@ -58,5 +58,13 @@ $(function () {
             angular.element($('#dashboard_modals_container')).scope().dashboard.update_monitor_order();
         }
     });
+
+    $(window).resize( function() {
+        var monitor = angular.element($('#dashboard_content')).scope().monitor;
+        $.each(monitor.monitors, function(key, value) {
+            monitor.setup_chart(key);
+        });
+    });
+
 });
 

@@ -125,3 +125,25 @@
 .chart.high .liquidFillGaugeWave {
     fill: #FFDDDD;
 }
+
+.chart .barChart.bar {
+    fill: steelblue;
+}
+
+.chart .barChart.bar:hover {
+    fill: brown;
+}
+
+.chart .axis {
+    font: 10px sans-serif;
+}
+
+.chart .barChart.axis path, .barChart.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.chart .barChart.x.axis path {
+    display: none;
+}

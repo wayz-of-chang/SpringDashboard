@@ -109,6 +109,19 @@ app.controller('MonitorController', function($scope, service) {
             var gauge = loadLiquidFillGauge("chart_" + id, 0, config);
             monitor.monitors[id].chart_config = config;
             monitor.monitors[id].chart_render = gauge;
+        } else if (monitor.monitors[id].chart == 'bar') {
+            if ($('#chart_' + id).size() == 0) {
+                return;
+            }
+            var config = barChartDefaultSettings();
+            config.minValue = 0;
+            config.maxValue = 100;
+            config.textVertPosition = 0.5;
+            config.textSize = 0.8;
+            d3.selectAll("#chart_" + id + " > *").remove();
+            var chart = loadBarChart("chart_" + id, [{key: 'n/a', value: 0}], config);
+            monitor.monitors[id].chart_config = config;
+            monitor.monitors[id].chart_render = chart;
         } else {
             monitor.monitors[id].show_raw = true;
         }
@@ -151,6 +164,44 @@ app.controller('MonitorController', function($scope, service) {
             monitor.monitors[id].chart_config.maxValue = max;
             monitor.monitors[id].chart_config.displayUnit = unit;
             monitor.monitors[id].chart_render.update(value);
+        }
+        if (monitor.monitors[id].chart == 'bar') {
+            var values = data[0];
+            var max = data[1];
+            var unit = data[2];
+            var mediumThreshold = data[3];
+            var highThreshold = data[4];
+            if (typeof unit == 'undefined') {
+                unit = '';
+            }
+            if (typeof mediumThreshold == 'undefined') {
+                mediumThreshold = 0.5;
+            }
+            if (typeof highThreshold == 'undefined') {
+                highThreshold = 0.9;
+            }
+            var percentage = 1.0 * value / max;
+            if (percentage <= mediumThreshold) {
+                $('#chart_' + id).removeClass('medium high').addClass('low');
+            }
+            if (percentage > mediumThreshold) {
+                $('#chart_' + id).removeClass('low high').addClass('medium');
+            }
+            if (percentage > highThreshold) {
+                $('#chart_' + id).removeClass('medium low').addClass('high');
+            }
+            if (unit == '%') {
+                value = Math.round(100 * percentage);
+                max = 100;
+            }
+
+            if (monitor.monitors[id].chart_config == null) {
+                monitor.setup_chart(id);
+                return;
+            }
+            monitor.monitors[id].chart_config.maxValue = max;
+            monitor.monitors[id].chart_config.displayUnit = unit;
+            monitor.monitors[id].chart_render.update(values);
         }
     };
     monitor.confirm_delete_popup = function(id, name) {
@@ -196,7 +247,7 @@ app.controller('MonitorController', function($scope, service) {
                     monitor.setup_chart(key);
                 }
             });
-        }, 500);
+        }, 1000);
     });
     $scope.$watch(function(scope) { return service.get_monitors(); },
         function(new_val, old_val) { monitor.monitors = new_val; }
