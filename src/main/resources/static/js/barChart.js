@@ -20,36 +20,29 @@ function loadBarChart(elementId, values, config) {
     if(config == null) config = barChartDefaultSettings();
 
     var chart = d3.select("#" + elementId);
+    var x_margin = 30;
     var width = parseInt(chart.style("width"));
     var height = parseInt(chart.style("height"));
     var x = d3.scale.ordinal().rangeRoundBands([0, width], .1).domain(values.map(function(value) { return value.key; }));
     var y = d3.scale.linear().range([height, 0]).domain([0, d3.max(values, function(value) { return value.value; })]);
     var xAxis = d3.svg.axis().scale(x).orient("bottom");
     var yAxis = d3.svg.axis().scale(y).orient("left").ticks(10, "%");
-    chart.append("g").attr("class", "barChart x axis").attr("transform", "translate(0, " + height + ")").call(xAxis);
-    chart.append("g").attr("class", "barChart y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text(config.displayUnit);
+    chart.append("g").attr("class", "barChart x axis").attr("transform", "translate(0, " + height + ")").call(d3.svg.axis().scale(x).orient("bottom"));
+    chart.append("g").attr("class", "barChart y axis").call(d3.svg.axis().scale(y).orient("left").ticks(10, "%")).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text(config.displayUnit);
     chart.attr("width", width).attr("height", height).append("g").attr("transform", "translate(0, 0)");
     var bars = chart.selectAll(".barChart.bar").data(values).enter().append("g").attr("class", "barChart bar");
-    bars.append("rect").attr("x", function(value) { return x(value.key); }).attr("y", function(value) { return y(value.value); }).attr("width", x.rangeBand()).attr("height", function(value) { return height - y(value.value); }).attr("fill", config.barColor);
-    bars.append("text").text(function(value) { return d3.format(",")(value.value)}).attr("x", function(value) { return x(value.key) + x.rangeBand()/2; }).attr("y", function(value) { return y(value.value) - 5; }).attr("text-anchor", "middle");
-
-    // Text where the wave does not overlap.
-    /*var text1 = gaugeGroup.append("text")
-        .text(textRounder(textStartValue) + config.displayUnit)
-        .attr("class", "liquidFillGaugeText")
-        .attr("text-anchor", "middle")
-        .attr("font-size", textPixels + "px")
-        .attr('transform','translate('+radius+','+textRiseScaleY(config.textVertPosition)+')');*/
 
     function ChartUpdater(){
         this.update = function(values){
             x.domain(values.map(function(value) { return value.key; }));
             y.domain([0,  d3.max(values, function(value) { return value.value; })]);
-            var bars = chart.selectAll(".barChart.bar").data(values);
+            var bars = chart.select(".barChart.bar");;
 
-            bars.select("rect").transition().duration(500).attr("y", function(value) { return y(value.value); }).attr("height", function(value) { return height - y(value.value); }).attr("fill", config.barColor);
+            bars.selectAll("rect").data(values).enter().append("rect");
+            bars.selectAll("rect").data(values).transition().duration(500).attr("x", function(value) { return x(value.key); }).attr("y", function(value) { return y(value.value); }).attr("fill", config.barColor).attr("width", x.rangeBand()).attr("height", function(value) { return height - y(value.value); });
 
-            bars.select("text").transition().duration(500).text(function(value) { return d3.format(",")(value.value)}).attr("y", function(value) { return y(value.value) - 5; });
+            bars.selectAll("text").data(values).enter().append("text");
+            bars.selectAll("text").data(values).transition().duration(500).text(function(value) { return d3.format(",")(value.value)}).attr("x", function(value) { return x(value.key) + x.rangeBand()/2; }).attr("y", function(value) { return y(value.value) - 5; }).attr("text-anchor", "middle");
            /* $.each(values, function(value) {
                 var newFinalValue = parseFloat(value).toFixed(2);
                 var textRounderUpdater = function(value){ return Math.round(value); };
