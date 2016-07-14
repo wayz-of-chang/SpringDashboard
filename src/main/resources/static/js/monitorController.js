@@ -116,10 +116,8 @@ app.controller('MonitorController', function($scope, service) {
             var config = barChartDefaultSettings();
             config.minValue = 0;
             config.maxValue = 100;
-            config.textVertPosition = 0.5;
-            config.textSize = 0.8;
             d3.selectAll("#chart_" + id + " > *").remove();
-            var chart = loadBarChart("chart_" + id, [{key: 'n/a', value: 0}], config);
+            var chart = loadBarChart("chart_" + id, [{key: "n/a", value: 0}], config);
             monitor.monitors[id].chart_config = config;
             monitor.monitors[id].chart_render = chart;
         } else {
@@ -180,26 +178,14 @@ app.controller('MonitorController', function($scope, service) {
             if (typeof highThreshold == 'undefined') {
                 highThreshold = 0.9;
             }
-            var percentage = 1.0 * value / max;
-            if (percentage <= mediumThreshold) {
-                $('#chart_' + id).removeClass('medium high').addClass('low');
-            }
-            if (percentage > mediumThreshold) {
-                $('#chart_' + id).removeClass('low high').addClass('medium');
-            }
-            if (percentage > highThreshold) {
-                $('#chart_' + id).removeClass('medium low').addClass('high');
-            }
-            if (unit == '%') {
-                value = Math.round(100 * percentage);
-                max = 100;
-            }
 
             if (monitor.monitors[id].chart_config == null) {
                 monitor.setup_chart(id);
                 return;
             }
             monitor.monitors[id].chart_config.maxValue = max;
+            monitor.monitors[id].chart_config.mediumThreshold = mediumThreshold;
+            monitor.monitors[id].chart_config.highThreshold = highThreshold;
             monitor.monitors[id].chart_config.displayUnit = unit;
             monitor.monitors[id].chart_render.update(values);
         }

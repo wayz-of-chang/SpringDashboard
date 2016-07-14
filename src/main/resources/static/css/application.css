@@ -127,11 +127,7 @@
 }
 
 .chart .barChart.bar {
-    fill: steelblue;
-}
-
-.chart .barChart.bar:hover {
-    fill: brown;
+    fill: black;
 }
 
 .chart .axis {
