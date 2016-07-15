@@ -364,6 +364,9 @@ app.factory('service', function($http, $rootScope) {
                 $rootScope.$apply();
             });
             service.stompClient.send("/monitoring/connect", {}, JSON.stringify({ 'name': name, 'dashboardId': service.user_settings.current_dashboard }));
+        }, function(message) {
+            console.log(message);
+            console.log('Unexpected disconnect.  Try reconnecting later.');
         });
     };
 

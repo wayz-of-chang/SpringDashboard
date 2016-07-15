@@ -44,7 +44,7 @@ public class MonitorSetting {
     }
 
     public enum Charts {
-        gauge, bar
+        status, gauge, bar
     }
 
     public long getId() {

@@ -18,6 +18,7 @@
     <script src="/js/angular-touch.js"></script>
     <script src="/js/bootstrap.js"></script>
     <script src="/js/d3.js"></script>
+    <script src="/js/statusIndicator.js"></script>
     <script src="/js/liquidFillGauge.js"></script>
     <script src="/js/barChart.js"></script>
     <script type="text/javascript">
@@ -160,12 +161,11 @@
                                 <div class="form-group" ng-show="mon.monitorType == 'script'">
                                     <label for="monitor_chart_{{mon.id}}">Chart Type</label>
                                     <select id="monitor_chart_{{mon.id}}" class="form-control input-sm" title="Chart Type" ng-model="mon.chart">
+                                        <option value="status">Status</option>
                                         <option value="gauge">Gauge</option>
                                         <option value="bar">Bar Chart</option>
-                                        <option value="pie">Pie Chart</option>
                                         <option value="line">Line Graph</option>
-                                        <option value="number">Number</option>
-                                        <option value="binary">Binary</option>
+                                        <option value="pie">Pie Chart</option>
                                     </select>
                                 </div>
                                 <div class="form-group">

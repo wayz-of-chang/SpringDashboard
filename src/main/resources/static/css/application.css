@@ -83,6 +83,40 @@
     border-style: dashed;
 }
 
+.status, .status-box, .status-label {
+    transition: fill .4s ease;
+}
+
+.status.low .status-box {
+    fill: #CCDDCC;
+    stroke-width: 5;
+    stroke: #77DD77;
+}
+
+.status.low .status-label {
+    fill: #99FF99;
+}
+
+.status.medium .status-box {
+    fill: #DDDDCC;
+    stroke-width: 5;
+    stroke: #DDDD77;
+}
+
+.status.medium .status-label {
+    fill: #FFFF99;
+}
+
+.status.high .status-box {
+    fill: #FFDDDD;
+    stroke-width: 5;
+    stroke: #FF7777;
+}
+
+.status.high .status-label {
+    fill: #FF9999;
+}
+
 .chart, .liquidFillGaugeCircle, .liquidFillGaugeText, .liquidFillGaugeWaveText, .liquidFillGaugeWave {
     transition: fill .4s ease;
 }
@@ -119,7 +153,7 @@
 .chart.high .liquidFillGaugeText {
     fill: #FF4444;
 }
-.chart.high .liquidFillGaugeWaveText.liquidFillGaugeWaveText {
+.chart.high .liquidFillGaugeWaveText {
     fill: #FF9999;
 }
 .chart.high .liquidFillGaugeWave {
@@ -143,3 +177,5 @@
 .chart .barChart.x.axis path {
     display: none;
 }
+
+.

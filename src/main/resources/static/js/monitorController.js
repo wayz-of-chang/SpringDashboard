@@ -94,7 +94,14 @@ app.controller('MonitorController', function($scope, service) {
         return '';
     };
     monitor.setup_chart = function(id) {
-        if (monitor.monitors[id].chart == 'gauge') {
+        if (monitor.monitors[id].chart == 'status') {
+            if ($('#chart_' + id).size() == 0) {
+                return;
+            }
+            d3.selectAll("#chart_" + id + " > *").remove();
+            var status = loadStatusIndicator("chart_" + id, 'n/a');
+            monitor.monitors[id].chart_render = status;
+        } else if (monitor.monitors[id].chart == 'gauge') {
             if ($('#chart_' + id).size() == 0) {
                 return;
             }
@@ -125,12 +132,30 @@ app.controller('MonitorController', function($scope, service) {
         }
     };
     monitor.update_chart = function(id, data) {
+        if (monitor.monitors[id].chart == 'status') {
+            var value = data.value;
+            var status = data.status;
+            if (status == 'success') {
+                $('#chart_' + id).removeClass('medium high').addClass('low');
+            }
+            if (status == 'warning') {
+                $('#chart_' + id).removeClass('low high').addClass('medium');
+            }
+            if (status == 'failure') {
+                $('#chart_' + id).removeClass('medium low').addClass('high');
+            }
+            if (monitor.monitors[id].chart_render == null) {
+                monitor.setup_chart(id);
+                return;
+            }
+            monitor.monitors[id].chart_render.update(value);
+        }
         if (monitor.monitors[id].chart == 'gauge') {
-            var value = data[0];
-            var max = data[1];
-            var unit = data[2];
-            var mediumThreshold = data[3];
-            var highThreshold = data[4];
+            var value = data.value;
+            var max = data.max;
+            var unit = data.unit;
+            var mediumThreshold = data.mediumThreshold;
+            var highThreshold = data.highThreshold;
             if (typeof unit == 'undefined') {
                 unit = '';
             }
@@ -164,11 +189,11 @@ app.controller('MonitorController', function($scope, service) {
             monitor.monitors[id].chart_render.update(value);
         }
         if (monitor.monitors[id].chart == 'bar') {
-            var values = data[0];
-            var max = data[1];
-            var unit = data[2];
-            var mediumThreshold = data[3];
-            var highThreshold = data[4];
+            var values = data.values;
+            var max = data.max;
+            var unit = data.unit;
+            var mediumThreshold = data.mediumThreshold;
+            var highThreshold = data.highThreshold;
             if (typeof unit == 'undefined') {
                 unit = '';
             }
