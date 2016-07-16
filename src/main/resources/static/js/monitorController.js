@@ -2,6 +2,7 @@ app.controller('MonitorController', function($scope, service) {
     var monitor = this;
     monitor.current = "1";
     monitor.monitoring = false;
+    monitor.automatic_reconnect = false;
     monitor.monitors = {};
     monitor.flipped = {};
     monitor.new_monitor = {
@@ -271,6 +272,9 @@ app.controller('MonitorController', function($scope, service) {
     );
     $scope.$watch(function(scope) { return service.get_monitoring_status(); },
         function(new_val, old_val) { monitor.monitoring = new_val; }
+    );
+    $scope.$watch(function(scope) { return service.get_reconnect_status(); },
+        function(new_val, old_val) { monitor.automatic_reconnect = new_val; }
     );
     $scope.$watch(function(scope) { return service.get_monitor_marked_for_deletion(); },
         function(new_val, old_val) {

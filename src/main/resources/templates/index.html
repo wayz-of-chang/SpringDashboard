@@ -207,6 +207,9 @@
             <div class="panel-body flex">
                 <button type="button" ng-click="monitor.add_monitor()" class="btn btn-default"><i class="fa fa-plus-circle"></i> Add Monitor</button>
                 <button type="button" ng-click="monitor.toggle_monitoring()" class="btn" ng-class="{'btn-success': !monitor.monitoring, 'btn-danger': monitor.monitoring}"><i class="fa" ng-class="{'fa-play-circle': !monitor.monitoring, 'fa-stop-circle': monitor.monitoring}"></i> {{monitor.monitoring ? "Stop Monitoring" : "Start Monitoring"}}</button>
+                <div class="pager">
+                    <i class="fa fa-refresh" ng-class="{'fa-pulse': !monitor.monitoring &amp;&amp; monitor.automatic_reconnect, 'success': monitor.monitoring &amp;&amp; monitor.automatic_reconnect, 'disabled': !monitor.automatic_reconnect}"></i>
+                </div>
             </div>
         </div>
     </div>

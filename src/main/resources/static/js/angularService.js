@@ -21,6 +21,8 @@ app.factory('service', function($http, $rootScope) {
     };
     service.monitor_results = {};
     service.monitoring = false;
+    service.automatic_reconnect = false;
+    service.connection_attempts = 0;
     service.marked_delete_monitor = {
         id: '',
         name: ''
@@ -340,7 +342,12 @@ app.factory('service', function($http, $rootScope) {
         return service.monitoring;
     };
 
+    service.get_reconnect_status = function() {
+        return service.automatic_reconnect;
+    };
+
     service.toggle_monitoring_status = function() {
+        service.automatic_reconnect = false;
         if (service.monitoring) {
             service.disconnect_monitors();
         } else {
@@ -355,6 +362,7 @@ app.factory('service', function($http, $rootScope) {
     service.connect_monitors = function() {
         var cookie = JSON.parse($.cookie('csrf'));
         var socket = new SockJS('/monitor_socket');
+        service.connection_attempts += 1;
         service.stompClient = Stomp.over(socket);
         service.stompClient.connect({'X-CSRF-TOKEN': cookie.csrf}, function(frame) {
             console.log('Connected: ' + frame);
@@ -364,9 +372,18 @@ app.factory('service', function($http, $rootScope) {
                 $rootScope.$apply();
             });
             service.stompClient.send("/monitoring/connect", {}, JSON.stringify({ 'name': name, 'dashboardId': service.user_settings.current_dashboard }));
+            service.automatic_reconnect = true;
+            service.connection_attempts -= 1;
         }, function(message) {
-            console.log(message);
-            console.log('Unexpected disconnect.  Try reconnecting later.');
+            if (message.indexOf("Whoops! Lost connection") > -1) {
+                console.log('Unexpected disconnect.  Try reconnecting later.');
+                service.disconnect_monitors();
+                $rootScope.$apply();
+                if (service.automatic_reconnect && service.connection_attempts <= 1) {
+                    setTimeout(service.connect_monitors, 5000);
+                }
+            }
+            service.connection_attempts -= 1;
         });
     };
 
