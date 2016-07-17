@@ -58,6 +58,7 @@ app.controller('UserController', function($scope, service) {
                 user.logged_in = true;
                 var cookie = JSON.stringify({csrf: response.headers('X-CSRF-TOKEN')});
                 $.cookie('csrf', cookie);
+                service.update_session_status(response.headers('X-CSRF-TOKEN'));
                 user.success = true;
                 user.success_message = "User successfully logged in: " + response.data.data.username;
                 var data = {

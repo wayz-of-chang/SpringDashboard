@@ -32,6 +32,7 @@ app.factory('service', function($http, $rootScope) {
         monitor_order: {}
     };
     service.stompClient = null;
+    service.session_status = 'expired';
 
     service.create_user = function(data, callback) {
         return $http.post('/users/create', data, {headers: {'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')}}).then(function(response) {
@@ -69,6 +70,7 @@ app.factory('service', function($http, $rootScope) {
         return $http.post('/users/update_settings', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
             console.log(response);
             //success
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
             return callback(response);
         }, function(response) {
             console.log(response);
@@ -102,11 +104,25 @@ app.factory('service', function($http, $rootScope) {
         return service.user[key];
     };
 
+    service.update_session_status = function(csrf_token) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        if (cookie.csrf == csrf_token) {
+            service.session_status = 'valid';
+        } else {
+            service.session_status = 'expired';
+        }
+    };
+
+    service.get_session_status = function() {
+        return service.session_status;
+    };
+
     service.create_dashboard = function(data, callback) {
         var cookie = JSON.parse($.cookie('csrf'));
         return $http.post('/dashboards/create', data, {headers: {'X-CSRF-TOKEN':cookie.csrf}}).then(function(response) {
             console.log(response);
             //success
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
             service.set_dashboard(response.data.data);
             return callback(response);
         }, function(response) {
@@ -121,6 +137,7 @@ app.factory('service', function($http, $rootScope) {
         return $http.post('/dashboards/get', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
             console.log(response);
             //success
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
             service.clear_dashboards();
             service.set_dashboards(response.data.data);
             var current_dashboard = service.user_settings.current_dashboard;
@@ -141,6 +158,7 @@ app.factory('service', function($http, $rootScope) {
         return $http.post('/dashboards/edit', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
             console.log(response);
             //success
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
             service.set_dashboard(response.data.data);
             return callback(response);
         }, function(response) {
@@ -155,6 +173,7 @@ app.factory('service', function($http, $rootScope) {
         return $http.post('/dashboards/delete', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
             console.log(response);
             //success
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
             delete service.dashboards[response.data.data.id];
             return callback(response);
         }, function(response) {
@@ -180,6 +199,7 @@ app.factory('service', function($http, $rootScope) {
         return $http.post('/monitors/create', data, {headers: {'X-CSRF-TOKEN':cookie.csrf}}).then(function(response) {
             console.log(response);
             //success
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
             service.set_monitor(response.data.data);
             service.user_settings.monitor_order[service.user_settings.current_dashboard] = [].concat(service.user_settings.monitor_order[service.user_settings.current_dashboard], response.data.data.id);
             return callback(response);
@@ -195,6 +215,7 @@ app.factory('service', function($http, $rootScope) {
         return $http.post('/monitors/get', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
             console.log(response);
             //success
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
             service.clear_monitors();
             service.set_monitors(response.data.data);
             return callback(response);
@@ -210,8 +231,9 @@ app.factory('service', function($http, $rootScope) {
         var data = service.get_monitor(id);
         return $http.post('/monitors/update_settings', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
             console.log(response);
-            service.set_monitor(response.data.data);
             //success
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
+            service.set_monitor(response.data.data);
             return callback(response);
         }, function(response) {
             console.log(response);
@@ -225,6 +247,7 @@ app.factory('service', function($http, $rootScope) {
         return $http.post('/monitors/delete', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
             console.log(response);
             //success
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
             delete service.monitors[response.data.data.id];
             service.marked_delete_monitor.id = '';
             service.marked_delete_monitor.name = '';
@@ -369,6 +392,10 @@ app.factory('service', function($http, $rootScope) {
             service.monitoring = true;
             service.stompClient.subscribe('/results/' + service.user_settings.current_dashboard + '/instant', function(response) {
                 service.update_monitor_results(JSON.parse(response.body).data);
+                $rootScope.$apply();
+            });
+            service.stompClient.subscribe('/info', function(response) {
+                service.update_session_status(response.headers('X-CSRF-TOKEN'));
                 $rootScope.$apply();
             });
             service.stompClient.send("/monitoring/connect", {}, JSON.stringify({ 'name': name, 'dashboardId': service.user_settings.current_dashboard }));

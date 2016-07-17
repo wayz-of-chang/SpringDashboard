@@ -208,7 +208,8 @@
                 <button type="button" ng-click="monitor.add_monitor()" class="btn btn-default"><i class="fa fa-plus-circle"></i> Add Monitor</button>
                 <button type="button" ng-click="monitor.toggle_monitoring()" class="btn" ng-class="{'btn-success': !monitor.monitoring, 'btn-danger': monitor.monitoring}"><i class="fa" ng-class="{'fa-play-circle': !monitor.monitoring, 'fa-stop-circle': monitor.monitoring}"></i> {{monitor.monitoring ? "Stop Monitoring" : "Start Monitoring"}}</button>
                 <div class="pager">
-                    <i class="fa fa-refresh" ng-class="{'fa-pulse': !monitor.monitoring &amp;&amp; monitor.automatic_reconnect, 'success': monitor.monitoring &amp;&amp; monitor.automatic_reconnect, 'disabled': !monitor.automatic_reconnect}"></i>
+                    <i class="fa fa-refresh" ng-class="{'fa-pulse': !monitor.monitoring &amp;&amp; monitor.automatic_reconnect, 'success': monitor.monitoring &amp;&amp; monitor.automatic_reconnect, 'disabled': !monitor.automatic_reconnect}" title="Monitoring Status"></i>
+                    <i class="fa fa-exclamation-circle" ng-class="{'failure': monitor.session_expired, 'disabled': !monitor.session_expired}" title="Session Status"></i>
                 </div>
             </div>
         </div>
@@ -216,7 +217,7 @@
     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
         <div class="panel panel-default monitor">
             <div class="panel-heading clearfix">
-                Chat
+                Global Chat
             </div>
             <div class="panel-body flex">
                 <div>
