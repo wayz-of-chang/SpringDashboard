@@ -56,8 +56,6 @@ app.controller('UserController', function($scope, service) {
         service.login(data, function(response) {
             if (response.status >= 200 && response.status < 300) {
                 user.logged_in = true;
-                var cookie = JSON.stringify({csrf: response.headers('X-CSRF-TOKEN')});
-                $.cookie('csrf', cookie);
                 service.update_session_status(response.headers('X-CSRF-TOKEN'));
                 user.success = true;
                 user.success_message = "User successfully logged in: " + response.data.data.username;
