@@ -437,13 +437,15 @@ app.factory('service', function($http, $rootScope) {
             service.automatic_reconnect = true;
             service.connection_attempts -= 1;
         }, function(message) {
-            if (message.indexOf("Whoops! Lost connection") > -1) {
+            if (type of message == "object") {
+                console.log(message.headers.message);
+            } else if (message.indexOf("Whoops! Lost connection") > -1) {
                 console.log('Unexpected disconnect.  Try reconnecting later.');
-                service.disconnect_monitors();
-                $rootScope.$apply();
-                if (service.automatic_reconnect && service.connection_attempts <= 1) {
-                    setTimeout(service.connect_monitors, 5000);
-                }
+            }
+            service.disconnect_monitors();
+            $rootScope.$apply();
+            if (service.automatic_reconnect && service.connection_attempts <= 1) {
+                setTimeout(service.connect_monitors, 5000);
             }
             service.connection_attempts -= 1;
         });
