@@ -64,6 +64,22 @@ app.factory('service', function($http, $rootScope) {
         });
     };
 
+    service.relogin = function(callback) {
+        var data = service.user;
+        return $http.post('/users/login', data, {headers: {'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')}}).then(function(response) {
+            console.log(response);
+            //success
+            var cookie = JSON.stringify({csrf: response.headers('X-CSRF-TOKEN')});
+            $.cookie('csrf', cookie);
+            return callback(response);
+        }, function(response) {
+            console.log(response);
+            //fail
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
+            return callback(response);
+        });
+    };
+
     service.save_user_settings = function(callback) {
         var cookie = JSON.parse($.cookie('csrf'));
         var data = {
@@ -114,15 +130,24 @@ app.factory('service', function($http, $rootScope) {
             service.session_status = 'valid';
         } else {
             service.session_status = 'expired';
-            service.refresh_csrf();
+            service.refresh_csrf(service.relogin);
         }
     };
 
-    service.refresh_csrf = function() {
-        var csrf_token;
-        var cookie = JSON.stringify({csrf: csrf_token});
-        $.cookie('csrf', cookie);
-        $('meta[name="_csrf"]').attr('content', csrf_token);
+    service.refresh_csrf = function(callback) {
+        $http.get('/csrf', null, {}).then(function(response) {
+            console.log(response);
+            //success
+            var csrf_token = response.headers('X-CSRF-TOKEN');
+            var cookie = JSON.stringify({csrf: csrf_token});
+            $.cookie('csrf', cookie);
+            $('meta[name="_csrf"]').attr('content', csrf_token);
+            return callback(csrf_token);
+        }, function(response) {
+            console.log(response);
+            //fail
+            return;
+        });
     };
 
     service.get_session_status = function() {
@@ -395,6 +420,7 @@ app.factory('service', function($http, $rootScope) {
     };
 
     service.connect_monitors = function() {
+        service.update_session_status('');
         var cookie = JSON.parse($.cookie('csrf'));
         var socket = new SockJS('/monitor_socket');
         service.connection_attempts += 1;
@@ -402,6 +428,7 @@ app.factory('service', function($http, $rootScope) {
         service.stompClient.connect({'X-CSRF-TOKEN': cookie.csrf}, function(frame) {
             console.log('Connected: ' + frame);
             service.monitoring = true;
+            service.update_session_status(cookie.csrf);
             service.stompClient.subscribe('/results/' + service.user_settings.current_dashboard + '/instant', function(response) {
                 service.update_monitor_results(JSON.parse(response.body).data);
                 $rootScope.$apply();

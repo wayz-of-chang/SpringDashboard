@@ -22,7 +22,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/", "/ping", "/system", "/script", "/test", "/fonts/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/", "/csrf", "/ping", "/system", "/script", "/test", "/fonts/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/users/create", "/users/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/dashboards/get").hasAnyAuthority("R_USER","RW_USER","ADMIN")
                 .antMatchers(HttpMethod.POST, "/dashboards/create", "/dashboards/edit", "/dashboards/delete").hasAnyAuthority("RW_USER","ADMIN")
