@@ -15,4 +15,9 @@ public class HomeController {
     public String index(Model model) {
         return "index";
     }
+
+    @RequestMapping("/csrf")
+    public String csrf(Model model) {
+        return "csrf";
+    }
 }
