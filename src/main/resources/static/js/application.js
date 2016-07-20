@@ -66,5 +66,16 @@ $(function () {
         });
     });
 
+    var cookie = JSON.parse($.cookie('csrf'));
+    var csrf = cookie.csrf;
+    cookie = JSON.parse($.cookie('remember_me'));
+    var remember_me;
+    if (cookie != null) {
+        remember_me = cookie.remember_me;
+    }
+    if (csrf > "" && remember_me) {
+        angular.element(document.body).injector().get('service').get_current_user();
+    }
+
 });
 

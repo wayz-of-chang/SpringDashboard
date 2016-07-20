@@ -95,6 +95,11 @@
                                         <option value="RW_USER">Power User</option>
                                     </select>
                                 </div>
+                                <div class="form-group checkbox" ng-show="user.mode.login">
+                                    <label class="pull-right">
+                                        <input type="checkbox" ng-model="user.remember_me" /> Remember Me
+                                    </label>
+                                </div>
                                 <div class="form-group clearfix btn-toolbar">
                                     <button type="submit" ng-click="user.login()" ng-class="{'btn-primary': user.mode.login, 'btn-default': user.mode.register}" class="btn pull-right">Login</button>&nbsp;
                                     <button type="submit" ng-click="user.register()" ng-class="{'btn-primary': user.mode.register, 'btn-default': user.mode.login}" class="btn pull-right">Register</button>

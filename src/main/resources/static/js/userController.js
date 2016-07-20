@@ -2,6 +2,7 @@ app.controller('UserController', function($scope, service) {
     var user = this;
     user.show_password = false;
     user.confirm_password = "";
+    user.remember_me = false;
     user.error = false;
     user.error_message = "";
     user.success = false;
@@ -11,7 +12,7 @@ app.controller('UserController', function($scope, service) {
         register: false,
         login: true
     };
-    user.logged_in = false;
+    user.logged_in = service.logged_in;
     user.user = service.user;
     user.register = function() {
         if (user.mode.register) {
@@ -56,14 +57,17 @@ app.controller('UserController', function($scope, service) {
         service.login(data, function(response) {
             if (response.status >= 200 && response.status < 300) {
                 user.logged_in = true;
-                service.update_session_status(response.headers('X-CSRF-TOKEN'));
                 user.success = true;
                 user.success_message = "User successfully logged in: " + response.data.data.username;
-                var data = {
-                    userId: service.get_user_property('id')
-                };
+                if (user.remember_me) {
+                    var remember_me = JSON.stringify({remember_me: true});
+                    $.cookie('remember_me', remember_me);
+                } else {
+                    $.cookie('u', null);
+                    $.cookie('p', null);
+                    $.cookie('remember_me', null);
+                }
                 setTimeout(function() { $('body').trigger('click'); user.success = false; $scope.$digest(); }, 3000);
-                service.query_dashboards(data, function(response) {});
             } else {
                 user.error = true;
                 user.error_message = response.data.error + ": " + response.data.message;
@@ -90,4 +94,7 @@ app.controller('UserController', function($scope, service) {
         }
         return true;
     }
+    $scope.$watch(function(scope) { return service.get_login_status(); },
+        function(new_val, old_val) { user.logged_in = new_val; }
+    );
 });

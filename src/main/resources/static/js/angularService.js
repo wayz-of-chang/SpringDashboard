@@ -33,6 +33,7 @@ app.factory('service', function($http, $rootScope) {
     };
     service.stompClient = null;
     service.session_status = 'expired';
+    service.logged_in = false;
 
     service.create_user = function(data, callback) {
         return $http.post('/users/create', data, {headers: {'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')}}).then(function(response) {
@@ -54,7 +55,15 @@ app.factory('service', function($http, $rootScope) {
             //success
             var cookie = JSON.stringify({csrf: response.headers('X-CSRF-TOKEN')});
             $.cookie('csrf', cookie);
+            var username = JSON.stringify({username: response.data.data.username});
+            $.cookie('u', username);
+            var password = JSON.stringify({password: service.user.password});
+            $.cookie('p', password);
             service.set_user(response.data.data);
+            var data = {
+                userId: service.get_user_property('id')
+            };
+            service.query_dashboards(data, function(response) {});
             return callback(response);
         }, function(response) {
             console.log(response);
@@ -65,19 +74,65 @@ app.factory('service', function($http, $rootScope) {
     };
 
     service.relogin = function(callback) {
+        var cookie = JSON.parse($.cookie('remember_me'));
+        var remember_me;
+        if (cookie != null) {
+            remember_me = cookie.remember_me;
+        }
+        var data = {};
+        if (remember_me) {
+            cookie = JSON.parse($.cookie('u'));
+            if (cookie != null) {
+                service.user.username = cookie.username;
+            }
+            cookie = JSON.parse($.cookie('p'));
+            if (cookie != null) {
+                service.user.password = cookie.password;
+            }
+        }
         var data = service.user;
+        if (data.username <= '' || data.password <= '') {
+            return;
+        }
         return $http.post('/users/login', data, {headers: {'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')}}).then(function(response) {
             console.log(response);
             //success
             var cookie = JSON.stringify({csrf: response.headers('X-CSRF-TOKEN')});
             $.cookie('csrf', cookie);
-            return callback(response);
+            service.logged_in = true;
+            return cookie;
         }, function(response) {
             console.log(response);
             //fail
             service.update_session_status(response.headers('X-CSRF-TOKEN'));
-            return callback(response);
+            return;
         });
+    };
+
+    service.get_current_user = function(callback) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        return $http.post('/users/get', {}, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
+            console.log(response);
+            //success
+            var cookie = JSON.stringify({csrf: response.headers('X-CSRF-TOKEN')});
+            $.cookie('csrf', cookie);
+            $('meta[name="_csrf"]').attr('content', response.headers('X-CSRF-TOKEN'));
+            service.set_user(response.data.data);
+            var data = {
+                userId: service.get_user_property('id')
+            };
+            service.query_dashboards(data, function(response) {});
+            return response;
+        }, function(response) {
+            console.log(response);
+            //fail
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
+            return response;
+        });
+    };
+
+    service.get_login_status = function() {
+        return service.logged_in;
     };
 
     service.save_user_settings = function(callback) {
@@ -437,7 +492,7 @@ app.factory('service', function($http, $rootScope) {
             service.automatic_reconnect = true;
             service.connection_attempts -= 1;
         }, function(message) {
-            if (type of message == "object") {
+            if (typeof message == "object") {
                 console.log(message.headers.message);
             } else if (message.indexOf("Whoops! Lost connection") > -1) {
                 console.log('Unexpected disconnect.  Try reconnecting later.');

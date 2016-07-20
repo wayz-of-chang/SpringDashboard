@@ -77,4 +77,17 @@ public class UserController {
         }
         throw new Exception("Could not update user settings: " + errorMessage);
     }
+
+    @RequestMapping(value="/users/get", method=RequestMethod.POST)
+    public Message get_user(@RequestBody UserParameters parameters) throws Exception {
+        String errorMessage;
+        try {
+            Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            //CurrentUser user = detailsService.loadUserByUsername(parameters.getUsername());
+            return new Message(counter.incrementAndGet(), user, "get current user", parameters);
+        } catch (Exception e) {
+            errorMessage = e.getMessage();
+        }
+        throw new Exception("Could not retrieve current user: " + errorMessage);
+    }
 }
