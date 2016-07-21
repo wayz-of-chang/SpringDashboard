@@ -62,6 +62,9 @@ public class ScriptClient extends Client {
             error = errorFuture.get();
             outputFuture.cancel(false);
             errorFuture.cancel(false);
+            process.getInputStream().close();
+            process.getOutputStream().close();
+            process.getErrorStream().close();
             process.destroy();
             pool.shutdown();
         } catch (Throwable throwable) {
@@ -91,6 +94,7 @@ class StreamGobbler implements Callable<ArrayList<String>> {
             this.outputBufferedReader.close();
         } catch (IOException e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
         return this.output;
     }

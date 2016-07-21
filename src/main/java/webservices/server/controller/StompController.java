@@ -37,14 +37,13 @@ public class StompController {
         this.dashboardService = dashboardService;
     }
 
-    private void getStats(long dashboardId) throws Exception {
+    private void getStats(long dashboardId, RestTemplate restTemplate, SimpMessagingTemplate template, DashboardService dashboardService, long counter) throws Exception {
         Dashboard dashboard;
         Set<Monitor> monitors;
         HashMap<Long, Message> responses = new HashMap<Long, Message>();
         try {
             dashboard = dashboardService.getDashboardById(dashboardId).get();
             monitors = dashboard.getMonitors();
-            RestTemplate restTemplate = new RestTemplate();
             for (Monitor monitor: monitors) {
                 HashMap<MonitorSetting.Setting, String> settings = monitor.settingsMap();
                 String monitorUrl = "";
@@ -63,7 +62,7 @@ public class StompController {
             e.printStackTrace();
             throw new Exception("Could not get stats: " + e.getMessage());
         }
-        template.convertAndSend("/results/" + dashboardId + "/instant", new Message(counter.incrementAndGet(), responses, String.format("monitor results for %s (%s)", dashboard.getName(), Long.toString(dashboardId)), new MonitorParameters()));
+        template.convertAndSend("/results/" + dashboardId + "/instant", new Message(counter, responses, String.format("monitor results for %s (%s)", dashboard.getName(), Long.toString(dashboardId)), new MonitorParameters()));
     }
 
 
@@ -83,9 +82,10 @@ public class StompController {
                 @Override
                 public void run() {
                     try {
-                        getStats(dashboardId);
+                        getStats(dashboardId, new RestTemplate(), template, dashboardService, counter.incrementAndGet());
                     } catch(Exception e) {
                         System.out.println("Error occurred while getting stats for " + Long.toString(dashboardId) + ": " + e.getMessage());
+                        Thread.currentThread().interrupt();
                     }
                 }
             }, 5000);
