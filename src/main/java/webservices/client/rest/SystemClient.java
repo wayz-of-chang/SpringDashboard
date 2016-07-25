@@ -16,6 +16,10 @@ public class SystemClient extends Client {
 
     @RequestMapping("/system")
     public Message system() {
+        return new Message(counter.incrementAndGet(), determineSystemInfo(), name, new Parameters(name, "system"));
+    }
+
+    private SystemData determineSystemInfo() {
         SystemInfo systemInfo = new SystemInfo();
         HardwareAbstractionLayer hardware = systemInfo.getHardware();
         CentralProcessor cpu = hardware.getProcessor();
@@ -23,6 +27,27 @@ public class SystemClient extends Client {
         OSFileStore[] fs = hardware.getFileStores();
         NetworkIF[] network = hardware.getNetworkIFs();
 
-        return new Message(counter.incrementAndGet(), new SystemData(cpu, mem, fs, network), name, new Parameters(name, "system"));
+        double cpuUsed = cpu.getSystemCpuLoad();
+        double cpuTotal = 1;
+        long memTotal = mem.getTotal();
+        long memUsed = memTotal - mem.getAvailable();
+        long fsTotal = 0;
+        long fsUsed = 0;
+        for (OSFileStore fileSystem : fs) {
+            fsTotal += fileSystem.getTotalSpace();
+            fsUsed += fileSystem.getTotalSpace() - fileSystem.getUsableSpace();
+        }
+        long bytesSent = 0;
+        long bytesRecv = 0;
+        for (NetworkIF net : network) {
+            if (bytesSent < net.getBytesSent()) {
+                bytesSent = net.getBytesSent();
+            }
+            if (bytesRecv < net.getBytesRecv()) {
+                bytesRecv = net.getBytesRecv();
+            }
+        }
+
+        return new SystemData(cpuUsed, cpuTotal, memUsed, memTotal, fsUsed, fsTotal, bytesSent, bytesRecv);
     }
 }

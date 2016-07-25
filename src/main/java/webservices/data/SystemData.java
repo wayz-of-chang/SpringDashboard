@@ -1,10 +1,6 @@
 package webservices.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import oshi.hardware.CentralProcessor;
-import oshi.hardware.GlobalMemory;
-import oshi.hardware.NetworkIF;
-import oshi.software.os.OSFileStore;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SystemData {
@@ -17,24 +13,15 @@ public class SystemData {
     private long bytesSent;
     private long bytesRecv;
 
-    public SystemData(CentralProcessor cpu, GlobalMemory mem, OSFileStore[] fs, NetworkIF[] network) {
-        this.cpuUsed = cpu.getSystemCpuLoad();
-        this.cpuTotal = 1;
-        this.memTotal = mem.getTotal();
-        this.memUsed = this.memTotal - mem.getAvailable();
-        for (OSFileStore fileSystem : fs) {
-            this.fsTotal += fileSystem.getTotalSpace();
-            this.fsUsed += fileSystem.getTotalSpace() - fileSystem.getUsableSpace();
-        }
-        for (NetworkIF net : network) {
-            if (this.bytesSent < net.getBytesSent()) {
-                this.bytesSent = net.getBytesSent();
-            }
-            if (this.bytesRecv < net.getBytesRecv()) {
-                this.bytesRecv = net.getBytesRecv();
-            }
-        }
-
+    public SystemData(double cpuUsed, double cpuTotal, long memUsed, long memTotal, long fsUsed, long fsTotal, long bytesSent, long bytesRecv) {
+        this.cpuUsed = cpuUsed;
+        this.cpuTotal = cpuTotal;
+        this.memTotal = memTotal;
+        this.memUsed = memUsed;
+        this.fsTotal = fsTotal;
+        this.fsUsed = fsUsed;
+        this.bytesSent = bytesSent;
+        this.bytesRecv = bytesRecv;
     }
 
     public double getCpuUsed() { return cpuUsed; }
