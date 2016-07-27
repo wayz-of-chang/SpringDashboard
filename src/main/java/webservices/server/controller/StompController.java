@@ -41,6 +41,7 @@ public class StompController {
         Dashboard dashboard;
         Set<Monitor> monitors;
         HashMap<Long, Message> responses = new HashMap<Long, Message>();
+        HashMap<String, Message> systemResponses = new HashMap<String, Message>();
         try {
             dashboard = dashboardService.getDashboardById(dashboardId).get();
             monitors = dashboard.getMonitors();
@@ -52,10 +53,18 @@ public class StompController {
                 }
                 if (monitorUrl != null && !monitorUrl.equals("")) {
                     monitorUrl = String.format("%s/%s?name=%s", monitorUrl, settings.getOrDefault(MonitorSetting.Setting.TYPE, ""), settings.getOrDefault(MonitorSetting.Setting.SCRIPT, ""));
-                    Message response = restTemplate.getForObject(monitorUrl, Message.class);
-                    responses.put(monitor.getId(), response);
-                    //System.out.println(monitorUrl);
-                    //System.out.println(response.toString());
+                    boolean systemMonitor = MonitorSetting.Types.valueOf(settings.getOrDefault(MonitorSetting.Setting.TYPE, "")).equals(MonitorSetting.Types.system);
+                    if (systemMonitor && systemResponses.get(monitorUrl) != null) {
+                        responses.put(monitor.getId(), systemResponses.get(monitorUrl));
+                    } else {
+                        Message response = restTemplate.getForObject(monitorUrl, Message.class);
+                        responses.put(monitor.getId(), response);
+                        //System.out.println(monitorUrl);
+                        //System.out.println(response.toString());
+                        if (systemMonitor) {
+                            systemResponses.put(monitorUrl, response);
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
