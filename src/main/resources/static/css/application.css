@@ -190,4 +190,6 @@
     display: none;
 }
 
-.
+.chart .pieChart path {
+    stroke: #FFF;
+}

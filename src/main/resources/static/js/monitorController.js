@@ -129,6 +129,17 @@ app.controller('MonitorController', function($scope, service) {
             var chart = loadBarChart("chart_" + id, [{key: "n/a", value: 0}], config);
             monitor.monitors[id].chart_config = config;
             monitor.monitors[id].chart_render = chart;
+        } else if (monitor.monitors[id].chart == 'pie') {
+            if ($('#chart_' + id).size() == 0) {
+                return;
+            }
+            var config = pieChartDefaultSettings();
+            config.minValue = 0;
+            config.maxValue = 100;
+            d3.selectAll("#chart_" + id + " > *").remove();
+            var chart = loadPieChart("chart_" + id, [{key: "n/a", color: "black", value: 1}], config);
+            monitor.monitors[id].chart_config = config;
+            monitor.monitors[id].chart_render = chart;
         } else {
             monitor.monitors[id].show_raw = true;
         }
@@ -214,6 +225,15 @@ app.controller('MonitorController', function($scope, service) {
             monitor.monitors[id].chart_config.mediumThreshold = mediumThreshold;
             monitor.monitors[id].chart_config.highThreshold = highThreshold;
             monitor.monitors[id].chart_config.displayUnit = unit;
+            monitor.monitors[id].chart_render.update(values);
+        }
+        if (monitor.monitors[id].chart == 'pie') {
+            var values = data;
+
+            if (monitor.monitors[id].chart_config == null) {
+                monitor.setup_chart(id);
+                return;
+            }
             monitor.monitors[id].chart_render.update(values);
         }
     };
