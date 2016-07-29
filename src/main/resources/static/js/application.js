@@ -59,11 +59,20 @@ $(function () {
         }
     });
 
+    var document_width;
+
+    $(document).ready(function() {
+        document_width = $(document).width();
+    });
+
     $(window).resize( function() {
-        var monitor = angular.element($('#dashboard_content')).scope().monitor;
-        $.each(monitor.monitors, function(key, value) {
-            monitor.setup_chart(key);
-        });
+        if (document_width != $(document).width()) {
+            var monitor = angular.element($('#dashboard_content')).scope().monitor;
+            $.each(monitor.monitors, function(key, value) {
+                monitor.setup_chart(key);
+            });
+            document_width = $(document).width();
+        }
     });
 
     var cookie = JSON.parse($.cookie('csrf'));

@@ -24,7 +24,7 @@ function loadBarChart(elementId, values, config) {
     var margin = {top: 20, right: 10, bottom: 30, left: 30};
     var width = parseInt(chart.style("width"));
     var height = parseInt(chart.style("height"));
-    chart = chart.attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    chart = chart.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     var x = d3.scale.ordinal().rangeRoundBands([0, width - margin.left - margin.right], .1).domain(values.map(function(value) { return value.key; }));
     var xAxis = d3.svg.axis().scale(x).orient("bottom");
     chart.append("g").attr("class", "barChart x axis").attr("transform", "translate(0," + (height - margin.top - margin.bottom) + ")").call(d3.svg.axis().scale(x).orient("bottom"));

@@ -12,7 +12,7 @@ function loadPieChart(elementId, values, config) {
     var width = parseInt(chart.style("width"));
     var height = parseInt(chart.style("height"));
     var radius = parseInt(Math.min(width, height) / 2);
-    chart = chart.attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width/2 + "," + height/2 + ")").attr("class", "pieChart");
+    chart = chart.append("g").attr("transform", "translate(" + width/2 + "," + height/2 + ")").attr("class", "pieChart");
 
     // create function to draw the arcs of the pie slices.
     var arc = d3.svg.arc().outerRadius(radius - 10).innerRadius(0);
