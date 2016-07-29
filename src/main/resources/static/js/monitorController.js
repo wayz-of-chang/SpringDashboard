@@ -134,10 +134,8 @@ app.controller('MonitorController', function($scope, service) {
                 return;
             }
             var config = pieChartDefaultSettings();
-            config.minValue = 0;
-            config.maxValue = 100;
             d3.selectAll("#chart_" + id + " > *").remove();
-            var chart = loadPieChart("chart_" + id, [{key: "n/a", color: "black", value: 1}], config);
+            var chart = loadPieChart("chart_" + id, [{key: "n/a", color: "#000000", value: 1}], config);
             monitor.monitors[id].chart_config = config;
             monitor.monitors[id].chart_render = chart;
         } else {

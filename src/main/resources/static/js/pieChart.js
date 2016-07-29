@@ -1,19 +1,7 @@
 
 function pieChartDefaultSettings(){
     return {
-        minValue: 0, // The gauge minimum value.
-        maxValue: 100, // The gauge maximum value.
-        lowBarColor: "#77DD77", // The color of the bar.
-        mediumBarColor: "#DDDD77", // The color of the bar.
-        highBarColor: "#FF7777", // The color of the bar.
-        lowTextColor: "#44DD44", // The color of the text.
-        mediumTextColor: "#DDDD44", // The color of the text.
-        highTextColor: "#FF4444", // The color of the text.
-        transitionTime: 1000, // The amount of time in milliseconds for the wave to rise from 0 to it's final height.
-        valueCountUp: true, // If true, the displayed value counts up from 0 to it's final value upon loading. If false, the final value is displayed.
-        displayUnit: "%", // If true, a % symbol is displayed after the value.
-        mediumThreshold: 0.5, // The color of the value text when the wave does not overlap it.
-        highThreshold: 0.9 // The color of the value text when the wave overlaps it.
+        transitionTime: 500, // The amount of time in milliseconds for the wave to rise from 0 to it's final height.
     };
 }
 
@@ -21,7 +9,6 @@ function loadPieChart(elementId, values, config) {
     if(config == null) config = pieChartDefaultSettings();
 
     var chart = d3.select("#" + elementId);
-    var margin = {top: 20, right: 10, bottom: 30, left: 30};
     var width = parseInt(chart.style("width"));
     var height = parseInt(chart.style("height"));
     var radius = parseInt(Math.min(width, height) / 2);
@@ -34,9 +21,15 @@ function loadPieChart(elementId, values, config) {
     var pie = d3.layout.pie().sort(null).value(function(d) { return d.value; });
 
     // Draw the pie slices.
-    chart.selectAll("path").data(pie(values)).enter().append("path").attr("d", arc)
+    var pieChunk = chart.selectAll("g").data(pie(values)).enter().append("g");
+    pieChunk.append("path").attr("d", arc)
         .each(function(d) { this._current = d; })
         .style("fill", function(d) { return d.data.color; });
+    pieChunk.append("text").attr("text-anchor", "middle");
+    pieChunk.append("title").attr("text-anchor", "end");
+    chart.selectAll("text").data(pie(values)).text(function(d) { return (d.data.value == 0 ? "" : d.data.key); }).attr("x", function(d) { return 0.5*radius*Math.cos(0.5*(d.startAngle+d.endAngle-Math.PI)); }).attr("y", function(d) { return 0.5*radius*Math.sin(0.5*(d.startAngle+d.endAngle-Math.PI)); }).attr("fill", function(d) {
+        return intToRGB(hashCode(d.data.color));
+    });
 
     // Animating the pie-slice requiring a custom function which specifies
     // how the intermediate paths should be drawn.
@@ -47,33 +40,35 @@ function loadPieChart(elementId, values, config) {
     }
 
     function hashCode(str) {
-        var hash = 0;
-        for (var i = 0; i < str.length; i++) {
-           hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        if (str.match(/^#[0-9a-fA-F]{6}/) == null) {
+            console.log("Invalid color specified for pie chart: " + str + ".  Color should be in HEX (#XXXXXX) format.");
+            return 0;
         }
-        return hash;
+        return parseInt(str.replace(/^#/, ''), 16);
     }
 
     function intToRGB(i){
-        var c = (i & 0x00FFFFFF)
+        var c = (0xFFFFFF ^ i)
             .toString(16)
             .toUpperCase();
 
-        return "00000".substring(0, 6 - c.length) + c;
+        return "#000000".substring(0, 7 - c.length) + c;
     }
 
     function ChartUpdater(){
         // create function to update pie-chart. This will be used by histogram.
         this.update = function(values){
-            chart.selectAll("path").data(pie(values)).enter().append("path").attr("d", arc).each(function(d) { this._current = d; }).style("fill", function(d) { return d.data.color; });
-            chart.selectAll("path").data(pie(values)).transition().duration(500)
+            var pieChunk = chart.selectAll("g").data(pie(values)).enter().append("g");
+            pieChunk.append("path").attr("d", arc).each(function(d) { this._current = d; }).style("fill", function(d) { return d.data.color; });
+            chart.selectAll("path").data(pie(values)).transition().duration(config.transitionTime)
                 .attrTween("d", arcTween).style("fill", function(d) { return d.data.color; });
-            chart.selectAll("text").data(pie(values)).enter().append("text");
-            chart.selectAll("text").data(pie(values)).transition().duration(500).text(function(d) { return d.data.key; }).attr("x", function(d) { return 0.6*radius*Math.cos(0.5*(d.startAngle+d.endAngle)); }).attr("y", function(d) { return 0.6*radius*Math.sin(0.5*(d.startAngle+d.endAngle)); }).attr("fill", function(d) {
-                return "#" + intToRGB(0xFFFFFF ^ hashCode(d.data.color.substring(1)));
-            }).attr("text-anchor", "middle");
+            pieChunk.append("text").attr("text-anchor", "middle");
+            pieChunk.append("title").attr("text-anchor", "end");
+            chart.selectAll("text").data(pie(values)).transition().duration(config.transitionTime).text(function(d) { return (d.data.value == 0 ? "" : d.data.key); }).attr("x", function(d) { return 0.5*radius*Math.cos(0.5*(d.startAngle+d.endAngle-Math.PI)); }).attr("y", function(d) { return 0.5*radius*Math.sin(0.5*(d.startAngle+d.endAngle-Math.PI)); }).attr("fill", function(d) {
+                return intToRGB(hashCode(d.data.color));
+            });
+            chart.selectAll("title").data(pie(values)).text(function(d) { return "Value: " + d.data.value; });
         }
-
     }
 
     return new ChartUpdater();
