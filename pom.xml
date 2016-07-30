@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dchang</groupId>
-    <artifactId>dashboard</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>urim</artifactId>
+    <version>1.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

@@ -57,6 +57,11 @@ public class ScriptClient extends Client {
                 try {
                     /* The last part of this is really some Java nonsense.  It's this kind of thing that makes me wonder that maybe I chose the wrong technology, and Java should go the way of the dodo. */
                     String parentPath = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile().getPath().replaceFirst(String.format("^file:\\%s", File.separator), "");
+                    System.out.println(prefix);
+                    System.out.println(parentPath);
+                    System.out.println(File.separator);
+                    System.out.println("scripts");
+                    System.out.println(name);
                     builder = new ProcessBuilder(prefix + parentPath + File.separator + "scripts" + File.separator + name);
                     process = builder.start();
                 } catch (IOException f) {
@@ -75,9 +80,9 @@ public class ScriptClient extends Client {
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         } finally {
-            try { process.getInputStream().close(); } catch (IOException e) {}
-            try { process.getOutputStream().close(); } catch (IOException e) {}
-            try { process.getErrorStream().close(); } catch (IOException e) {}
+            try { process.getInputStream().close(); } catch (Exception e) {}
+            try { process.getOutputStream().close(); } catch (Exception e) {}
+            try { process.getErrorStream().close(); } catch (Exception e) {}
             try { process.destroy(); } catch (Exception e) {}
             pool.shutdown();
         }
