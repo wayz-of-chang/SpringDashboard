@@ -234,6 +234,9 @@ app.controller('MonitorController', function($scope, service) {
             }
             monitor.monitors[id].chart_render.update(values);
         }
+        if (monitor.monitors[id].chart == null) {
+            monitor.monitors[id].show_raw = true;
+        }
     };
     monitor.confirm_delete_popup = function(id, name) {
         service.update_delete_monitor(id, name);
