@@ -197,3 +197,13 @@ body {
 .chart .pieChart path {
     stroke: #FFF;
 }
+
+.chart .lineChart.axis path, .lineChart.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.chart .lineChart.line {
+    fill: none;
+}

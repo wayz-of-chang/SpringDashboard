@@ -6,6 +6,7 @@ app.controller('MonitorController', function($scope, service) {
     monitor.session_expired = true;
     monitor.monitors = {};
     monitor.flipped = {};
+    monitor.last_updated = {};
     monitor.new_monitor = {
         name: '',
         error: false,
@@ -143,9 +144,12 @@ app.controller('MonitorController', function($scope, service) {
                 return;
             }
             var config = lineChartDefaultSettings();
+            config.minValue = 0;
+            config.maxValue = 100;
+            config.dates = [];
             config.values = [];
             d3.selectAll("#chart_" + id + " > *").remove();
-            var chart = loadLineChart("chart_" + id, [{key: "n/a", color: "#000000", values: []}], config);
+            var chart = loadLineChart("chart_" + id, [/*{key: "n/a", color: "#000000", values: []}*/], config);
             monitor.monitors[id].chart_config = config;
             monitor.monitors[id].chart_render = chart;
         } else {
@@ -153,6 +157,13 @@ app.controller('MonitorController', function($scope, service) {
         }
     };
     monitor.update_chart = function(id, data) {
+        var date = new Date();
+        if (monitor.last_updated[id] == date.toString()) {
+            // Limit updates to at most once per second
+            return;
+        } else {
+            monitor.last_updated[id] = date.toString();
+        }
         if (monitor.monitors[id].chart == 'status') {
             var value = data.value;
             var status = data.status;
@@ -242,18 +253,65 @@ app.controller('MonitorController', function($scope, service) {
             monitor.monitors[id].chart_render.update(values);
         } else if (monitor.monitors[id].chart == 'line') {
             var values = data;
-
-            /* Update Line Chart Values */
-            var chart_values = monitor.monitors[id].chart_config.values;
-            for(int i = 0; i < chart_values.length; i++) {
-
-            }
+            var x = date;
+            var existing_chart_values = {};
+            $.each(Object.keys(values), function( index, value ) {
+                existing_chart_values[value] = false;
+            });
 
             if (monitor.monitors[id].chart_config == null) {
                 monitor.setup_chart(id);
                 return;
             }
-            monitor.monitors[id].chart_render.update(chart_values);
+
+            /* Update Line Chart Values */
+            var chart_dates = monitor.monitors[id].chart_config.dates;
+            if (chart_dates.length >= monitor.monitors[id].chart_config.historySize) {
+                chart_dates.shift();
+            }
+            chart_dates.push(x);
+
+            var chart_values = monitor.monitors[id].chart_config.values;
+            $.each(chart_values, function( index, chart_value ) {
+                var key = chart_value.key;
+                if (values[key] != null) {
+                    existing_chart_values[key] = true;
+                    if (values[key].color != null) {
+                        chart_value.color = values[key].color;
+                    }
+                    if (chart_values.values.length >= monitor.monitors[id].chart_config.historySize) {
+                        chart_values.values.shift();
+                    }
+                    chart_value.values.push({x: x, y: values[key].value});
+                } else {
+                    // Incoming data does not have existing key
+                    chart_value.values.push({x: x, y: 0});
+                }
+            });
+
+            $.each(Object.keys(existing_chart_values), function( index, value ) {
+                if (!existing_chart_values[value]) {
+                    var chart_value = {
+                        key: value,
+                        values: [{x: x, y: values[value].value}],
+                        color: values[value].color
+                    };
+                    chart_values.push(chart_value);
+                }
+            });
+
+            var all_values = [].concat.apply([], chart_values.map(function(chart_value) {
+                return chart_value.values.map(function(value) {
+                    return value.y;
+                });
+            }));
+
+            var min = Math.min.apply(null, all_values);
+            var max = Math.max.apply(null, all_values);
+
+            monitor.monitors[id].chart_config.minValue = min;
+            monitor.monitors[id].chart_config.maxValue = max;
+            monitor.monitors[id].chart_render.update(chart_dates, chart_values);
         } else {
             monitor.monitors[id].show_raw = true;
         }
