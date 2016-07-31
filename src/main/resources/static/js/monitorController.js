@@ -138,6 +138,16 @@ app.controller('MonitorController', function($scope, service) {
             var chart = loadPieChart("chart_" + id, [{key: "n/a", color: "#000000", value: 1}], config);
             monitor.monitors[id].chart_config = config;
             monitor.monitors[id].chart_render = chart;
+        } else if (monitor.monitors[id].chart == 'line') {
+            if ($('#chart_' + id).size() == 0) {
+                return;
+            }
+            var config = lineChartDefaultSettings();
+            config.values = [];
+            d3.selectAll("#chart_" + id + " > *").remove();
+            var chart = loadLineChart("chart_" + id, [{key: "n/a", color: "#000000", values: []}], config);
+            monitor.monitors[id].chart_config = config;
+            monitor.monitors[id].chart_render = chart;
         } else {
             monitor.monitors[id].show_raw = true;
         }
@@ -160,8 +170,7 @@ app.controller('MonitorController', function($scope, service) {
                 return;
             }
             monitor.monitors[id].chart_render.update(value);
-        }
-        if (monitor.monitors[id].chart == 'gauge') {
+        } else if (monitor.monitors[id].chart == 'gauge') {
             var value = data.value;
             var max = data.max;
             var unit = data.unit;
@@ -198,8 +207,7 @@ app.controller('MonitorController', function($scope, service) {
             monitor.monitors[id].chart_config.maxValue = max;
             monitor.monitors[id].chart_config.displayUnit = unit;
             monitor.monitors[id].chart_render.update(value);
-        }
-        if (monitor.monitors[id].chart == 'bar') {
+        } else if (monitor.monitors[id].chart == 'bar') {
             var values = data.values;
             var max = data.max;
             var unit = data.unit;
@@ -224,8 +232,7 @@ app.controller('MonitorController', function($scope, service) {
             monitor.monitors[id].chart_config.highThreshold = highThreshold;
             monitor.monitors[id].chart_config.displayUnit = unit;
             monitor.monitors[id].chart_render.update(values);
-        }
-        if (monitor.monitors[id].chart == 'pie') {
+        } else if (monitor.monitors[id].chart == 'pie') {
             var values = data;
 
             if (monitor.monitors[id].chart_config == null) {
@@ -233,8 +240,21 @@ app.controller('MonitorController', function($scope, service) {
                 return;
             }
             monitor.monitors[id].chart_render.update(values);
-        }
-        if (monitor.monitors[id].chart == null) {
+        } else if (monitor.monitors[id].chart == 'line') {
+            var values = data;
+
+            /* Update Line Chart Values */
+            var chart_values = monitor.monitors[id].chart_config.values;
+            for(int i = 0; i < chart_values.length; i++) {
+
+            }
+
+            if (monitor.monitors[id].chart_config == null) {
+                monitor.setup_chart(id);
+                return;
+            }
+            monitor.monitors[id].chart_render.update(chart_values);
+        } else {
             monitor.monitors[id].show_raw = true;
         }
     };
