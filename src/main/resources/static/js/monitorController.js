@@ -279,8 +279,8 @@ app.controller('MonitorController', function($scope, service) {
                     if (values[key].color != null) {
                         chart_value.color = values[key].color;
                     }
-                    if (chart_values.values.length >= monitor.monitors[id].chart_config.historySize) {
-                        chart_values.values.shift();
+                    if (chart_value.values.length >= monitor.monitors[id].chart_config.historySize) {
+                        chart_value.values.shift();
                     }
                     chart_value.values.push({x: x, y: values[key].value});
                 } else {

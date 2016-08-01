@@ -20,15 +20,13 @@ function loadLineChart(elementId, values, config) {
     var width = parseInt(chart.style("width"));
     var height = parseInt(chart.style("height"));
     chart = chart.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    chart.append("clipPath").attr("id", "chartBody_" + elementId).append("rect").attr("x", 0).attr("y", 0).attr("width", width - margin.left - margin.right).attr("height", height - margin.top - margin.bottom);
+    //chart.append("clipPath").attr("id", "chartBody_" + elementId).append("rect").attr("x", 0).attr("y", 0).attr("width", width - margin.left - margin.right).attr("height", height - margin.top - margin.bottom);
     var x = d3.time.scale().range([0, width - margin.left - margin.right]);
     var xAxis = d3.svg.axis().scale(x).orient("bottom");
     chart.append("g").attr("class", "lineChart x axis").attr("transform", "translate(0," + (height - margin.top - margin.bottom) + ")").call(xAxis);
     var y = d3.scale.linear().range([height - margin.top - margin.bottom, 0]);
     var yAxis = d3.svg.axis().scale(y).orient("left");
     chart.append("g").attr("class", "lineChart y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text(config.displayUnit);
-    //var z = d3.scale.ordinal();
-    //var formatDate = d3.time.format(config.dateFormat);
     var line = d3.svg.line().x(function(d) { return x(d.x); }).y(function(d) { return y(d.y); });
     var lines = chart.selectAll(".lineChart.line").data(values).enter().append("g").attr("class", "lineChart line");
 
@@ -46,7 +44,7 @@ function loadLineChart(elementId, values, config) {
             var lines = chart.selectAll(".lineChart.line").data(values).enter().append("g").attr("class", "lineChart line");
 
             lines.append("path");
-            chart.selectAll(".lineChart.line path").data(values).transition().duration(config.transitionTime).attr("d", function(d) { return line(d.values); }).attr("stroke", function(d) { return d.color }).attr("clip-path", "url(#chartBody_" + elementId + ")");
+            chart.selectAll(".lineChart.line path").data(values).transition().duration(config.transitionTime).attr("d", function(d) { return line(d.values); }).attr("stroke", function(d) { return d.color }); //.attr("clip-path", "url(#chartBody_" + elementId + ")");
 
             lines.append("text").text("");
             chart.selectAll(".lineChart.line text").data(values).transition().duration(config.transitionTime).text(function(d) { return d.key }).attr("fill", function(d) { return d.color; }).attr("text-anchor", "end").attr("transform", function(d) { return "translate(" + x(d.values[d.values.length - 1].x) + "," + y(d.values[d.values.length - 1].y) + ")"; }).attr("text-anchor", "start");
