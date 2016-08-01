@@ -206,4 +206,6 @@ body {
 
 .chart .lineChart.line {
     fill: none;
+    stroke-width: 2;
 }
+
