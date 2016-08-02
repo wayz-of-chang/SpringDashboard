@@ -28,6 +28,7 @@ public class StompController {
     private final MonitorService service;
     private final DashboardService dashboardService;
     private HashMap<Long, ScheduledFuture> schedulers = new HashMap<Long, ScheduledFuture>();
+    private HashMap<Long, Long> offsets = new HashMap<Long, Long>();
     @Autowired
     private SimpMessagingTemplate template;
 
@@ -42,11 +43,20 @@ public class StompController {
         Set<Monitor> monitors;
         HashMap<Long, Message> responses = new HashMap<Long, Message>();
         HashMap<String, Message> systemResponses = new HashMap<String, Message>();
+        long offset = offsets.get(dashboardId).longValue();
+        offsets.put(dashboardId, new Long((offset + 5000) % 86400000));
         try {
             dashboard = dashboardService.getDashboardById(dashboardId).get();
             monitors = dashboard.getMonitors();
             for (Monitor monitor: monitors) {
                 HashMap<MonitorSetting.Setting, String> settings = monitor.settingsMap();
+                if (settings.getOrDefault(MonitorSetting.Setting.INTERVAL, "").equals("")) {
+                    continue;
+                }
+                if (offset % monitor.getIntervalSeconds(settings.getOrDefault(MonitorSetting.Setting.INTERVAL, "")) != 0) {
+                    System.out.println("Skipping monitor: " + monitor.getName() + "(" + monitor.getId() + "), interval: " + settings.getOrDefault(MonitorSetting.Setting.INTERVAL, "") + ", offset: " + offset);
+                    continue;
+                }
                 String monitorUrl = "";
                 if(settings != null) {
                     monitorUrl = settings.getOrDefault(MonitorSetting.Setting.URL, "");
@@ -99,6 +109,7 @@ public class StompController {
                 }
             }, 5000);
             schedulers.put(dashboardId, future);
+            offsets.put(dashboardId, new Long(0));
         }
         return new Message(counter.incrementAndGet(), String.format("started monitoring, %s", Long.toString(parameters.getDashboardId())), parameters.getName(), parameters);
     }
@@ -111,6 +122,7 @@ public class StompController {
             ScheduledFuture future = schedulers.get(dashboardId);
             future.cancel(false);
             schedulers.remove(dashboardId);
+            offsets.remove(dashboardId);
         }
         return new Message(counter.incrementAndGet(), String.format("stopped monitoring, %s", Long.toString(parameters.getDashboardId())), parameters.getName(), parameters);
     }

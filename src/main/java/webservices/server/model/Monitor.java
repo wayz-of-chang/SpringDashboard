@@ -47,6 +47,44 @@ public class Monitor {
 
     public Set<MonitorSetting> getSettings() { return this.settings; }
 
+    public long getIntervalSeconds(String interval) {
+        long toReturn;
+        try {
+            toReturn = getIntervalSeconds(MonitorSetting.Intervals.valueOf(interval));
+        } catch (IllegalArgumentException e) {
+            toReturn = 86400000;
+        }
+        return toReturn;
+    }
+
+    public long getIntervalSeconds(MonitorSetting.Intervals interval) {
+        long multiplier = 1;
+        switch (interval) {
+            case d1:
+                multiplier *= 12; //1 day = 2 hours * 12
+            case h2:
+                multiplier *= 2; //2 hours = 1 hour * 2
+            case h1:
+                multiplier *= 2; //1 hour = 30 minutes * 2
+            case m30:
+                multiplier *= 2; //30 minutes = 15 minutes * 2
+            case m15:
+                multiplier *= 3; //15 minutes = 5 minutes * 3
+            case m5:
+                multiplier *= 5; //5 minutes = 1 minute * 5
+            case m1:
+                multiplier *= 2; //1 minute = 30 seconds * 2
+            case s30:
+                multiplier *= 3; //30 seconds = 10 seconds * 3
+            case s10:
+                multiplier *= 2; //10 seconds = 5 seconds * 2
+            case s5:
+                multiplier *= 5; //5 seconds = 1 second * 5
+                multiplier *= 1000; //milliseconds in one second
+        }
+        return multiplier;
+    }
+
     public void setId(long id) {
         this.id = id;
     }

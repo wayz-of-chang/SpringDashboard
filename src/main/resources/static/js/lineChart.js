@@ -3,7 +3,7 @@ function lineChartDefaultSettings(){
     return {
         minValue: 0, // The gauge minimum value.
         maxValue: 100, // The gauge maximum value.
-        dateFormat: "%Y-%m-%d %X", // Date format used for x axis
+        dateFormat: "%-m/%-d %-X", // Date format used for x axis
         historySize: 50, // Number of data points to keep in history
         transitionTime: 1000, // The amount of time in milliseconds for the wave to rise from 0 to it's final height.
         displayUnit: "", // If true, a % symbol is displayed after the value.
@@ -22,7 +22,7 @@ function loadLineChart(elementId, values, config) {
     chart = chart.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     //chart.append("clipPath").attr("id", "chartBody_" + elementId).append("rect").attr("x", 0).attr("y", 0).attr("width", width - margin.left - margin.right).attr("height", height - margin.top - margin.bottom);
     var x = d3.time.scale().range([0, width - margin.left - margin.right]);
-    var xAxis = d3.svg.axis().scale(x).orient("bottom");
+    var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(d3.time.format(config.dateFormat)).ticks(d3.time.minutes, 1);
     chart.append("g").attr("class", "lineChart x axis").attr("transform", "translate(0," + (height - margin.top - margin.bottom) + ")").call(xAxis);
     var y = d3.scale.linear().range([height - margin.top - margin.bottom, 0]);
     var yAxis = d3.svg.axis().scale(y).orient("left");
@@ -33,7 +33,7 @@ function loadLineChart(elementId, values, config) {
     function ChartUpdater(){
         this.update = function(dates, values){
             var x = d3.time.scale().range([0, width - margin.left - margin.right]).domain(d3.extent(dates, function(d) { return d; }));
-            var xAxis = d3.svg.axis().scale(x).orient("bottom");
+            var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(d3.time.format(config.dateFormat)).ticks(d3.time.minutes, 1);
             chart.select(".lineChart.x.axis").transition().duration(config.transitionTime).call(xAxis);
 
             var y = d3.scale.linear().range([height - margin.top - margin.bottom, 0]).domain([config.minValue, config.maxValue]);
@@ -44,7 +44,7 @@ function loadLineChart(elementId, values, config) {
             var lines = chart.selectAll(".lineChart.line").data(values).enter().append("g").attr("class", "lineChart line");
 
             lines.append("path");
-            chart.selectAll(".lineChart.line path").data(values).transition().duration(config.transitionTime).attr("d", function(d) { return line(d.values); }).attr("stroke", function(d) { return d.color }); //.attr("clip-path", "url(#chartBody_" + elementId + ")");
+            chart.selectAll(".lineChart.line path").data(values).attr("d", function(d) { return line(d.values); }).attr("stroke", function(d) { return d.color }); //.attr("clip-path", "url(#chartBody_" + elementId + ")");
 
             lines.append("text").text("");
             chart.selectAll(".lineChart.line text").data(values).transition().duration(config.transitionTime).text(function(d) { return d.key }).attr("fill", function(d) { return d.color; }).attr("text-anchor", "end").attr("transform", function(d) { return "translate(" + x(d.values[d.values.length - 1].x) + "," + y(d.values[d.values.length - 1].y) + ")"; }).attr("text-anchor", "start");

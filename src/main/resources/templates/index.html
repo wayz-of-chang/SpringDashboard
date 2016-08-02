@@ -171,7 +171,7 @@
                                         <option value="status">Status</option>
                                         <option value="gauge">Gauge</option>
                                         <option value="bar">Bar Chart</option>
-                                        <option value="line">Line Graph</option>
+                                        <option value="line">Line Chart</option>
                                         <option value="pie">Pie Chart</option>
                                     </select>
                                 </div>
@@ -185,15 +185,16 @@
                                 <div class="form-group">
                                     <label for="monitor_interval_{{mon.id}}">Interval</label>
                                     <select id="monitor_interval_{{mon.id}}" class="form-control input-sm" title="Interval" ng-model="mon.interval">
-                                        <option value="5s">5 seconds</option>
-                                        <option value="10s">10 seconds</option>
-                                        <option value="30s">30 seconds</option>
-                                        <option value="1m">1 minute</option>
-                                        <option value="2m">2 minutes</option>
-                                        <option value="10m">10 minutes</option>
-                                        <option value="30m">30 minutes</option>
-                                        <option value="1h">1 hour</option>
-                                        <option value="2h">2 hours</option>
+                                        <option value="s5">5 seconds</option>
+                                        <option value="s10">10 seconds</option>
+                                        <option value="s30">30 seconds</option>
+                                        <option value="m1">1 minute</option>
+                                        <option value="m5">5 minutes</option>
+                                        <option value="m15">15 minutes</option>
+                                        <option value="m30">30 minutes</option>
+                                        <option value="h1">1 hour</option>
+                                        <option value="h2">2 hours</option>
+                                        <option value="d1">1 day</option>
                                     </select>
                                 </div>
                                 <div class="form-group">

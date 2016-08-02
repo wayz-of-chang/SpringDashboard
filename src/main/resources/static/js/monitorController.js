@@ -74,9 +74,11 @@ app.controller('MonitorController', function($scope, service) {
             monitor.flipped[id] = false;
         }
         if (monitor.flipped[id]) {
-            service.update_monitor_settings(id, function(response) {
-                //monitor.setup_chart(id);
-            });
+            setTimeout(function() {
+                service.update_monitor_settings(id, function(response) {
+                    //monitor.setup_chart(id);
+                });
+            }, 1000);
         }
         monitor.flipped[id] = !monitor.flipped[id];
     };

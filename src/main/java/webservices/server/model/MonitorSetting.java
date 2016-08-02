@@ -1,6 +1,7 @@
 package webservices.server.model;
 
 import javax.persistence.*;
+import java.util.HashMap;
 
 @Entity
 @Table(name = "monitor_setting")
@@ -45,6 +46,10 @@ public class MonitorSetting {
 
     public enum Charts {
         status, gauge, bar
+    }
+
+    public enum Intervals {
+        s5, s10, s30, m1, m5, m15, m30, h1, h2, d1
     }
 
     public long getId() {
