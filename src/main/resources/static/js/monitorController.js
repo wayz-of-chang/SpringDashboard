@@ -150,6 +150,7 @@ app.controller('MonitorController', function($scope, service) {
             config.maxValue = 100;
             config.dates = [];
             config.values = [];
+            config.interval = monitor.monitors[id].interval;
             d3.selectAll("#chart_" + id + " > *").remove();
             var chart = loadLineChart("chart_" + id, [/*{key: "n/a", color: "#000000", values: []}*/], config);
             monitor.monitors[id].chart_config = config;
