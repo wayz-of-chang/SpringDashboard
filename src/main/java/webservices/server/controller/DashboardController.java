@@ -1,14 +1,15 @@
 package webservices.server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import webservices.Message;
-import webservices.server.parameters.DashboardParameters;
 import webservices.server.model.Dashboard;
 import webservices.server.model.User;
+import webservices.server.parameters.DashboardParameters;
 import webservices.server.service.DashboardService;
 import webservices.server.service.UserService;
 
@@ -16,6 +17,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
+@Profile("server")
 public class DashboardController {
 
     final AtomicLong counter = new AtomicLong();

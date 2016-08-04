@@ -1,6 +1,7 @@
 package webservices.server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import webservices.server.service.UserSettingService;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
+@Profile("server")
 public class UserController {
 
     final AtomicLong counter = new AtomicLong();

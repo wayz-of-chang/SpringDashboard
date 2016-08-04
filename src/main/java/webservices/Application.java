@@ -17,6 +17,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 import webservices.server.model.Dashboard;
 import webservices.server.repository.DashboardRepository;
@@ -28,10 +29,13 @@ import java.util.concurrent.TimeUnit;
 public class Application implements CommandLineRunner {
     @Value("${type}")
     private String type;
+    @Value("${server.port}")
+    private String port;
     private static final String TYPE_SERVER = "SERVER";
     private static final String TYPE_CLIENT = "CLIENT";
 
-    private static final String queueName = "dashboard-mq";
+    @Value("${spring.rabbitmq.queue}")
+    private String queueName;
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -83,7 +87,7 @@ public class Application implements CommandLineRunner {
     public CommandLineRunner demoRest() throws Exception {
         return (args) -> {
             RestTemplate restTemplate = new RestTemplate();
-            Pong pong = restTemplate.getForObject("http://localhost:8080/test", Pong.class);
+            Pong pong = restTemplate.getForObject("http://localhost:" + port + "/test", Pong.class);
             log.info(pong.toString());
 
             System.out.println("Waiting five seconds...");
@@ -96,6 +100,7 @@ public class Application implements CommandLineRunner {
     }
 
     @Bean
+    @Profile("server")
     public CommandLineRunner demo(DashboardRepository repository) {
         return (args) -> {
             //repository.save(new Dashboard("Home"));
