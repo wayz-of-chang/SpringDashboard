@@ -32,34 +32,34 @@ function loadLineChart(elementId, values, config) {
         ["%Y-%m", function(d) { return d.getMonth(); }],
         ["%Y", function(d) { return true; }]
     ]);
-    var ticksUnit = d3.time.seconds;
-    var ticksInterval = 30;
+    var ticksUnit = d3.time.minutes;
+    var ticksInterval = 1;
     if (config.interval == "s10") {
         ticksUnit = d3.time.minutes;
-        ticksInterval = 1;
+        ticksInterval = 2;
     }
     if (config.interval == "s30") {
         ticksUnit = d3.time.minutes;
-        ticksInterval = 5;
+        ticksInterval = 10;
     }
     if (config.interval == "m1") {
         ticksUnit = d3.time.minutes;
-        ticksInterval = 15;
-    }
-    if (config.interval == "m5") {
-        ticksUnit = d3.time.minutes;
         ticksInterval = 30;
     }
-    if (config.interval == "m15") {
+    if (config.interval == "m5") {
         ticksUnit = d3.time.hours;
         ticksInterval = 1;
     }
-    if (config.interval == "m30") {
+    if (config.interval == "m15") {
         ticksUnit = d3.time.hours;
         ticksInterval = 2;
     }
+    if (config.interval == "m30") {
+        ticksUnit = d3.time.hours;
+        ticksInterval = 6;
+    }
     if (config.interval == "h1") {
-        ticksUnit = d3.time.daya;
+        ticksUnit = d3.time.days;
         ticksInterval = 1;
     }
     if (config.interval == "h2") {

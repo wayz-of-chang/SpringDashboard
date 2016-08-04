@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URL;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,13 +31,13 @@ public class DashboardControllerIT {
 
     @Before
     public void setUp() throws Exception {
-        this.base = new URL("http://localhost:" + port + "/");
+        this.base = new URL("http://localhost:" + port + "/greeting");
         template = new TestRestTemplate();
     }
 
     @Test
     public void getDashboard() throws Exception {
         ResponseEntity<String> response = template.getForEntity(base.toString(), String.class);
-        assertThat(response.getBody(), equalTo("Hello, world"));
+        assertThat(response.getBody(), containsString("Hello, World"));
     }
 }

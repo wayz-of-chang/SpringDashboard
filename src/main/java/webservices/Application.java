@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import webservices.server.model.Dashboard;
 import webservices.server.repository.DashboardRepository;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
@@ -118,7 +119,9 @@ public class Application implements CommandLineRunner {
 
     @Bean
     public Queue queue() {
-        return new Queue(queueName, false);
+        HashMap<String, Object> args = new HashMap<String, Object>();
+        args.put("x-message-ttl", 15000);
+        return new Queue(queueName, false, false, false, args);
     }
 
     @Bean
