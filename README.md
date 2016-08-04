@@ -3,11 +3,27 @@ This project started more with the intention of exploring Spring Boot, making we
 
 The idea is to have a dashboard that would monitor and display system statistics across multiple remote machines.  There is the basic system client, which will return JSON via REST web service calls.  Then, there is the client that will run any script, and return back any custom JSON response.  The server will read the JSON responses from the client, and render a UI from parsing the results.
 
-To run the client: mvn spring-boot:run -Dtype=CLIENT -Dname={system_name}
+To run the client: 
 
-To run the server: mvn spring-boot:run -Dtype=SERVER -Dname={system_name}
+mvn spring-boot:run -Dtype=CLIENT -Dname={system_name}
 
-{system_name} is any custom string.  It is used in the JSON response to tell which system the response is monitoring.
+or
+
+java -jar {rundir}/urim-{xxx}.jar --type=CLIENT --name={system_name}
+
+To run the server: 
+
+mvn spring-boot:run -Dtype=SERVER -Dname={system_name}
+
+or
+
+java -jar {rundir}/urim-{xxx}.jar --type=SERVER --name={system_name}
+
+{rundir} is the directory path containing the jar file.
+
+{xxx} is the version number.
+
+{system_name} is the system's id; can be any custom string.  It is used in the JSON response to tell which system the response is monitoring.
 
 
 
