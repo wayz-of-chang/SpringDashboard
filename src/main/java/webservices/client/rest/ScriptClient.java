@@ -54,12 +54,12 @@ public class ScriptClient extends Client {
             try {
                 builder = new ProcessBuilder(prefix + getClass().getClassLoader().getResource(String.format("scripts/%s", name)).getPath());
                 process = builder.start();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 try {
                     /* The last part of this is really some Java nonsense.  It's this kind of thing that makes me wonder that maybe I chose the wrong technology, and Java should go the way of the dodo. */
                     String parentPath = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile().getPath().replaceFirst(String.format("^file:\\%s", File.separator), "");
                     parentPath = URLDecoder.decode(parentPath, "UTF-8");
-                    if (osName.contains("Linux")) {
+                    if (osName.contains("Linux") || osName.contains("Mac OS X")) {
                         parentPath = "/" + parentPath;
                         builder = new ProcessBuilder();
                         builder.command("bash", "-c", "\"" + parentPath + File.separator + "scripts" + File.separator + name + "\"");
