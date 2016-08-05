@@ -8,6 +8,10 @@ body {
     height: 300px;
 }
 
+.fill-height {
+    height: 100%;
+}
+
 .flex {
     display: flex;
     flex-flow: column;
