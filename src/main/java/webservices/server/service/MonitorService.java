@@ -8,8 +8,8 @@ import webservices.server.parameters.MonitorParameters;
 import webservices.server.repository.MonitorRepository;
 import webservices.server.repository.MonitorSettingRepository;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -34,6 +34,24 @@ public class MonitorService {
 
     public Monitor create() {
         Monitor monitor = new Monitor();
+        return repository.save(monitor);
+    }
+
+    public Monitor copy(long id) {
+        Monitor monitor = new Monitor();
+        repository.save(monitor);
+        Monitor referenceMonitor = getMonitorById(id).get();
+        if (referenceMonitor != null) {
+            monitor.setName(referenceMonitor.getName());
+            Set<MonitorSetting> settings = new HashSet<MonitorSetting>();
+            Set<MonitorSetting> referenceSettings = referenceMonitor.getSettings();
+            for (MonitorSetting referenceSetting: referenceSettings) {
+                MonitorSetting setting = new MonitorSetting(referenceSetting.getKey(), referenceSetting.getValue());
+                settingRepository.save(setting);
+                settings.add(setting);
+            }
+            monitor.setSettings(settings);
+        }
         return repository.save(monitor);
     }
 

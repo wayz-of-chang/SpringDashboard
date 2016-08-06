@@ -42,6 +42,18 @@ public class MonitorController {
         }
     }
 
+    @RequestMapping(value = "/monitors/copy", method = RequestMethod.POST)
+    public Message copy(@RequestBody MonitorParameters parameters) throws Exception {
+        Monitor monitor;
+        try {
+            monitor = service.copy(parameters.getId());
+            dashboardService.addMonitor(parameters.getDashboardId(), monitor.getId());
+            return new Message(counter.incrementAndGet(), monitor, "copy monitor", parameters);
+        } catch (Exception e) {
+            throw new Exception("Could not copy monitor: " + e.getMessage());
+        }
+    }
+
     @RequestMapping(value = "/monitors/get", method = RequestMethod.POST)
     public Message get(@RequestBody MonitorParameters parameters) throws Exception {
         Dashboard dashboard;
@@ -77,6 +89,7 @@ public class MonitorController {
             Set <Monitor> monitors = dashboard.getMonitors();
             if (monitors.remove(monitor)) {
                 dashboardService.save(dashboard);
+                service.remove(monitor);
             }
             return new Message(counter.incrementAndGet(), monitor, "delete monitor", parameters);
         } catch (Exception e) {

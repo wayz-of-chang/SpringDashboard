@@ -98,6 +98,28 @@ app.controller('MonitorController', function($scope, service) {
         }
         return '';
     };
+    monitor.copy_monitor = function(id) {
+        var data = {
+            id: id,
+            dashboardId: monitor.current_dashboard()
+        };
+        service.copy_monitor(data, function(response) {
+            if (response.status >= 200 && response.status < 300) {
+                monitor.new_monitor.error = false;
+                monitor.new_monitor.error_message = '';
+                monitor.new_monitor.success = true;
+                monitor.new_monitor.success_message = "Successfully copied monitor";
+                setTimeout(function() {
+                    monitor.new_monitor.success = false;
+                    service.update_monitor_order();
+                }, 3000);
+            } else {
+                monitor.new_monitor.error = true;
+                monitor.new_monitor.error_message = response.data.error + ": " + response.data.message;
+                monitor.new_monitor.success = false;
+            }
+        });
+    };
     monitor.setup_chart = function(id) {
         if (monitor.monitors[id].chart == 'status') {
             if ($('#chart_' + id).size() == 0) {

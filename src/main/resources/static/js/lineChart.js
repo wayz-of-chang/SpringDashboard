@@ -16,7 +16,7 @@ function loadLineChart(elementId, values, config) {
     if(config == null) config = lineChartDefaultSettings();
 
     var chart = d3.select("#" + elementId);
-    var margin = {top: 20, right: 0, bottom: 30, left: 40};
+    var margin = {top: 20, right: 10, bottom: 30, left: 40};
     var width = parseInt(chart.style("width"));
     var height = parseInt(chart.style("height"));
     chart = chart.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");

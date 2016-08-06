@@ -302,6 +302,22 @@ app.factory('service', function($http, $rootScope) {
         });
     };
 
+    service.copy_monitor = function(data, callback) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        return $http.post('/monitors/copy', data, {headers: {'X-CSRF-TOKEN':cookie.csrf}}).then(function(response) {
+            console.log(response);
+            //success
+            service.set_monitor(response.data.data);
+            service.user_settings.monitor_order[service.user_settings.current_dashboard] = [].concat(service.user_settings.monitor_order[service.user_settings.current_dashboard], response.data.data.id);
+            return callback(response);
+        }, function(response) {
+            console.log(response);
+            //fail
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
+            return callback(response);
+        });
+    };
+
     service.query_monitors = function(data, callback) {
         var cookie = JSON.parse($.cookie('csrf'));
         return $http.post('/monitors/get', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
