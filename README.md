@@ -3,7 +3,7 @@ This project started more with the intention of exploring Spring Boot, making we
 
 The idea is to have a dashboard that would monitor and display system statistics across multiple remote machines.  There is the basic system client, which will return JSON via REST web service calls.  Then, there is the client that will run any script, and return back any custom JSON response.  The server will read the JSON responses from the client, and render a UI from parsing the results.
 
-To run the client: 
+### To run the client: 
 
 mvn spring-boot:run -Dspring.profiles.active=client -Dname={system_name}
 
@@ -11,7 +11,7 @@ or
 
 java -jar {rundir}/urim-{xxx}.jar --spring.profiles.active=client --name={system_name}
 
-To run the server: 
+### To run the server: 
 
 mvn spring-boot:run -Dspring.profiles.active=server -Dname={system_name}
 
@@ -19,7 +19,7 @@ or
 
 java -jar {rundir}/urim-{xxx}.jar --spring.profiles.active=server --name={system_name}
 
-To run the application with endpoints from both modes turned on:
+### To run the application with endpoints from both modes turned on:
 
 mvn spring-boot:run -Dname={system_name}
 
@@ -109,7 +109,7 @@ The script should be placed in a `scripts` directory that is on the same level a
 The chart type includes many various types, which are explained in more detail in the **Chart Types** section.  If none is specified, the raw JSON response will be printed.
 
 ### Output Parser
-This is an inline JS function that is evaluated every time the monitor response is available.  What is returned here is the value used to update the chart.  Thus, it is the job of this function to return something in a format that is valid to the chart type being used.  Each chart type has a specific format, which is explained in more detail in the **Chart Types** section.  **Note: Tha maximum length of the output parser is 1023 characters long.**  This number was chosen both as a sane number large enough for accomplishing the job of massaging the data to fit the inputs for the charts, and small enough to not negatively impact performance too much and to discourage potential security exploits (where cusom JS is run, there is the potential it can cause harm to the user's system).
+This is an inline JS function that is evaluated every time the monitor response is available.  What is returned here is the value used to update the chart.  Thus, it is the job of this function to return something in a format that is valid to the chart type being used.  Each chart type has a specific format, which is explained in more detail in the **Chart Types** section.  **Note: The maximum length of the output parser is 1023 characters long.**  This number was chosen both as a sane number large enough for accomplishing the job of massaging the data to fit the inputs for the charts, and small enough to not negatively impact performance too much and to discourage potential security exploits (where cusom JS is run, there is the potential it can cause harm to the user's system).
 
 
 
