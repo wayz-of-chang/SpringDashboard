@@ -1,7 +1,6 @@
 package webservices.server.model;
 
 import javax.persistence.*;
-import java.util.HashMap;
 
 @Entity
 @Table(name = "monitor_setting")
@@ -29,7 +28,7 @@ public class MonitorSetting {
     @Override
     public String toString() {
         return String.format(
-                "Monitor[id=%d, key='%s']", id, key);
+                "MonitorSetting[id=%d, key='%s']", id, key);
     }
 
     public enum Setting {
@@ -46,6 +45,10 @@ public class MonitorSetting {
 
     public enum Charts {
         status, gauge, bar
+    }
+
+    public enum Protocols {
+        rest, mq
     }
 
     public enum Intervals {

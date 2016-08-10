@@ -2,14 +2,7 @@ package webservices;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -21,9 +14,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 import webservices.server.model.Dashboard;
 import webservices.server.repository.DashboardRepository;
-
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
@@ -90,11 +80,11 @@ public class Application implements CommandLineRunner {
             Pong pong = restTemplate.getForObject("http://localhost:" + port + "/test", Pong.class);
             log.info(pong.toString());
 
-            System.out.println("Waiting five seconds...");
-            Thread.sleep(5000);
-            System.out.println("Sending message...");
-            rabbitTemplate.convertAndSend(queueName, "Hello from RabbitMQ!");
-            receiver().getLatch().await(10000, TimeUnit.MILLISECONDS);
+            //System.out.println("Waiting five seconds...");
+            //Thread.sleep(5000);
+            //System.out.println("Sending message...");
+            //rabbitTemplate.convertAndSend(queueName, "Hello from RabbitMQ!");
+            //receiver().getLatch().await(10000, TimeUnit.MILLISECONDS);
             context.close();
         };
     }
@@ -122,7 +112,7 @@ public class Application implements CommandLineRunner {
         };
     }
 
-    @Bean
+    /*@Bean
     public Queue queue() {
         HashMap<String, Object> args = new HashMap<String, Object>();
         args.put("x-message-ttl", 15000);
@@ -157,5 +147,5 @@ public class Application implements CommandLineRunner {
     @Bean
     public MessageListenerAdapter listenerAdapter(MessageQueueReceiver receiver) {
         return new MessageListenerAdapter(receiver, "receiveMessage");
-    }
+    }*/
 }

@@ -29,7 +29,7 @@ public class UserSetting {
     @Override
     public String toString() {
         return String.format(
-                "Dashboard[userId=%d, current_dashboard='%s']", userId, currentDashboard);
+                "UserSetting[userId=%d, current_dashboard='%s']", userId, currentDashboard);
     }
 
     public long getUserId() {

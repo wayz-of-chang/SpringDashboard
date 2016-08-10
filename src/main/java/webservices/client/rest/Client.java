@@ -9,7 +9,7 @@ import webservices.Message;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-@RestController
+@RestController("RestClient")
 @Profile("client")
 class Client {
 
