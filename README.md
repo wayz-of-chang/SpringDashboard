@@ -73,13 +73,14 @@ There are two components to this application - the server and the client.  The s
    Browsers -> Server [label=set_settings];
    Clients -> Systems [label=get_stats, penwidth=2];
    Server -> Clients [label=REST, penwidth=2];
-   Clients -> RabbitMQ -> Server [label=MQ, style=dotted];
+   Clients -> RabbitMQ [label=MQ, penwidth=2];
    Clients -> Server [label=REST, penwidth=2];
    Clients -> Client_Log [style=dotted];
    Server -> Server_Log [style=dotted];
    Server -> MySQL [label=persist_settings];
    Server -> MongoDB [label=persist_user_settings];
-   Server -> RabbitMQ -> Clients [label=MQ, style=dotted];
+   RabbitMQ -> MongoDB [label=MQ, penwidth=2];
+   MongoDB -> Server [label=MQ, penwidth=2];
    Server -> Browsers [label=send_stats, penwidth=2];
    Systems -> Clients [label=stats_response, penwidth=2];
  }
@@ -110,6 +111,12 @@ The chart type includes many various types, which are explained in more detail i
 
 ### Output Parser
 This is an inline JS function that is evaluated every time the monitor response is available.  What is returned here is the value used to update the chart.  Thus, it is the job of this function to return something in a format that is valid to the chart type being used.  Each chart type has a specific format, which is explained in more detail in the **Chart Types** section.  **Note: The maximum length of the output parser is 1023 characters long.**  This number was chosen both as a sane number large enough for accomplishing the job of massaging the data to fit the inputs for the charts, and small enough to not negatively impact performance too much and to discourage potential security exploits (where cusom JS is run, there is the potential it can cause harm to the user's system).
+
+### Protocol
+There are two main data flows supported by this application - REST and MQ (Message Queue via RabbitMQ).  When REST is selected, the server will periodically send REST webservice requests to clients.  Clients will respond with JSON responses, which will then be sent to the browser.  This is the simplest data flow.  When MQ is selected, the server will periodically send REST webservice requests to clients to start the clients.  Clients will then periodically send messages to the message queue, which the server will listen for.  Once a message appears in the message queue, the server will consume it by parsing the message, and persisting it in MongoDB.  Concurrently, the server will be returning responses found in MongoDB within the last 5 seconds (every 5 seconds) to the browser.  With MQ, the data flow is significantly more complex, with quite a few extra moving pieces, as follows: 
+- Every time a client receives a start REST request to start the MQ, the client will send a maximum of 10 messages before stopping.  
+- In order to keep the client running, the server sends periodic start REST requests every four messages, which will restart the client's remaining message count.
+- Messages older than 1 minute old are cleared from MongoDB.
 
 
 
