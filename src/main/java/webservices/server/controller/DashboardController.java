@@ -78,6 +78,7 @@ public class DashboardController {
             Set <Dashboard> dashboards = user.getDashboards();
             if (dashboards.remove(dashboard)) {
                 userService.save(user);
+                service.remove(dashboard);
             }
             return new Message(counter.incrementAndGet(), dashboard, "delete dashboard", parameters);
         } catch (Exception e) {

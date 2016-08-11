@@ -137,18 +137,34 @@ public class StompController {
                 }
                 monitorIds.add(monitor.getId());
             }
-            //Grab all responses that are less than 5 seconds old; parse them for the monitors with ids in this dashboard, and return those results
-            long currentTime = System.currentTimeMillis();
-            long lastUpdateTime = currentTime - 5000;
-            Iterable<MonitorMessage> monitorMessages = monitorMessageService.getMonitorMessagesAfterTimestamp(lastUpdateTime);
-            for (MonitorMessage monitorMessage: monitorMessages) {
-                if (monitorIds.contains(monitorMessage.getMonitorId())) {
-                    responses.put(monitorMessage.getMonitorId(), monitorMessage.getMessage());
-                }
-            }
+
+            aggregateMqResponses(monitorIds, responses);
+            deleteOldMqResponses();
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Could not get stats: " + e.getMessage());
+        }
+    }
+
+    //Grab all responses that are less than 5 seconds old; parse them for the monitors with ids in this dashboard, and return those results
+    private void aggregateMqResponses(Set<Long> monitorIds, HashMap<Long, Message> responses) {
+        long currentTime = System.currentTimeMillis();
+        long lastUpdateTime = currentTime - 5000;
+        Iterable<MonitorMessage> monitorMessages = monitorMessageService.getMonitorMessagesAfterTimestamp(lastUpdateTime);
+        for (MonitorMessage monitorMessage: monitorMessages) {
+            if (monitorIds.contains(monitorMessage.getMonitorId())) {
+                responses.put(monitorMessage.getMonitorId(), monitorMessage.getMessage());
+            }
+        }
+    }
+
+    //Delete MQ responses that are more than 1 minute old (expired)
+    private void deleteOldMqResponses() {
+        long currentTime = System.currentTimeMillis();
+        long expiredTime = currentTime - 60000;
+        Iterable<MonitorMessage> monitorMessages = monitorMessageService.getMonitorMessagesBeforeTimestamp(expiredTime);
+        for (MonitorMessage monitorMessage: monitorMessages) {
+            monitorMessageService.remove(monitorMessage);
         }
     }
 

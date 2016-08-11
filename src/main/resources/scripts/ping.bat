@@ -3,6 +3,6 @@
 @echo off
 
 @rem this will print hello, world three times
-echo "hello, world"
-echo "hello, world"
-echo "hello, world"
+echo hello, world
+echo hello, world
+echo hello, world
