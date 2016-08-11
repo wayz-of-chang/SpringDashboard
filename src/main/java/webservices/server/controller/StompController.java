@@ -1,5 +1,6 @@
 package webservices.server.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -21,13 +22,16 @@ import org.springframework.web.client.RestTemplate;
 import webservices.Message;
 import webservices.server.model.Dashboard;
 import webservices.server.model.Monitor;
+import webservices.server.model.MonitorMessage;
 import webservices.server.model.MonitorSetting;
 import webservices.server.parameters.MonitorParameters;
 import webservices.server.service.DashboardService;
 import webservices.server.service.MonitorMessageService;
 import webservices.server.service.MonitorService;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledFuture;
@@ -57,16 +61,16 @@ public class StompController {
         this.monitorMessageService = monitorMessageService;
     }
 
-    private void getRestStats(long dashboardId, RestTemplate restTemplate, SimpMessagingTemplate template, DashboardService dashboardService, long counter, long offset) throws Exception {
-        Dashboard dashboard;
+    private void getRestStats(long dashboardId, RestTemplate restTemplate, HashMap<Long, Message> responses, Dashboard dashboard, long offset) throws Exception {
         Set<Monitor> monitors;
-        HashMap<Long, Message> responses = new HashMap<Long, Message>();
         HashMap<String, Message> systemResponses = new HashMap<String, Message>();
         try {
-            dashboard = dashboardService.getDashboardById(dashboardId).get();
             monitors = dashboard.getMonitors();
             for (Monitor monitor: monitors) {
                 HashMap<MonitorSetting.Setting, String> settings = monitor.settingsMap();
+                if (settings.getOrDefault(MonitorSetting.Setting.PROTOCOL, "").equals("")) {
+                    continue;
+                }
                 if (settings.getOrDefault(MonitorSetting.Setting.PROTOCOL, "").equals("mq")) {
                     continue;
                 }
@@ -101,19 +105,18 @@ public class StompController {
             e.printStackTrace();
             throw new Exception("Could not get stats: " + e.getMessage());
         }
-        template.convertAndSend("/results/" + dashboardId + "/instant", new Message(counter, responses, String.format("monitor results for %s (%s)", dashboard.getName(), Long.toString(dashboardId)), new MonitorParameters()));
     }
 
-    private void getMqStats(long dashboardId, RestTemplate restTemplate, SimpMessagingTemplate template, DashboardService dashboardService, long counter, long offset) throws Exception {
-        Dashboard dashboard;
+    private void getMqStats(long dashboardId, RestTemplate restTemplate, HashMap<Long, Message> responses, Dashboard dashboard, long offset) throws Exception {
         Set<Monitor> monitors;
-        HashMap<Long, Message> responses = new HashMap<Long, Message>();
-        HashMap<String, Message> systemResponses = new HashMap<String, Message>();
+        Set<Long> monitorIds = new HashSet<Long>();
         try {
-            dashboard = dashboardService.getDashboardById(dashboardId).get();
             monitors = dashboard.getMonitors();
             for (Monitor monitor: monitors) {
                 HashMap<MonitorSetting.Setting, String> settings = monitor.settingsMap();
+                if (settings.getOrDefault(MonitorSetting.Setting.PROTOCOL, "").equals("")) {
+                    continue;
+                }
                 if (settings.getOrDefault(MonitorSetting.Setting.PROTOCOL, "").equals("rest")) {
                     continue;
                 }
@@ -127,21 +130,26 @@ public class StompController {
                         monitorUrl = settings.getOrDefault(MonitorSetting.Setting.URL, "");
                     }
                     if (monitorUrl != null && !monitorUrl.equals("")) {
-                        monitorUrl = String.format("%s/start?key=%s&interval=%s&name=%s", monitorUrl, monitor.getId(), monitor.getIntervalSeconds(settings.getOrDefault(MonitorSetting.Setting.INTERVAL, "")), settings.getOrDefault(MonitorSetting.Setting.TYPE, ""), settings.getOrDefault(MonitorSetting.Setting.SCRIPT, ""));
+                        monitorUrl = String.format("%s/start?key=%s&interval=%s&type=%s&name=%s", monitorUrl, monitor.getId(), monitor.getIntervalSeconds(settings.getOrDefault(MonitorSetting.Setting.INTERVAL, "")), settings.getOrDefault(MonitorSetting.Setting.TYPE, ""), settings.getOrDefault(MonitorSetting.Setting.SCRIPT, ""));
                         Message response = restTemplate.getForObject(monitorUrl, Message.class);
-                        //responses.put(monitor.getId(), response);
+                        //Not sure what to do with this response
                     }
                 }
-                //grab all responses that are less than 5 seconds old; parse them for the monitors with ids in this dashboard, and return those results
-                //receiver().getLatch().await(10, TimeUnit.MILLISECONDS);
-                //Message response = restTemplate.getForObject(monitorUrl, Message.class);
-                //responses.put(monitor.getId(), response);
+                monitorIds.add(monitor.getId());
+            }
+            //Grab all responses that are less than 5 seconds old; parse them for the monitors with ids in this dashboard, and return those results
+            long currentTime = System.currentTimeMillis();
+            long lastUpdateTime = currentTime - 5000;
+            Iterable<MonitorMessage> monitorMessages = monitorMessageService.getMonitorMessagesAfterTimestamp(lastUpdateTime);
+            for (MonitorMessage monitorMessage: monitorMessages) {
+                if (monitorIds.contains(monitorMessage.getMonitorId())) {
+                    responses.put(monitorMessage.getMonitorId(), monitorMessage.getMessage());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Could not get stats: " + e.getMessage());
         }
-        template.convertAndSend("/results/" + dashboardId + "/instant", new Message(counter, responses, String.format("monitor results for %s (%s)", dashboard.getName(), Long.toString(dashboardId)), new MonitorParameters()));
     }
 
 
@@ -163,8 +171,11 @@ public class StompController {
                     try {
                         long offset = offsets.get(dashboardId).longValue();
                         offsets.put(dashboardId, new Long((offset + 5000) % 86400000));
-                        getRestStats(dashboardId, new RestTemplate(), template, dashboardService, counter.incrementAndGet(), offset);
-                        getMqStats(dashboardId, new RestTemplate(), template, dashboardService, counter.incrementAndGet(), offset);
+                        Dashboard dashboard = dashboardService.getDashboardById(dashboardId).get();
+                        HashMap<Long, Message> responses = new HashMap<Long, Message>();
+                        getRestStats(dashboardId, new RestTemplate(), responses, dashboard, offset);
+                        getMqStats(dashboardId, new RestTemplate(), responses, dashboard, offset);
+                        template.convertAndSend("/results/" + dashboardId + "/instant", new Message(counter.incrementAndGet(), responses, String.format("monitor results for %s (%s)", dashboard.getName(), Long.toString(dashboardId)), new MonitorParameters()));
                     } catch(Exception e) {
                         System.out.println("Error occurred while getting stats for " + Long.toString(dashboardId) + ": " + e.getMessage());
                         Thread.currentThread().interrupt();
@@ -238,10 +249,15 @@ class MessageQueueReceiver {
         this.service = service;
     }
 
-    public void receiveMessage(Message message) {
-        System.out.println("Received <" + message.getId() + ">");
-        service.create(Long.parseLong(message.getParameters().getName()), MonitorSetting.Protocols.mq, message);
-        //latch.countDown();
+    public void receiveMessage(String mqMessage) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            Message message = mapper.readValue(mqMessage, Message.class);
+            System.out.println("Received <" + message.getId() + ">");
+            service.create(Long.parseLong(message.getParameters().getName()), MonitorSetting.Protocols.mq, message);
+        } catch (IOException e) {
+            System.out.println("Could not convert message: " + mqMessage);
+        }
     }
 
     public CountDownLatch getLatch() {

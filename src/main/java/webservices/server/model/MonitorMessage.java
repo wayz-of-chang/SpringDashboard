@@ -4,13 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.Id;
 import webservices.Message;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MonitorMessage {
 
     @Id
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
+
     private long monitorId;
     private MonitorSetting.Protocols protocol;
     private Message message;
@@ -40,7 +44,7 @@ public class MonitorMessage {
                 "MonitorMessage[id=%d, protocol=%s, message='%s']", id, protocol, message);
     }
 
-    public long getId() {
+    public String getId() {
         return this.id;
     }
 
@@ -58,7 +62,7 @@ public class MonitorMessage {
         return this.timestamp;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

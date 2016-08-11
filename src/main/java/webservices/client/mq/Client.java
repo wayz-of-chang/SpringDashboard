@@ -1,5 +1,6 @@
 package webservices.client.mq;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -93,7 +94,8 @@ class Client {
 
     private void sendMessage(String key, TaskTypes type, String name, long counter) throws Exception
     {
-        rabbitTemplate.convertAndSend(queueName, getStats(key, type, name, counter));
+        ObjectMapper mapper = new ObjectMapper();
+        rabbitTemplate.convertAndSend(queueName, mapper.writeValueAsString(getStats(key, type, name, counter)));
     }
 
     private Message getStats(String key, TaskTypes type, String name, long counter) {
