@@ -114,14 +114,9 @@ app.factory('service', function($http, $rootScope) {
         return $http.post('/users/get', {}, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
             console.log(response);
             //success
-            var cookie = JSON.stringify({csrf: response.headers('X-CSRF-TOKEN')});
-            $.cookie('csrf', cookie);
-            $('meta[name="_csrf"]').attr('content', response.headers('X-CSRF-TOKEN'));
-            service.set_user(response.data.data);
-            var data = {
-                userId: service.get_user_property('id')
-            };
-            service.query_dashboards(data, function(response) {});
+            if (callback != null) {
+                return callback(response);
+            }
             return response;
         }, function(response) {
             console.log(response);

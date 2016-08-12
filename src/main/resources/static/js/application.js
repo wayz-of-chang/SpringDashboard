@@ -83,7 +83,18 @@ $(function () {
         remember_me = cookie.remember_me;
     }
     if (csrf > "" && remember_me) {
-        angular.element(document.body).injector().get('service').get_current_user();
+        var service = angular.element(document.body).injector().get('service');
+        service.get_current_user(function(response) {
+            var cookie = JSON.stringify({csrf: response.headers('X-CSRF-TOKEN')});
+            $.cookie('csrf', cookie);
+            $('meta[name="_csrf"]').attr('content', response.headers('X-CSRF-TOKEN'));
+            service.set_user(response.data.data);
+            var data = {
+                userId: service.get_user_property('id')
+            };
+            service.query_dashboards(data, function(response) {});
+            return response;
+        });
     }
 
 });
