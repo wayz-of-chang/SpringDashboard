@@ -43,15 +43,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Urim</a>
+            <a class="navbar-brand small-caps" href="#">Urim</a>
         </div>
 
         <div class="collapse navbar-collapse" id="main-nav">
-            <ul class="nav navbar-nav" ng-controller="DashboardController as dashboard">
+            <ul class="nav navbar-nav" ng-controller="DashboardController as dashboard" ng-show="dashboard.logged_in()">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{dashboard.dashboards[dashboard.current].name || "None"}}<span class="sr-only">(current)</span><span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle small-caps" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{dashboard.dashboards[dashboard.current].name || "None"}}<span class="sr-only">(current)</span><span class="caret"></span></a>
                     <ul class="dropdown-menu" >
-                        <li ng-repeat="board in dashboard.unselected()"><a href="" ng-click="dashboard.select(board)">{{dashboard.dashboards[board].name}}</a></li>
+                        <li ng-repeat="board in dashboard.unselected()"><a class="small-caps" href="" ng-click="dashboard.select(board)">{{dashboard.dashboards[board].name}}</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="" ng-click="dashboard.open_new_popup()"><i class="fa fa-plus fa-fw"></i> New Dashboard</a></li>
                         <li><a href="" ng-click="dashboard.copy()"><i class="fa fa-clone fa-fw"></i> Copy Dashboard</a></li>
@@ -62,7 +62,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right" ng-controller="UserController as user">
                 <li class="dropdown">
-                    <a id="login_dropdown_button" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.logged_in ? user.user.username : "Log In"}} <span class="caret"></span></a>
+                    <a id="login_dropdown_button" href="#" class="dropdown-toggle small-caps" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.logged_in ? user.user.username : "Log In"}} <span class="caret"></span></a>
                     <ul class="dropdown-menu" style="min-width:200px;">
                         <li class="container-fluid">
                             <div class="alert alert-danger" ng-show="user.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{user.error_message}}</div>
@@ -110,7 +110,7 @@
                         </li>
                     </ul>
                 </li>
-                <li><a href="#"><i class="fa fa-cog" aria-hidden="true" title="Settings"></i></a></li>
+                <li ng-show="user.logged_in"><a href="" ng-click="user.open_settings_popup()"><i class="fa fa-cog" aria-hidden="true" title="Settings"></i></a></li>
             </ul>
         </div>
     </div>
@@ -120,7 +120,7 @@
     <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript!  Websocket relies on Javascript being enabled.  Please enable Javascript and reload this page!</h2></noscript>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 sortable" ng-repeat="mon in monitor.ordered_monitors()" repeat-final="" id="monitor_{{mon.id}}" data-id="{{mon.id}}">
         <div class="panel panel-default monitor">
-            <div class="panel-heading clearfix">
+            <div class="panel-heading clearfix small-caps">
                 {{mon.name ? mon.name : "Unnamed"}} <button type="button" ng-click="monitor.flip_monitor(mon.id);" class="btn pull-right btn-xs" ng-class="{'btn-default': !monitor.flipped[mon.id], 'btn-success': monitor.flipped[mon.id]}"><i class="fa" ng-class="{'fa-cog': !monitor.flipped[mon.id], 'fa-check-circle': monitor.flipped[mon.id]}"></i></button>
             </div>
             <div class="panel-body flex">
@@ -131,7 +131,7 @@
                                 {{mon.url}}&nbsp;{{mon.monitorType}}&nbsp;{{mon.statType}}&nbsp;{{mon.parser}}&nbsp;{{mon.chart}}&nbsp;{{mon.protocol}}&nbsp;{{mon.interval}}<br />{{monitor.get_results(mon.id)}}
                             </div>
                             <div class="fill-height" ng-hide="mon.show_raw">
-                                <svg id="chart_{{mon.id}}" width="97%" height="97%" class="chart" onclick="alert('hello');"></svg>
+                                <svg id="chart_{{mon.id}}" width="97%" height="97%" class="chart" onclick="return false;"></svg>
                             </div>
                         </div>
                         <div class="col-xs-12 ccl-sm-12 back monitor-content">
@@ -210,7 +210,7 @@
     </div>
     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-2" ng-show="monitor.current_dashboard() > ''" >
         <div class="panel panel-default monitor">
-            <div class="panel-heading clearfix">
+            <div class="panel-heading clearfix small-caps">
                 Monitor Actions
             </div>
             <div class="panel-body flex">
@@ -341,6 +341,64 @@
                         <div class="form-group clearfix btn-toolbar">
                             <button type="submit" class="btn btn-danger pull-right" ng-click="monitor.delete(monitor.delete_monitor.id)">Delete</button>&nbsp;
                             <button type="button" class="btn btn-default pull-right" data-dismiss="modal" ng-click="monitor.cancel_delete_monitor_modal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="user_modals_container" ng-controller="UserController as user">
+    <div id="user_settings_modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">User Settings</h4>
+                </div>
+                <div class="modal-body">
+                   <form>
+                        <div class="form-group">
+                            <h4 ng-show="user.user_settings().current_dashboard">Current Dashboard: {{user.dashboards()[user.user_settings().current_dashboard + ""].name}}
+                                <!--<select id="user_settings_current_dashboard" ng-model="user.user_settings().current_dashboard">
+                                    <option ng-repeat="option in user.dashboard_keys()" value="{{option}}">{{user.dashboards()[option].name}}</option>
+                                </select>-->
+                            </h4>
+                            <h4>Monitors:</h4>
+                            <div class="table-responsive" ng-repeat="mon in user.monitor_order()">
+                                <h5><strong>{{user.monitors()[mon].name}}</strong></h5>
+                                <table class="table">
+                                    <tr>
+                                        <td class="text-right">URL</td><td>{{user.monitors()[mon].url}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right">Monitor Type</td><td class="small-caps capitalize">{{user.monitors()[mon].monitorType}}</td>
+                                    </tr>
+                                    <tr ng-show="user.monitors()[mon].monitorType == 'system'">
+                                        <td class="text-right">Stat Type</td><td class="small-caps caps">{{user.monitors()[mon].statType}}</td>
+                                    </tr>
+                                    <tr ng-show="user.monitors()[mon].monitorType == 'script'">
+                                        <td class="text-right">Script Name</td><td class="small-caps">{{user.monitors()[mon].script}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right">Interval</td><td class="small-caps capitalize">{{user.monitors()[mon].interval}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right">Protocol</td><td class="small-caps caps">{{user.monitors()[mon].protocol}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right">Chart Type</td><td class="small-caps capitalize">{{user.monitors()[mon].chart || "json"}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right">Output Parser</td><td>{{user.monitors()[mon].parser}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group clearfix btn-toolbar">
+                            <button type="submit" class="btn btn-warning pull-right" ng-click="">Export Data</button>&nbsp;
+                            <button type="button" class="btn btn-warning pull-right" ng-click="">Import Data</button>&nbsp;
+                            <button type="button" class="btn btn-default pull-right" data-dismiss="modal" ng-click="user.close_settings_popup()">Close</button>
                         </div>
                     </form>
                 </div>

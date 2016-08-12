@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import webservices.Message;
+import webservices.client.task.Task;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -20,7 +21,6 @@ class Client {
 
     @RequestMapping("/ping")
     public Message ping(@RequestParam(value="value", defaultValue="ping") String value) {
-        return new Message(counter.incrementAndGet(), String.format(template, value), name, new Parameters(name,
-                "ping"));
+        return new Task().getStats("0", value, counter.incrementAndGet());
     }
 }

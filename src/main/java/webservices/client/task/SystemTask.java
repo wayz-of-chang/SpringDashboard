@@ -1,4 +1,4 @@
-package webservices.client.mq;
+package webservices.client.task;
 
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
@@ -8,12 +8,20 @@ import oshi.hardware.NetworkIF;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 import webservices.Message;
+import webservices.client.mq.Parameters;
 import webservices.data.SystemData;
 
 public class SystemTask extends Task {
+    private static SystemData cachedStat;
+    private static long lastUpdatedTimestamp = 0;
 
     public Message getStats(String key, String statType, long counter) {
-        return new Message(counter, determineSystemInfo(), name, new Parameters(key, "system", statType));
+        long currentTimestamp = System.currentTimeMillis();
+        if (currentTimestamp - 4000 > lastUpdatedTimestamp) {
+            lastUpdatedTimestamp = currentTimestamp;
+            cachedStat = determineSystemInfo();
+        }
+        return new Message(counter, cachedStat, name, new Parameters(key, "system", statType));
     }
 
     private SystemData determineSystemInfo() {

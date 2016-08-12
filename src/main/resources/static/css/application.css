@@ -40,6 +40,19 @@ body {
     text-align: right;
 }
 
+.small-caps {
+    text-rendering: auto;
+    font-variant: small-caps;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.caps {
+    text-transform: uppercase;
+}
+
 /* entire container, keeps perspective */
 .flip-container {
 	perspective: 1000px;

@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import webservices.Message;
+import webservices.client.task.ScriptTask;
+import webservices.client.task.SystemTask;
+import webservices.client.task.Task;
 
 import java.util.HashMap;
 import java.util.concurrent.ScheduledFuture;

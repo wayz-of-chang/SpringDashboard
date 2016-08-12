@@ -137,6 +137,9 @@ app.controller('DashboardController', function($scope, service) {
     dashboard.cancel_delete_dashboard_modal = function() {
         $('#delete_dashboard_modal').modal('hide');
     };
+    dashboard.logged_in = function() {
+        return service.logged_in;
+    };
 
     $scope.$watch(function(scope) { return service.get_dashboards(); },
         function(new_val, old_val) { dashboard.dashboards = new_val; }

@@ -93,7 +93,34 @@ app.controller('UserController', function($scope, service) {
             }
         }
         return true;
-    }
+    };
+    user.open_settings_popup = function() {
+        $('#user_settings_modal').modal('show');
+    };
+    user.close_settings_popup = function() {
+        $('#user_settings_modal').modal('hide');
+    };
+
+    user.user_settings = function() {
+        console.log(service.user_settings);
+        return service.user_settings;
+    };
+    user.dashboards = function() {
+        console.log(service.dashboards);
+        return service.dashboards;
+    };
+    user.dashboard_keys = function() {
+        console.log(Object.keys(user.dashboards()));
+        return Object.keys(user.dashboards());
+    };
+    user.monitors = function() {
+        console.log(service.monitors);
+        return service.monitors;
+    };
+    user.monitor_order = function() {
+        return service.user_settings.monitor_order[service.user_settings.current_dashboard];
+    };
+
     $scope.$watch(function(scope) { return service.get_login_status(); },
         function(new_val, old_val) { user.logged_in = new_val; }
     );

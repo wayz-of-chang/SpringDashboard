@@ -1,6 +1,7 @@
-package webservices.client.mq;
+package webservices.client.task;
 
 import webservices.Message;
+import webservices.client.mq.Parameters;
 import webservices.data.ScriptData;
 
 import java.io.*;
