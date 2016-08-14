@@ -117,59 +117,16 @@ app.controller('UserController', function($scope, $window, service) {
         return service.user_settings.monitor_order[service.user_settings.current_dashboard];
     };
     user.export = function() {
-        service.get_current_user(function(response) {
-            var dashboards = response.data.data.user.dashboards;
-            var dashboards_map = {};
-            $.each(dashboards, function(index, dashboard) {
-                dashboards_map[dashboard.id] = dashboard;
-            });
-            var monitor_order = response.data.data.userSetting.monitorOrder;
-            var return_object = [];
-            $.each(monitor_order, function(dashboard_id, monitors) {
-                if (dashboards_map[dashboard_id] == null) {
-                    return true;
-                }
-                var monitors_map = {};
-                $.each(dashboards_map[dashboard_id].monitors, function(index, monitor) {
-                    monitors_map[monitor.id] = monitor;
-                });
-                var dashboard = { name: dashboards_map[dashboard_id].name, monitors: [] };
-                $.each(monitors, function(index, monitor_id) {
-                    if (monitors_map[monitor_id] == null) {
-                        return true;
-                    }
-                    var monitor = { name: monitors_map[monitor_id].name };
-                    $.each(monitors_map[monitor_id].settings.sort(user.sort_by_key), function(index, setting) {
-                        monitor[setting.key] = setting.value;
-                    });
-                    dashboard.monitors.push(monitor);
-                });
-                return_object.push(dashboard);
-            });
-            var export_file = new Blob([JSON.stringify({dashboards: return_object.sort(user.sort_by_name)}, null, 2)], {type: "application/json"})
+        service.export_user(function(response) {
+            //console.log(response.data.data);
+            var export_file = new Blob([JSON.stringify(response.data.data, null, 2)], {type: "application/json"})
             var reader = new FileReader();
             reader.onloadend = function(e) {
                 $window.open(reader.result);
             }
             reader.readAsDataURL(export_file);
-            return {dashboards: return_object};
+            return response.data.data;
         });
-    };
-
-    user.sort_by_key = function(a, b) {
-        var aL = a.key.toLowerCase();
-        var bL = b.key.toLowerCase();
-        return ((aL < bL) ? -1 : 1);
-    }
-
-    user.sort_by_name = function(a, b) {
-        var aL = a.name.toLowerCase();
-        var bL = b.name.toLowerCase();
-        return ((aL < bL) ? -1 : 1);
-    }
-
-    user.import = function() {
-
     };
 
     $scope.$watch(function(scope) { return service.get_login_status(); },

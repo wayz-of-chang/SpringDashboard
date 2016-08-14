@@ -149,6 +149,22 @@ app.factory('service', function($http, $rootScope) {
         });
     };
 
+    service.export_user = function(callback) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        return $http.post('/users/export', {}, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
+            console.log(response);
+            //success
+            if (callback != null) {
+                return callback(response);
+            }
+            return response;
+        }, function(response) {
+            console.log(response);
+            //fail
+            return response;
+        });
+    };
+
     service.set_user = function(data) {
         service.user.id = data.id;
         service.user.username = data.username;

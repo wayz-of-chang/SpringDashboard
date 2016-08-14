@@ -36,6 +36,10 @@ body {
     float: right;
 }
 
+.hidden {
+    display: none;
+}
+
 .align-right {
     text-align: right;
 }

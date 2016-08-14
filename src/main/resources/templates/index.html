@@ -12,6 +12,8 @@
     <script src="/js/vendor/jquery-1.12.4.js"></script>
     <script src="/js/vendor/jquery.cookie.js"></script>
     <script src="/js/vendor/jquery-ui.js"></script>
+    <script src="/js/vendor/jquery.iframe-transport.js"></script>
+    <script src="/js/vendor/jquery.fileupload.js"></script>
     <script src="/js/vendor/sockjs-1.1.1.js"></script>
     <script src="/js/vendor/stomp.js"></script>
     <script src="/js/vendor/angular.js"></script>
@@ -397,7 +399,7 @@
                         </div>
                         <div class="form-group clearfix btn-toolbar">
                             <button type="submit" class="btn btn-warning pull-right" ng-click="user.export()">Export Data</button>&nbsp;
-                            <button type="button" class="btn btn-warning pull-right" ng-click="user.import()">Import Data</button>&nbsp;
+                            <label class="btn btn-warning btn-file pull-right"><span>Import Data</span><input id="user_upload" type="file" name="file" data-url="/users/import" class="hidden" /></label>&nbsp;
                             <button type="button" class="btn btn-default pull-right" data-dismiss="modal" ng-click="user.close_settings_popup()">Close</button>
                         </div>
                     </form>

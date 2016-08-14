@@ -58,6 +58,17 @@ $(function () {
             angular.element($('#dashboard_modals_container')).scope().dashboard.update_monitor_order();
         }
     });
+    $('#user_upload').fileupload({
+        dataType: 'json',
+        headers: {'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')},
+        done: function(e, data) {
+            console.log(data);
+        },
+        progressall: function(e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            console.log(progress);
+        },
+    });
 
     var document_width;
 
