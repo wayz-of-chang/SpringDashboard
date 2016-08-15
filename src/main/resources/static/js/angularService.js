@@ -235,6 +235,22 @@ app.factory('service', function($http, $rootScope) {
         });
     };
 
+    service.copy_dashboard = function(data, callback) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        return $http.post('/dashboards/copy', data, {headers: {'X-CSRF-TOKEN':cookie.csrf}}).then(function(response) {
+            console.log(response);
+            //success
+            service.set_dashboard(response.data.data.dashboard);
+            service.user_settings.monitor_order[response.data.data.dashboard.id] = response.data.data.monitor_order;
+            return callback(response);
+        }, function(response) {
+            console.log(response);
+            //fail
+            service.update_session_status(response.headers('X-CSRF-TOKEN'));
+            return callback(response);
+        });
+    };
+
     service.query_dashboards = function(data, callback) {
         var cookie = JSON.parse($.cookie('csrf'));
         return $http.post('/dashboards/get', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {

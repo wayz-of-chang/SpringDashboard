@@ -2,13 +2,15 @@ package webservices.server.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import webservices.server.model.Dashboard;
 import webservices.server.model.Monitor;
+import webservices.server.model.MonitorSetting;
 import webservices.server.repository.DashboardRepository;
 import webservices.server.repository.MonitorRepository;
+import webservices.server.repository.MonitorSettingRepository;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,11 +18,13 @@ import java.util.Set;
 public class DashboardService {
     private final DashboardRepository repository;
     private final MonitorRepository monitorRepository;
+    private final MonitorSettingRepository monitorSettingRepository;
 
     @Autowired
-    public DashboardService(DashboardRepository repository, MonitorRepository monitorRepository) {
+    public DashboardService(DashboardRepository repository, MonitorRepository monitorRepository, MonitorSettingRepository monitorSettingRepository) {
         this.repository = repository;
         this.monitorRepository = monitorRepository;
+        this.monitorSettingRepository = monitorSettingRepository;
     }
 
     public Optional<Dashboard> getDashboardById(long id) {
@@ -39,6 +43,42 @@ public class DashboardService {
         Dashboard dashboard = new Dashboard();
         dashboard.setName(name);
         return repository.save(dashboard);
+    }
+
+    public Dashboard copy(ArrayList<Long> monitorOrder, long id) {
+        Dashboard dashboard = new Dashboard();
+        Dashboard referenceDashboard = getDashboardById(id).get();
+        if (referenceDashboard != null) {
+            dashboard.setName(referenceDashboard.getName());
+            Set<Monitor> monitors = new HashSet<Monitor>();
+            for (int i = 0; i < monitorOrder.size(); i++) {
+                Monitor m = copyMonitor(monitorOrder.get(i));
+                monitors.add(m);
+                monitorOrder.set(i, m.getId());
+            }
+            dashboard.setMonitors(monitors);
+            repository.save(dashboard);
+        }
+        return dashboard;
+    }
+
+    // This method is almost a copy of MonitorService.copy
+    private Monitor copyMonitor(long id) {
+        Monitor monitor = new Monitor();
+        Monitor referenceMonitor = monitorRepository.findOne(id);
+        if (referenceMonitor != null) {
+            monitor.setName(referenceMonitor.getName());
+            Set<MonitorSetting> settings = new HashSet<MonitorSetting>();
+            Set<MonitorSetting> referenceSettings = referenceMonitor.getSettings();
+            for (MonitorSetting referenceSetting: referenceSettings) {
+                MonitorSetting setting = new MonitorSetting(referenceSetting.getKey(), referenceSetting.getValue());
+                monitorSettingRepository.save(setting);
+                settings.add(setting);
+            }
+            monitor.setSettings(settings);
+            monitorRepository.save(monitor);
+        }
+        return monitor;
     }
 
     public void addMonitor(long id, long monitorId) {

@@ -9,10 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 import webservices.Message;
 import webservices.server.model.Dashboard;
 import webservices.server.model.User;
+import webservices.server.model.UserSetting;
 import webservices.server.parameters.DashboardParameters;
 import webservices.server.service.DashboardService;
 import webservices.server.service.UserService;
+import webservices.server.service.UserSettingService;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -23,11 +27,13 @@ public class DashboardController {
     final AtomicLong counter = new AtomicLong();
     private final DashboardService service;
     private final UserService userService;
+    private final UserSettingService userSettingService;
 
     @Autowired
-    public DashboardController(DashboardService service, UserService userService) {
+    public DashboardController(DashboardService service, UserService userService, UserSettingService userSettingService) {
         this.service = service;
         this.userService = userService;
+        this.userSettingService = userSettingService;
     }
 
     @RequestMapping(value="/dashboards/create", method=RequestMethod.POST)
@@ -40,6 +46,40 @@ public class DashboardController {
             return new Message(counter.incrementAndGet(), dashboard, "create dashboard", parameters);
         } catch (Exception e) {
             throw new Exception("Could not create dashboard: " + e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/dashboards/copy", method = RequestMethod.POST)
+    public Message copy(@RequestBody DashboardParameters parameters) throws Exception {
+        Dashboard dashboard;
+        try {
+            UserSetting referenceUserSetting = userService.getUserSettingById(parameters.getUserId()).get();
+            HashMap<Long, ArrayList<Long>> referenceMonitorOrders = null;
+            ArrayList<Long> referenceMonitorOrder = null;
+            ArrayList<Long> newMonitorOrder = new ArrayList<Long>();
+            if (referenceUserSetting != null) {
+                referenceMonitorOrders = referenceUserSetting.getMonitorOrder();
+            }
+            if (referenceMonitorOrders != null) {
+                referenceMonitorOrder = referenceMonitorOrders.get(parameters.getId());
+                for (Long monitorId: referenceMonitorOrder) {
+                    newMonitorOrder.add(new Long(monitorId));
+                }
+            }
+            if (referenceMonitorOrder != null) {
+                dashboard = service.copy(newMonitorOrder, parameters.getId());
+                userService.addDashboard(parameters.getUserId(), dashboard.getId());
+                referenceMonitorOrders.put(dashboard.getId(), newMonitorOrder);
+                userSettingService.save(referenceUserSetting);
+                HashMap<String, Object> toReturn = new HashMap<String, Object>();
+                toReturn.put("dashboard", dashboard);
+                toReturn.put("monitor_order", newMonitorOrder);
+                return new Message(counter.incrementAndGet(), toReturn, "copy dashboard", parameters);
+            } else {
+                throw new Exception(String.format("Dashboard %s has no defined monitor order", Long.toString(parameters.getId())));
+            }
+        } catch (Exception e) {
+            throw new Exception("Could not copy dashboard: " + e.getMessage());
         }
     }
 

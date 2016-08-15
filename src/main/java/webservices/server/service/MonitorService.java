@@ -37,6 +37,7 @@ public class MonitorService {
         return repository.save(monitor);
     }
 
+    // This method is the reference for DashboardService.copyMonitor
     public Monitor copy(long id) {
         Monitor monitor = new Monitor();
         repository.save(monitor);

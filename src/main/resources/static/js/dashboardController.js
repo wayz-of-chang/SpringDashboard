@@ -64,12 +64,12 @@ app.controller('DashboardController', function($scope, service) {
     };
     dashboard.copy = function() {
         var data = {
-            userId: service.get_user_property('id'),
-            name: dashboard.dashboards[dashboard.current].name
+            id: dashboard.current,
+            userId: service.get_user_property('id')
         };
-        service.create_dashboard(data, function(response) {
+        service.copy_dashboard(data, function(response) {
             if (response.status >= 200 && response.status < 300) {
-                dashboard.select(response.data.data.id);
+                dashboard.select(response.data.data.dashboard.id);
             } else {
             }
         });
