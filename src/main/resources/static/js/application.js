@@ -63,6 +63,15 @@ $(function () {
         headers: {'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')},
         done: function(e, data) {
             console.log(data);
+            var service = angular.element(document.body).injector().get('service');
+            service.get_current_user(function(response) {
+                service.set_user(response.data.data);
+                var data = {
+                    userId: service.get_user_property('id')
+                };
+                service.query_dashboards(data, function(response) {});
+                return response;
+            });
         },
         progressall: function(e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);

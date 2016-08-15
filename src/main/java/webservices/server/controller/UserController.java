@@ -102,7 +102,7 @@ public class UserController {
         String errorMessage;
         try {
             CurrentUser user = (CurrentUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return new Message(counter.incrementAndGet(), user.exportUser(), "export user", parameters);
+            return new Message(counter.incrementAndGet(), service.exportUser(user.getUser(), userSettingService.getUserSettingByUserId(user.getUser().getId()).get()), "export user", parameters);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -127,7 +127,7 @@ public class UserController {
                 ObjectMapper mapper = new ObjectMapper();
                 HashMap<String, Object> u = mapper.readValue(output.toString(), new TypeReference<HashMap<String, Object>>() {});
                 CurrentUser user = (CurrentUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                user.importUser(u);
+                service.importUser(user.getUser(), user.getUserSetting(), u);
 
                 return new Message(counter.incrementAndGet(), output.toString(), "import user", new UserParameters());
             } catch (Exception e) {
