@@ -119,7 +119,7 @@ app.controller('UserController', function($scope, $window, service) {
     user.export = function() {
         service.export_user(function(response) {
             //console.log(response.data.data);
-            var export_file = new Blob([JSON.stringify(response.data.data, null, 2)], {type: "application/json"})
+            var export_file = new Blob([JSON.stringify(response.data.data, null, 2)], {type: "application/json"});
             var reader = new FileReader();
             reader.onloadend = function(e) {
                 $window.open(reader.result);

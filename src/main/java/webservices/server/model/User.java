@@ -40,20 +40,10 @@ public class User {
         R_USER, RW_USER, ADMIN
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public String toString() {
+        return String.format(
+                "User[id=%d, name='%s']", id, username);
     }
 
     public long getId() { return id; }
@@ -76,6 +66,22 @@ public class User {
 
     public Set<Dashboard> getDashboards() {
         return this.dashboards;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setDashboards(Set<Dashboard> dashboards) {

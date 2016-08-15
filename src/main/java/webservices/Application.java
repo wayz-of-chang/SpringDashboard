@@ -11,9 +11,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
-import org.springframework.web.client.RestTemplate;
 import webservices.server.model.Dashboard;
+import webservices.server.model.Monitor;
+import webservices.server.model.User;
 import webservices.server.repository.DashboardRepository;
+import webservices.server.repository.MonitorRepository;
+import webservices.server.repository.UserRepository;
+
+import java.util.Arrays;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
@@ -39,23 +44,21 @@ public class Application implements CommandLineRunner {
     }
 
     private static void initializeServer() {
-        System.out.println("Initializing Server.");
-        //ApplicationContext application_context = SpringApplication.run(Application.class, args);
-
-        //System.out.println("The following beans are provided by Spring Boot:");
-        //String[] beanNames = application_context.getBeanDefinitionNames();
-        //Arrays.sort(beanNames);
-        //for (String beanName : beanNames) {
-        //    System.out.println(beanName);
-        //}
+        log.info("Initializing Server.");
     }
 
     private static void initializeClient() {
-        System.out.println("Initializing Client.");
+        log.info("Initializing Client.");
     }
 
     @Override
     public void run(String... args) throws Exception {
+        log.info("The following beans are provided by Spring Boot:");
+        String[] beanNames = context.getBeanDefinitionNames();
+        Arrays.sort(beanNames);
+        for (String beanName : beanNames) {
+            log.info(beanName);
+        }
     }
 
     @Bean
@@ -65,7 +68,7 @@ public class Application implements CommandLineRunner {
                 initializeServer();
             } else {
                 if (!type.equals(TYPE_CLIENT)) {
-                    System.out.println("Invalid type specified: " + type + "; Using " + TYPE_CLIENT + " as default.");
+                    log.warn("Invalid type specified: " + type + "; Using " + TYPE_CLIENT + " as default.");
                     type = TYPE_CLIENT;
                 }
                 initializeClient();
@@ -74,78 +77,21 @@ public class Application implements CommandLineRunner {
     }
 
     @Bean
-    public CommandLineRunner demoRest() throws Exception {
-        return (args) -> {
-            RestTemplate restTemplate = new RestTemplate();
-            Pong pong = restTemplate.getForObject("http://localhost:" + port + "/test", Pong.class);
-            log.info(pong.toString());
-
-            //System.out.println("Waiting five seconds...");
-            //Thread.sleep(5000);
-            //System.out.println("Sending message...");
-            //rabbitTemplate.convertAndSend(queueName, "Hello from RabbitMQ!");
-            //receiver().getLatch().await(10000, TimeUnit.MILLISECONDS);
-            context.close();
-        };
-    }
-
-    @Bean
     @Profile("server")
-    public CommandLineRunner demo(DashboardRepository repository) {
+    public CommandLineRunner showPersistedData(UserRepository userRepository, DashboardRepository dashboardRepository, MonitorRepository monitorRepository) {
         return (args) -> {
-            //repository.save(new Dashboard("Home"));
-            //repository.save(new Dashboard("Websites"));
-
-            log.info("Dashboards found with findAll():");
-            for (Dashboard dashboard : repository.findAll()) {
+            log.info("All Users:");
+            for (User user : userRepository.findAll()) {
+                log.info(user.toString());
+            }
+            log.info("All Dashboards:");
+            for (Dashboard dashboard : dashboardRepository.findAll()) {
                 log.info(dashboard.toString());
             }
-
-            /*Dashboard dashboard = repository.findOne(1L);
-            log.info("Dashboard found with findOne(1L):");
-            log.info(dashboard.toString());
-
-            log.info("Dashboard found with findByName('Home'):");
-            for (Dashboard home : repository.findByName("Home")) {
-                log.info(home.toString());
-            }*/
+            log.info("All Monitors:");
+            for (Monitor monitor : monitorRepository.findAll()) {
+                log.info(monitor.toString());
+            }
         };
     }
-
-    /*@Bean
-    public Queue queue() {
-        HashMap<String, Object> args = new HashMap<String, Object>();
-        args.put("x-message-ttl", 15000);
-        return new Queue(queueName, false, false, false, args);
-    }
-
-    @Bean
-    public TopicExchange exchange() {
-        return new TopicExchange("spring-boot-exchange");
-    }
-
-    @Bean
-    public Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(queueName);
-    }
-
-    @Bean
-    public SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter
-            listenerAdapter) {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.setQueueNames(queueName);
-        container.setMessageListener(listenerAdapter);
-        return container;
-    }
-
-    @Bean
-    public MessageQueueReceiver receiver() {
-        return new MessageQueueReceiver();
-    }
-
-    @Bean
-    public MessageListenerAdapter listenerAdapter(MessageQueueReceiver receiver) {
-        return new MessageListenerAdapter(receiver, "receiveMessage");
-    }*/
 }
