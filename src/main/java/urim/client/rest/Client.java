@@ -21,6 +21,6 @@ class Client {
 
     @RequestMapping("/ping")
     public Message ping(@RequestParam(value="value", defaultValue="ping") String value) {
-        return new Task().getStats("0", value, counter.incrementAndGet());
+        return new Message(counter.incrementAndGet(), new Task().getStats(value), this.name, new Parameters("default", this.name, value));
     }
 }

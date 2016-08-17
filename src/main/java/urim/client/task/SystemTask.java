@@ -11,17 +11,17 @@ import urim.Message;
 import urim.client.mq.Parameters;
 import urim.data.SystemData;
 
-public class SystemTask extends Task {
+public class SystemTask {
     private static SystemData cachedStat;
     private static long lastUpdatedTimestamp = 0;
 
-    public Message getStats(String key, String statType, long counter) {
+    public SystemData getStats() {
         long currentTimestamp = System.currentTimeMillis();
         if (currentTimestamp - 4000 > lastUpdatedTimestamp) {
             lastUpdatedTimestamp = currentTimestamp;
             cachedStat = determineSystemInfo();
         }
-        return new Message(counter, cachedStat, name, new Parameters(key, "system", statType));
+        return cachedStat;
     }
 
     private SystemData determineSystemInfo() {

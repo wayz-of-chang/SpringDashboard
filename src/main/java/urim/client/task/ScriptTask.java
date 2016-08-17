@@ -12,9 +12,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class ScriptTask extends Task {
+public class ScriptTask {
 
-    public Message getStats(String key, String name, long counter) {
+    public ScriptData getStats(String name) {
         ExecutorService pool = Executors.newFixedThreadPool(2);
         int exitValue = -1;
         ArrayList<String> output = new ArrayList<String>();
@@ -86,7 +86,7 @@ public class ScriptTask extends Task {
             pool.shutdown();
         }
 
-        return new Message(counter, new ScriptData(exitValue, output, error), this.name, new Parameters(key, "script", name));
+        return new ScriptData(exitValue, output, error);
     }
 }
 

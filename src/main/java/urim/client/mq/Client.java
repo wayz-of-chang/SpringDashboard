@@ -77,7 +77,7 @@ class Client {
         if (schedulers.containsKey(key)) {
             ttl.put(key, Long.parseLong(interval) * 10);
         }
-        return new Message(counter.incrementAndGet(), String.format("started monitoring, %s", key), name, new Parameters(key, "start", this.name));
+        return new Message(counter.incrementAndGet(), String.format("started monitoring, %s", key), name, new Parameters(key, "start", this.name, ""));
     }
 
     @RequestMapping("/stop")
@@ -85,7 +85,7 @@ class Client {
         if (schedulers.containsKey(key)) {
             stop(key, schedulers.get(key));
         }
-        return new Message(counter.incrementAndGet(), String.format("stopped monitoring, %s", key), name, new Parameters(key, "stop", name));
+        return new Message(counter.incrementAndGet(), String.format("stopped monitoring, %s", key), name, new Parameters(key, "stop", this.name, ""));
     }
 
     private void stop(String key, ScheduledFuture future) {
@@ -104,11 +104,11 @@ class Client {
     private Message getStats(String key, TaskTypes type, String name, long counter) {
         switch (type) {
             case system:
-                return new SystemTask().getStats(key, name, counter);
+                return new Message(counter, new SystemTask().getStats(), this.name, new Parameters(key, "system", this.name, name));
             case script:
-                return new ScriptTask().getStats(key, name, counter);
+                return new Message(counter, new ScriptTask().getStats(name), this.name, new Parameters(key, "script", this.name, name));
             default:
-                return new Task().getStats(key, name, counter);
+                return new Message(counter, new Task().getStats(name), this.name, new Parameters(key, "default", this.name, name));
         }
     }
 

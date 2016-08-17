@@ -11,6 +11,6 @@ public class ScriptClient extends Client {
 
     @RequestMapping("/script")
     public Message script(@RequestParam(value="name", defaultValue="") String name) {
-        return new ScriptTask().getStats("0", name, counter.incrementAndGet());
+        return new Message(counter.incrementAndGet(), new ScriptTask().getStats(name), this.name, new Parameters("script", this.name, name));
     }
 }

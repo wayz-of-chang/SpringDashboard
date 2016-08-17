@@ -31,7 +31,6 @@ public class ScriptClientIT extends BaseIT {
     public void getStats() throws Exception {
         this.base = new URL(String.format("http://localhost:%s/script", Integer.toString(this.port)));
         this.response = this.template.getForEntity(this.base.toString(), String.class);
-        assertThat(this.response.getBody(), containsString("ping"));
         assertThat(this.response.getBody(), containsString("id"));
         assertThat(this.response.getBody(), containsString("data"));
         assertThat(this.response.getBody(), containsString("returnValue"));
@@ -47,13 +46,21 @@ public class ScriptClientIT extends BaseIT {
         assertThat(this.response.getBody(), containsString("server"));
         assertThat(this.response.getBody(), containsString("port"));
         assertThat(this.response.getBody(), containsString("type"));
+        assertThat(this.response.getBody(), containsString("REST"));
 
-        this.base = new URL(String.format("http://localhost:%s/script?value=%s", Integer.toString(this.port), "hello"));
+        this.base = new URL(String.format("http://localhost:%s/script?name=%s.%s", Integer.toString(this.port), "ping-ruby", this.scriptExtension));
         this.response = this.template.getForEntity(this.base.toString(), String.class);
-        assertThat(this.response.getBody(), containsString("helloaaaaa"));
+        assertThat(this.response.getBody(), containsString("hello, world"));
 
-        this.base = new URL(String.format("http://localhost:%s/script?value=", Integer.toString(this.port)));
+        this.base = new URL(String.format("http://localhost:%s/script?name=%s", Integer.toString(this.port), "hello"));
         this.response = this.template.getForEntity(this.base.toString(), String.class);
-        assertThat(this.response.getBody(), containsString("ping"));
+        assertThat(this.response.getBody(), containsString("returnValue"));
+        assertThat(this.response.getBody(), containsString("-1"));
+        assertThat(this.response.getBody(), containsString("error"));
+        assertThat(this.response.getBody(), containsString("Script hello could not be found"));
+
+        this.base = new URL(String.format("http://localhost:%s/script?name=", Integer.toString(this.port)));
+        this.response = this.template.getForEntity(this.base.toString(), String.class);
+        assertThat(this.response.getBody(), containsString("hello, world"));
     }
 }

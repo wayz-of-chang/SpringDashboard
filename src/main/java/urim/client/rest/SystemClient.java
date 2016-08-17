@@ -10,6 +10,6 @@ public class SystemClient extends Client {
 
     @RequestMapping("/system")
     public Message system() {
-        return new SystemTask().getStats("0", "system", counter.incrementAndGet());
+        return new Message(counter.incrementAndGet(), new SystemTask().getStats(), this.name, new Parameters("system", this.name, ""));
     }
 }
