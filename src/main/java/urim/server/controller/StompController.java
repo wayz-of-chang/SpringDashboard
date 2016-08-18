@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -259,8 +258,6 @@ class MessageQueueReceiver {
 
     private final MonitorMessageService service;
 
-    private CountDownLatch latch = new CountDownLatch(1);
-
     public MessageQueueReceiver(MonitorMessageService service) {
         this.service = service;
     }
@@ -274,9 +271,5 @@ class MessageQueueReceiver {
         } catch (IOException e) {
             System.out.println("Could not convert message: " + mqMessage);
         }
-    }
-
-    public CountDownLatch getLatch() {
-        return latch;
     }
 }

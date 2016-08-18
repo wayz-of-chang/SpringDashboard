@@ -51,6 +51,7 @@ public class ScriptClientIT extends BaseIT {
         this.base = new URL(String.format("http://localhost:%s/script?name=%s.%s", Integer.toString(this.port), "ping-ruby", this.scriptExtension));
         this.response = this.template.getForEntity(this.base.toString(), String.class);
         assertThat(this.response.getBody(), containsString("hello, world"));
+        assertThat(this.response.getBody(), containsString("ping-ruby"));
 
         this.base = new URL(String.format("http://localhost:%s/script?name=%s", Integer.toString(this.port), "hello"));
         this.response = this.template.getForEntity(this.base.toString(), String.class);

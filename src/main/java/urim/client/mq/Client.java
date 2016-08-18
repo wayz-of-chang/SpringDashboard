@@ -88,20 +88,20 @@ class Client {
         return new Message(counter.incrementAndGet(), String.format("stopped monitoring, %s", key), name, new Parameters(key, "stop", this.name, ""));
     }
 
-    private void stop(String key, ScheduledFuture future) {
+    protected void stop(String key, ScheduledFuture future) {
         future.cancel(false);
         schedulers.remove(key);
         intervals.remove(key);
         ttl.remove(key);
     }
 
-    private void sendMessage(String key, TaskTypes type, String name, long counter) throws Exception
+    protected void sendMessage(String key, TaskTypes type, String name, long counter) throws Exception
     {
         ObjectMapper mapper = new ObjectMapper();
         rabbitTemplate.convertAndSend(queueName, mapper.writeValueAsString(getStats(key, type, name, counter)));
     }
 
-    private Message getStats(String key, TaskTypes type, String name, long counter) {
+    protected Message getStats(String key, TaskTypes type, String name, long counter) {
         switch (type) {
             case system:
                 return new Message(counter, new SystemTask().getStats(), this.name, new Parameters(key, "system", this.name, name));
