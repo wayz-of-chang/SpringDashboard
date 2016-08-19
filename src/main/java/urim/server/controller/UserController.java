@@ -137,4 +137,10 @@ public class UserController {
         }
         throw new Exception("Uploaded file was empty");
     }
+
+    @RequestMapping("/test")
+    public Message test(@RequestParam(value="name", defaultValue="World") String name) {
+        String template = "Hello, %s!";
+        return new Message(counter.incrementAndGet(), String.format(template, name), "test", new UserParameters());
+    }
 }

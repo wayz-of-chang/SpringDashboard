@@ -1,6 +1,8 @@
 package urim.client.mq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -37,6 +39,8 @@ class Client {
     private HashMap<String, Long> ttl = new HashMap<String, Long>();
     private HashMap<String, TaskTypes> types = new HashMap<String, TaskTypes>();
 
+    private static final Logger log = LoggerFactory.getLogger(Client.class);
+
     @Value("${spring.rabbitmq.queue}")
     private String queueName;
 
@@ -65,7 +69,7 @@ class Client {
                         }
                         sendMessage(key, TaskTypes.valueOf(type), name, counter.incrementAndGet());
                     } catch(Exception e) {
-                        System.out.println("Error occurred while getting stats for " + key + ": " + e.getMessage());
+                        log.warn("Error occurred while getting stats for " + key + ": " + e.getMessage());
                         Thread.currentThread().interrupt();
                     }
                 }

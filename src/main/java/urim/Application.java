@@ -24,10 +24,13 @@ import java.util.Arrays;
 public class Application implements CommandLineRunner {
     @Value("${type}")
     private String type;
+
     @Value("${server.port}")
     private String port;
-    private static final String TYPE_SERVER = "SERVER";
-    private static final String TYPE_CLIENT = "CLIENT";
+
+    public enum Types {
+        SERVER, CLIENT
+    }
 
     @Value("${spring.rabbitmq.queue}")
     private String queueName;
@@ -64,12 +67,12 @@ public class Application implements CommandLineRunner {
     @Bean
     public CommandLineRunner initialize() {
         return (args) -> {
-            if (type.equals(TYPE_SERVER)) {
+            if (type.equals(Types.SERVER.name())) {
                 initializeServer();
             } else {
-                if (!type.equals(TYPE_CLIENT)) {
-                    log.warn("Invalid type specified: " + type + "; Using " + TYPE_CLIENT + " as default.");
-                    type = TYPE_CLIENT;
+                if (!type.equals(Types.CLIENT.name())) {
+                    log.warn("Invalid type specified: " + type + "; Using " + Types.CLIENT.name() + " as default.");
+                    type = Types.CLIENT.name();
                 }
                 initializeClient();
             }

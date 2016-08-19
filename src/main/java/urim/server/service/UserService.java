@@ -1,5 +1,7 @@
 package urim.server.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ public class UserService {
     private final DashboardRepository dashboardRepository;
     private final MonitorRepository monitorRepository;
     private final MonitorSettingRepository monitorSettingRepository;
+
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     public UserService(UserRepository repository, UserSettingRepository userSettingRepository, DashboardRepository dashboardRepository, MonitorRepository monitorRepository, MonitorSettingRepository monitorSettingRepository) {
@@ -135,7 +139,7 @@ public class UserService {
     }
 
     private Dashboard importDashboard(HashMap<Long, ArrayList<Long>> monitorOrder, HashMap<String, Object> dashboard) {
-        System.out.println(dashboard.get("name"));
+        log.info(dashboard.get("name").toString());
         Dashboard d = new Dashboard((String) dashboard.get("name"));
         ArrayList<Long> m = new ArrayList<Long>();
         Set<Monitor> existingMonitors = importMonitors(m, (ArrayList<HashMap<String, String>>) dashboard.get("monitors"));
@@ -156,11 +160,11 @@ public class UserService {
     }
 
     private Monitor importMonitor(HashMap<String, String> monitor) {
-        System.out.println(String.format(" %s", monitor.get("name")));
+        log.info(String.format(" %s", monitor.get("name")));
         Monitor m = new Monitor((String) monitor.get("name"));
         Set<MonitorSetting> settings = new HashSet<MonitorSetting>();
         for (MonitorSetting.Setting setting: MonitorSetting.Setting.values()) {
-            System.out.println(String.format("  %s: %s", setting.name(), monitor.get(setting.name())));
+            log.info(String.format("  %s: %s", setting.name(), monitor.get(setting.name())));
             MonitorSetting s = new MonitorSetting(setting, (String) monitor.get(setting.name()));
             monitorSettingRepository.save(s);
             settings.add(s);

@@ -1,6 +1,8 @@
 package urim.server.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -47,6 +49,8 @@ public class StompController {
     private HashMap<Long, ScheduledFuture> schedulers = new HashMap<Long, ScheduledFuture>();
     private HashMap<Long, Long> offsets = new HashMap<Long, Long>();
 
+    private static final Logger log = LoggerFactory.getLogger(StompController.class);
+
     @Value("${spring.rabbitmq.queue}")
     private String queueName;
 
@@ -77,7 +81,7 @@ public class StompController {
                     continue;
                 }
                 if (offset % monitor.getIntervalSeconds(settings.getOrDefault(MonitorSetting.Setting.INTERVAL, "")) != 0) {
-                    System.out.println("Skipping monitor: " + monitor.getName() + "(" + monitor.getId() + "), interval: " + settings.getOrDefault(MonitorSetting.Setting.INTERVAL, "") + ", offset: " + offset);
+                    log.info("Skipping monitor: " + monitor.getName() + "(" + monitor.getId() + "), interval: " + settings.getOrDefault(MonitorSetting.Setting.INTERVAL, "") + ", offset: " + offset);
                     continue;
                 }
                 String monitorUrl = "";
@@ -92,8 +96,8 @@ public class StompController {
                     } else {
                         Message response = restTemplate.getForObject(monitorUrl, Message.class);
                         responses.put(monitor.getId(), response);
-                        //System.out.println(monitorUrl);
-                        //System.out.println(response.toString());
+                        //log.info(monitorUrl);
+                        //log.info(response.toString());
                         if (systemMonitor) {
                             systemResponses.put(monitorUrl, response);
                         }
@@ -123,7 +127,7 @@ public class StompController {
                     continue;
                 }
                 if (offset % (monitor.getIntervalSeconds(settings.getOrDefault(MonitorSetting.Setting.INTERVAL, "")) * 4) == 0) {
-                    System.out.println("Keeping monitor alive: " + monitor.getName() + "(" + monitor.getId() + "), interval: " + settings.getOrDefault(MonitorSetting.Setting.INTERVAL, "") + ", offset: " + offset);
+                    log.info("Keeping monitor alive: " + monitor.getName() + "(" + monitor.getId() + "), interval: " + settings.getOrDefault(MonitorSetting.Setting.INTERVAL, "") + ", offset: " + offset);
                     String monitorUrl = "";
                     if(settings != null) {
                         monitorUrl = settings.getOrDefault(MonitorSetting.Setting.URL, "");
@@ -192,7 +196,7 @@ public class StompController {
                         getMqStats(dashboardId, new RestTemplate(), responses, dashboard, offset);
                         template.convertAndSend("/results/" + dashboardId + "/instant", new Message(counter.incrementAndGet(), responses, String.format("monitor results for %s (%s)", dashboard.getName(), Long.toString(dashboardId)), new MonitorParameters()));
                     } catch(Exception e) {
-                        System.out.println("Error occurred while getting stats for " + Long.toString(dashboardId) + ": " + e.getMessage());
+                        log.warn("Error occurred while getting stats for " + Long.toString(dashboardId) + ": " + e.getMessage());
                         Thread.currentThread().interrupt();
                     }
                 }
@@ -258,6 +262,8 @@ class MessageQueueReceiver {
 
     private final MonitorMessageService service;
 
+    private static final Logger log = LoggerFactory.getLogger(MessageQueueReceiver.class);
+
     public MessageQueueReceiver(MonitorMessageService service) {
         this.service = service;
     }
@@ -266,10 +272,10 @@ class MessageQueueReceiver {
         ObjectMapper mapper = new ObjectMapper();
         try {
             Message message = mapper.readValue(mqMessage, Message.class);
-            System.out.println("Received <" + message.getId() + ">");
+            log.info("Received <" + message.getId() + ">");
             service.create(Long.parseLong(message.getParameters().getName()), MonitorSetting.Protocols.mq, message);
         } catch (IOException e) {
-            System.out.println("Could not convert message: " + mqMessage);
+            log.warn("Could not convert message: " + mqMessage);
         }
     }
 }

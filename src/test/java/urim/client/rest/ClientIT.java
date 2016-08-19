@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
-import urim.BaseIT;
+import urim.client.BaseIT;
 
 import java.net.URL;
 
