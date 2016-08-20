@@ -21,6 +21,20 @@ public class HomeControllerIT extends BaseIT {
     }
 
     @Test
+    public void getIndex() throws Exception {
+        this.base = new URL("http://localhost:" + port);
+        this.response = template.getForEntity(base.toString(), String.class);
+        assertThat(response.getBody(), containsString("Urim - Dashboard"));
+    }
+
+    @Test
+    public void getCsrf() throws Exception {
+        this.base = new URL("http://localhost:" + port + "/csrf");
+        this.response = template.getForEntity(base.toString(), String.class);
+        assertThat(response.getBody(), containsString("CSRF Refresh"));
+    }
+
+    @Test
     public void getPong() throws Exception {
         this.base = new URL("http://localhost:" + port + "/pong");
         this.response = template.getForEntity(base.toString(), String.class);
