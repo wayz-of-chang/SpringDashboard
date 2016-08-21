@@ -29,4 +29,9 @@ public class HomeController {
         model.addAttribute("name", name);
         return "ping";
     }
+
+    @RequestMapping("/mocha")
+    public String mocha(Model model) {
+        return "mocha";
+    }
 }
