@@ -44,7 +44,7 @@ public class MonitorSetting {
     }
 
     public enum Charts {
-        status, gauge, bar
+        status, gauge, bar, pie, line
     }
 
     public enum Protocols {

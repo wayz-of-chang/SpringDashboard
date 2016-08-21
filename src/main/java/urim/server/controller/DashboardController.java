@@ -36,7 +36,7 @@ public class DashboardController {
         this.userSettingService = userSettingService;
     }
 
-    @RequestMapping(value="/dashboards/create", method=RequestMethod.POST)
+    @RequestMapping(value = "/dashboards/create", method = RequestMethod.POST)
     public Message create(@RequestBody DashboardParameters parameters) throws Exception {
         Dashboard dashboard;
         User user;
@@ -83,7 +83,7 @@ public class DashboardController {
         }
     }
 
-    @RequestMapping(value="/dashboards/get", method=RequestMethod.POST)
+    @RequestMapping(value = "/dashboards/get", method = RequestMethod.POST)
     public Message get(@RequestBody DashboardParameters parameters) throws Exception {
         User user;
         try {
@@ -94,21 +94,19 @@ public class DashboardController {
         }
     }
 
-    @RequestMapping(value="/dashboards/edit", method=RequestMethod.POST)
+    @RequestMapping(value = "/dashboards/edit", method = RequestMethod.POST)
     public Message edit(@RequestBody DashboardParameters parameters) throws Exception {
         Dashboard dashboard;
-        User user;
         try {
             dashboard = service.getDashboardById(parameters.getId()).get();
             dashboard.setName(parameters.getName());
-            user = userService.getUserById(parameters.getUserId()).get();
             return new Message(counter.incrementAndGet(), service.save(dashboard), "edit dashboard", parameters);
         } catch (Exception e) {
             throw new Exception("Could not update dashboard: " + e.getMessage());
         }
     }
 
-    @RequestMapping(value="/dashboards/delete", method=RequestMethod.POST)
+    @RequestMapping(value = "/dashboards/delete", method = RequestMethod.POST)
     public Message delete(@RequestBody DashboardParameters parameters) throws Exception {
         Dashboard dashboard;
         User user;

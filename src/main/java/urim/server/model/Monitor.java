@@ -106,4 +106,9 @@ public class Monitor {
         return settingsMap;
     }
 
+    public HashMap<MonitorSetting.Setting, String> resetSettingsMap() {
+        settingsMap = null;
+        return settingsMap();
+    }
+
 }

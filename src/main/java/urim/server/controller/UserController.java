@@ -39,7 +39,7 @@ public class UserController {
         this.detailsService = detailsService;
     }
 
-    @RequestMapping(value="/users/create", method=RequestMethod.POST)
+    @RequestMapping(value = "/users/create", method = RequestMethod.POST)
     public Message create(@RequestBody UserParameters parameters) throws Exception {
         User user;
         try {
@@ -50,7 +50,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value="/users/login", method=RequestMethod.POST)
+    @RequestMapping(value = "/users/login", method = RequestMethod.POST)
     public Message login(@RequestBody UserParameters parameters) throws Exception {
         String errorMessage = "";
         try {
@@ -69,7 +69,7 @@ public class UserController {
         throw new Exception("Could not log in: " + errorMessage);
     }
 
-    @RequestMapping(value="/users/update_settings", method=RequestMethod.POST)
+    @RequestMapping(value = "/users/update_settings", method = RequestMethod.POST)
     public Message update_settings(@RequestBody UserParameters parameters) throws Exception {
         String errorMessage;
         try {
@@ -84,7 +84,7 @@ public class UserController {
         throw new Exception("Could not update user settings: " + errorMessage);
     }
 
-    @RequestMapping(value="/users/get", method=RequestMethod.POST)
+    @RequestMapping(value = "/users/get", method = RequestMethod.POST)
     public Message get_user(@RequestBody UserParameters parameters) throws Exception {
         String errorMessage;
         try {
@@ -97,7 +97,7 @@ public class UserController {
         throw new Exception("Could not retrieve current user: " + errorMessage);
     }
 
-    @RequestMapping(value="/users/export", method=RequestMethod.POST)
+    @RequestMapping(value = "/users/export", method = RequestMethod.POST)
     public Message export_dashboards(@RequestBody UserParameters parameters) throws Exception {
         String errorMessage;
         try {
@@ -109,7 +109,7 @@ public class UserController {
         throw new Exception("Could not export user: " + errorMessage);
     }
 
-    @RequestMapping(value="/users/import", method=RequestMethod.POST)
+    @RequestMapping(value = "/users/import", method = RequestMethod.POST)
     public Message import_dashboards(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws Exception {
         String errorMessage;
         if (!file.isEmpty()) {
