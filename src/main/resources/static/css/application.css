@@ -116,6 +116,10 @@ body {
     color: #77DD77;
 }
 
+.warning {
+    color: #F0AD4E;
+}
+
 .failure {
     color: #DD7777;
 }

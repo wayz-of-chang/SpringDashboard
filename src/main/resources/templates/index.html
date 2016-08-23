@@ -123,7 +123,7 @@
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 sortable" ng-repeat="mon in monitor.ordered_monitors()" repeat-final="" id="monitor_{{mon.id}}" data-id="{{mon.id}}">
         <div class="panel panel-default monitor">
             <div class="panel-heading clearfix small-caps">
-                {{mon.name ? mon.name : "Unnamed"}} <button type="button" ng-click="monitor.flip_monitor(mon.id);" class="btn pull-right btn-xs" ng-class="{'btn-default': !monitor.flipped[mon.id], 'btn-success': monitor.flipped[mon.id]}"><i class="fa" ng-class="{'fa-cog': !monitor.flipped[mon.id], 'fa-check-circle': monitor.flipped[mon.id]}"></i></button>
+                {{mon.name ? mon.name : "Unnamed"}} <button type="button" ng-click="monitor.flip_monitor(mon.id);" class="btn pull-right btn-xs" ng-class="{'btn-default': !monitor.flipped[mon.id], 'btn-success': monitor.flipped[mon.id]}"><i class="fa" ng-class="{'fa-cog': !monitor.flipped[mon.id], 'fa-check-circle': monitor.flipped[mon.id]}"></i></button> <button type="button" class="btn pull-right btn-xs btn-link" ng-show="monitor.has_errors[mon.id]" data-toggle="tooltip" data-placement="bottom" ng-attr-title="{{monitor.errors[mon.id]}}"><i class="fa fa-warning warning"></i></button>
             </div>
             <div class="panel-body flex">
                 <div class="flip-container flex" ng-class="{'settings': monitor.flipped[mon.id]}">
@@ -219,8 +219,8 @@
                 <button type="button" ng-click="monitor.add_monitor()" class="btn btn-default"><i class="fa fa-plus-circle"></i> Add Monitor</button>
                 <button type="button" ng-click="monitor.toggle_monitoring()" class="btn" ng-class="{'btn-success': !monitor.monitoring, 'btn-danger': monitor.monitoring}"><i class="fa" ng-class="{'fa-play-circle': !monitor.monitoring, 'fa-stop-circle': monitor.monitoring}"></i> {{monitor.monitoring ? "Stop Monitoring" : "Start Monitoring"}}</button>
                 <div class="pager">
-                    <i class="fa fa-refresh" ng-class="{'fa-pulse': !monitor.monitoring &amp;&amp; monitor.automatic_reconnect, 'success': monitor.monitoring &amp;&amp; monitor.automatic_reconnect, 'disabled': !monitor.automatic_reconnect}" title="Monitoring Status"></i>
-                    <i class="fa fa-exclamation-circle" ng-class="{'failure': monitor.session_expired, 'disabled': !monitor.session_expired}" title="Session Status"></i>
+                    <i class="fa fa-refresh fa-2x" ng-class="{'fa-pulse': !monitor.monitoring &amp;&amp; monitor.automatic_reconnect, 'success': monitor.monitoring &amp;&amp; monitor.automatic_reconnect, 'disabled': !monitor.automatic_reconnect}" title="Monitoring Status"></i>
+                    <i class="fa fa-exclamation-circle fa-2x" ng-class="{'failure': monitor.session_expired, 'disabled': !monitor.session_expired}" title="Session Status"></i>
                 </div>
             </div>
         </div>

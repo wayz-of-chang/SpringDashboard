@@ -22,6 +22,8 @@ import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 import urim.Message;
+import urim.Parameters;
+import urim.error.BaseError;
 import urim.server.model.Dashboard;
 import urim.server.model.Monitor;
 import urim.server.model.MonitorMessage;
@@ -94,7 +96,12 @@ public class StompController {
                     if (systemMonitor && systemResponses.get(monitorUrl) != null) {
                         responses.put(monitor.getId(), systemResponses.get(monitorUrl));
                     } else {
-                        Message response = restTemplate.getForObject(monitorUrl, Message.class);
+                        Message response;
+                        try {
+                            response = restTemplate.getForObject(monitorUrl, Message.class);
+                        } catch (Exception e) {
+                            response = new Message(monitor.getId(), new BaseError(String.format("Invalid client response: %s", e.getMessage())), "", new Parameters());
+                        }
                         responses.put(monitor.getId(), response);
                         //log.info(monitorUrl);
                         //log.info(response.toString());

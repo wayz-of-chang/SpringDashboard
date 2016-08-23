@@ -7,6 +7,8 @@ app.controller('MonitorController', function($scope, service) {
     monitor.monitors = {};
     monitor.flipped = {};
     monitor.last_updated = {};
+    monitor.has_errors = {};
+    monitor.errors = {};
     monitor.new_monitor = {
         name: '',
         error: false,
@@ -88,10 +90,26 @@ app.controller('MonitorController', function($scope, service) {
     monitor.get_results = function(id) {
         if (monitor.stats) {
             if (monitor.monitors[id].parser_function && monitor.stats[id] && monitor.stats[id].data) {
-                var data = monitor.monitors[id].parser_function(monitor.stats[id]);
-                monitor.update_chart(id, data);
-                return data;
+                if (monitor.stats[id].data.errorMessage != null) {
+                    monitor.has_errors[id] = true;
+                    monitor.errors[id] = monitor.stats[id].data.errorMessage;
+                    return;
+                } else {
+                    if (monitor.monitors[id].monitorType == 'script' && monitor.stats[id].data.error != null && monitor.stats[id].data.error.length != 0) {
+                        monitor.has_errors[id] = true;
+                        monitor.errors[id] = monitor.stats[id].data.error.join("<br />");
+                        return;
+                    } else {
+                        monitor.has_errors[id] = false;
+                        monitor.errors[id] = "";
+                        var data = monitor.monitors[id].parser_function(monitor.stats[id]);
+                        monitor.update_chart(id, data);
+                        return data;
+                    }
+                }
             } else {
+                //monitor.has_errors[id] = true;
+                //monitor.errors[id] = "Invalid response for monitor received";
                 var data = monitor.stats[id];
                 return data;
             }
@@ -121,6 +139,10 @@ app.controller('MonitorController', function($scope, service) {
         });
     };
     monitor.setup_chart = function(id) {
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip('destroy');
+          $('[data-toggle="tooltip"]').tooltip();
+        })
         if (monitor.monitors[id].chart == 'status') {
             if ($('#chart_' + id).size() == 0) {
                 return;
