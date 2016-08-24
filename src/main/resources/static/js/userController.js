@@ -74,6 +74,18 @@ app.controller('UserController', function($scope, $window, service) {
             }
         });
     };
+    user.logout = function() {
+        service.disconnect_monitors();
+        service.clear_monitors();
+        service.clear_dashboards();
+        service.clear_user_settings();
+        service.logged_in = false;
+        $.cookie('csrf', JSON.stringify({csrf: null}));
+        $.cookie('u', null);
+        $.cookie('p', null);
+        user.user.username = "";
+        user.user.password = "";
+    };
     user.validate = function() {
         if (user.user.username == "" || user.user.password == "") {
             user.error = true;

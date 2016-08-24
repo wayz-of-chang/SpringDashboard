@@ -90,14 +90,17 @@ app.controller('MonitorController', function($scope, service) {
     monitor.get_results = function(id) {
         if (monitor.stats) {
             if (monitor.monitors[id].parser_function && monitor.stats[id] && monitor.stats[id].data) {
+                $('#monitor_error_' + id).tooltip('destroy');
                 if (monitor.stats[id].data.errorMessage != null) {
                     monitor.has_errors[id] = true;
                     monitor.errors[id] = monitor.stats[id].data.errorMessage;
+                    $('#monitor_error_' + id).tooltip();
                     return;
                 } else {
                     if (monitor.monitors[id].monitorType == 'script' && monitor.stats[id].data.error != null && monitor.stats[id].data.error.length != 0) {
                         monitor.has_errors[id] = true;
                         monitor.errors[id] = monitor.stats[id].data.error.join("<br />");
+                        $('#monitor_error_' + id).tooltip();
                         return;
                     } else {
                         monitor.has_errors[id] = false;
@@ -139,10 +142,6 @@ app.controller('MonitorController', function($scope, service) {
         });
     };
     monitor.setup_chart = function(id) {
-        $(function () {
-          $('[data-toggle="tooltip"]').tooltip('destroy');
-          $('[data-toggle="tooltip"]').tooltip();
-        })
         if (monitor.monitors[id].chart == 'status') {
             if ($('#chart_' + id).size() == 0) {
                 return;

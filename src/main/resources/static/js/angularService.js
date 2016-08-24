@@ -455,6 +455,13 @@ app.factory('service', function($http, $rootScope) {
         return service.user_settings;
     };
 
+    service.clear_user_settings = function() {
+        service.user_settings = {
+            current_dashboard: '',
+            monitor_order: []
+        };
+    };
+
     service.set_monitor = function(data) {
         service.monitors[data.id] = {
             id: data.id,
