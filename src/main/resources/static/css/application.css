@@ -238,3 +238,59 @@ body {
     stroke-width: 2;
 }
 
+.chart .dataflow .node rect {
+    stroke: #999;
+    fill: #fff;
+    stroke-width: 1.5px;
+}
+
+.chart .dataflow .node text {
+    pointer-events: none;
+}
+
+.chart .dataflow .edgePath path {
+    stroke: #333;
+    stroke-width: 1.5px;
+    pointer-events: none;
+}
+
+.chart .dataflow .edgePath.dotted {
+    stroke-dasharray: 5, 5;
+}
+
+.chart .dataflow .node.active rect {
+    animation-name: pulsate;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
+
+.chart .dataflow .edgePath.active path {
+    animation-name: pulsate-edge;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
+
+.chart .dataflow .edgePath.active marker {
+    animation-name: pulsate-marker;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes pulsate {
+    0% { fill: rgba(255, 255, 255, 255); stroke-width: 1.5px; stroke: #999; }
+    100% { fill: rgba(200, 200, 255, 255); stroke-width: 3px; stroke: #99F; }
+}
+
+@keyframes pulsate-edge {
+    100% { stroke-width: 2px; stroke: rgba(200, 200, 255, 255); }
+}
+
+@keyframes pulsate-marker {
+    100% { stroke-width: 1px; fill: rgba(200, 200, 255, 255); }
+}

@@ -20,6 +20,8 @@
     <script src="/js/vendor/angular-touch.js"></script>
     <script src="/js/vendor/bootstrap.js"></script>
     <script src="/js/vendor/d3.js"></script>
+    <script src="/js/vendor/dagre.js"></script>
+    <script src="/js/vendor/dagre-d3.js"></script>
     <script src="/js/statusIndicator.js"></script>
     <script src="/js/liquidFillGauge.js"></script>
     <script src="/js/barChart.js"></script>
@@ -34,6 +36,7 @@
     <script src="/js/userController.js"></script>
     <script src="/js/dashboardController.js"></script>
     <script src="/js/monitorController.js"></script>
+    <script src="/js/dataflowDiagram.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-default navbar-fixed-top">
@@ -257,9 +260,9 @@
                     </div>
                 </div>
                 <div class="list-group-item">
-                    <a class="list-group-item-heading" role="button" data-toggle="collapse" href="" aria-expanded="false" aria-controls="features_dataflow" data-target="#features_dataflow">Straightforward data flow</a>
+                    <a class="list-group-item-heading" role="button" data-toggle="collapse" href="" aria-expanded="false" aria-controls="features_dataflow" data-target="#features_dataflow">Straightforward design</a>
                     <div class="collapse list-group-item-text" id="features_dataflow">
-
+                        Both the data flow and architecture use very basic designs that make the application easy to use and understand.
                     </div>
                 </div>
             </div>
@@ -267,12 +270,49 @@
         <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
     </div>
     <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+            <div class="page-header">
+                <h1>Data Flow</h1>
+            </div>
+            <div class="col-xs-12 col-sm-12 hidden-md hidden-lg">
+                <select class="form-control" onchange="animateDataflow(this, $(this).val());return false;">
+                    <option value=""></option>
+                    <option value="rest">REST Client</option>
+                    <option value="mq">MQ Client</option>
+                    <option value="settings">Settings</option>
+                </select>
+            </div>
+            <div class="col-xs-12 col-sm-12 hidden-md hidden-lg">
+                <div class="well dataflow-description"></div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                <svg id="chart_dataflow" width="97%" class="chart"></svg>
+            </div>
+            <div class="hidden-xs hidden-sm col-md-4 col-lg-4">
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'rest'); return false;">REST Client</a>
+                    </div>
+                    <div class="list-group-item">
+                        <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'mq'); return false;">MQ Client</a>
+                    </div>
+                    <div class="list-group-item">
+                        <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'settings'); return false;">Settings</a>
+                    </div>
+                </div>
+                <div>
+                    <div class="well dataflow-description"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row bg-info">
         <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
         <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8 text-center">
             <div class="page-header">
-                <h1>How it works</h1>
+                <h1>Data Structure</h1>
             </div>
-            <p>A flexible and extensible dashboard application</p>
+            <svg id="chart_datastructure" width="97%" class="chart"></svg>
         </div>
         <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
     </div>

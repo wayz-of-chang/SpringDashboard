@@ -43,6 +43,8 @@ $(function () {
 
     $(document).ready(function() {
         document_width = $(document).width();
+        var dataflow_diagram = dataflowDiagram("chart_dataflow");
+        $('.dataflow-description').hide();
     });
 
     $(window).resize( function() {
@@ -52,6 +54,8 @@ $(function () {
                 monitor.setup_chart(key);
             });
             document_width = $(document).width();
+            d3.selectAll("#chart_dataflow > *").remove();
+            var dataflow_diagram = dataflowDiagram("chart_dataflow");
         }
     });
 
