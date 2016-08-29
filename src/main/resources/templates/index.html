@@ -339,10 +339,118 @@
     </div>
     <div class="row">
         <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
-        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8 text-center">
-            <div class="page-header">
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
+            <div class="page-header text-center">
                 <h1>Configuration</h1>
             </div>
+            <p>While there are many dashboard applications out there, this particular application aims to strike the perfect balance between customization and simplicity, by providing a solid data flow while exposing key parts of the application for customization.  The intention is that users will not be compelled to have to introduce hacks in order to extend needed functionality to this application, though should the user wish to do so, that is also possible.  To accomplish this goal, a few crucial handles are exposed: the name of a script to be run on the client, the chart type, and the output parser. This allows the user to specify the data (s)he wishes to monitor, set the chart type to appropriately render the information, and also to massage the data so that the chart type can process and render the results.</p>
+            <h3>Script</h3>
+            <p>The script should be placed in a <code>scripts</code> directory that is on the same level as the <code>.jar</code> file. Some examples are present when extracting the distribution <code>.zip</code> file. Currently, Windows <code>.bat</code> files and Linux/Mac OSX <code>.sh</code> files are supported. On Linux and/or Mac OSX systems, the executable permission may need to be set explicitly on the script file. What the output of the script is supposed to be is open-ended.  It is up to the user what (s)he wants to return from this script.  Whatever the output is, the client will return to the server, and the server will return to the browser.  It is then the output parser's job to parse the output and extract the information.</p>
+            <h3>Chart Type</h3>
+            <p>The chart type includes many various types, which are explained in more detail in the <a href="#chart_types">Chart Types</a> section. If none is specified, the raw JSON response will be printed.</p>
+            <h3>Output Parser</h3>
+            <p>This is an inline JS function that is evaluated every time the monitor response is available. What is returned here is the value used to update the chart. Thus, it is the job of this function to return something in a format that is valid to the chart type being used. Each chart type has a specific format, which is explained in more detail in the <a href="#chart_types">Chart Types</a> section. <b>Note: The maximum length of the output parser is 1023 characters long.</b> This number was chosen both as a sane number large enough for accomplishing the job of massaging the data to fit the inputs for the charts, and small enough to not negatively impact performance too much and to discourage potential security exploits (where custom JS is run, there is the potential it can cause harm to the user's system).</p>
+            <h3>Protocol</h3>
+            <p>There are two main data flows supported by this application - REST and MQ (Message Queue via RabbitMQ). When REST is selected, the server will periodically send REST webservice requests to clients. Clients will respond with JSON responses, which will then be sent to the browser. This is the simplest data flow. When MQ is selected, the server will periodically send REST webservice requests to clients to start the clients. Clients will then periodically send messages to the message queue, which the server will listen for. Once a message appears in the message queue, the server will consume it by parsing the message, and persisting it in MongoDB. Concurrently, the server will be returning responses found in MongoDB within the last 5 seconds (every 5 seconds) to the browser. With MQ, the data flow is significantly more complex, with quite a few extra moving pieces, as follows:</p>
+            <ul>
+                <li>Every time a client receives a start REST request to start the MQ, the client will send a maximum of 10 messages before stopping.</li>
+                <li>In order to keep the client running, the server sends periodic start REST requests every four messages, which will reset the client's remaining message count.</li>
+                <li>Messages older than 1 minute old are cleared from MongoDB.  Messages stored this way is meant to be a cache, as opposed to a permanent storage place.</li>
+            </ul>
+        </div>
+        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+    </div>
+    <div class="row bg-info">
+        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
+            <div class="page-header text-center">
+                <a id="chart_types"></a>
+                <h1>Chart Types</h1>
+            </div>
+            <p>This application comes with a number of charts which hopefully covers all the common cases of intuitively displaying monitor statuses.</p>
+            <h3>Status Indicator</h3>
+            <dl class="dl-horizontal">
+                <dt>Purpose</dt>
+                <dd>for monitoring one data source and giving color-coded status indication</dd>
+                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dd><code>{ 'value': value, 'status': status }</code></dd>
+                <dt>Arguments</dt>
+                <dd>
+                    <ul>
+                        <li><code>value</code> is any arbitrary string, and</li>
+                        <li><code>status</code> is one of the following: "success", "warning", or "failure", where its value determines the color (green, yellow, or red, respectively) shown</li>
+                    </ul>
+                </dd>
+            </dl>
+            <h3>Gauge</h3>
+            <dl class="dl-horizontal">
+                <dt>Purpose</dt>
+                <dd>for monitoring one data source where the value itself is important and there is a clearly-defined ceiling</dd>
+                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dd><code>{ 'value': value, 'max': max, 'unit': displayUnit, 'mediumThreshold': mediumThreshold, 'highThreshold': highThreshold }</code></dd>
+                <dt>Arguments</dt>
+                <dd>
+                    <ul>
+                        <li><code>value</code> is the value of the data source (any arbitrary number),</li>
+                        <li><code>max</code> is the maximum number allowed (any arbitrary number),</li>
+                        <li><code>unit</code> is the unit to be displayed next to value (any arbitrary string, preferably 2 characters or less),</li>
+                        <li><code>mediumThreshold</code> is the ratio of value to max at which the color turns yellow (any number between 0 and 1), and</li>
+                        <li><code>highThreshold</code> is the ratio of value to max at which the color turns red (any number between <code>mediumThreshold</code> and 1); if the ratio of value to max is under <code>mediumThreshold</code>, then the color is green</li>
+                    </ul>
+                </dd>
+            </dl>
+            <h3>Bar Chart</h3>
+            <dl class="dl-horizontal">
+                <dt>Purpose</dt>
+                <dd>for monitoring one or more data sources in comparison with each other</dd>
+                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dd><code>{ 'values': values, 'max': max, 'unit': displayUnit, 'mediumThreshold': mediumThreshold, 'highThreshold': highThreshold }</code></dd>
+                <dt>Arguments</dt>
+                <dd>
+                    <ul>
+                        <li><code>values</code> is an array of <code>{'key': key, 'value': value}</code> objects (i.e. <code>[{'key': key, 'value': value}, ...]</code>), where
+                            <ul>
+                                <li><code>key</code> is the id of the data source (any arbitrary string), and</li>
+                                <li><code>value</code> is the value of the data source (any arbitrary number),</li>
+                            </ul>
+                        </li>
+                        <li><code>max</code> is the maximum number allowed (any arbitrary number),</li>
+                        <li><code>unit</code> is the unit to be displayed for the y axis (any arbitrary string),</li>
+                        <li><code>mediumThreshold</code> is the ratio of value to max at which the color for the bar turns yellow (any number between 0 and 1), and</li>
+                        <li><code>highThreshold</code> is the ratio of value to max at which the color turns red (any number between <code>mediumThreshold</code> and 1); if the ratio of value to max is under <code>mediumThreshold</code>, then the color is green</li>
+                    </ul>
+                </dd>
+            </dl>
+            <h3>Pie Chart</h3>
+            <dl class="dl-horizontal">
+                <dt>Purpose</dt>
+                <dd>for monitoring one or more data sources that add up to a total amount</dd>
+                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dd><code>[{ 'key': key, 'value': value, 'color': color }, ...]</code></dd>
+                <dt>Arguments</dt>
+                <dd>
+                    <ul>
+                        <li><code>key</code> is the id of the data source (any arbitrary string),</li>
+                        <li><code>value</code> is the value of the data source (any arbitrary number), and</li>
+                        <li><code>color</code> is the color used to show the data source (a color string in hex format - i.e. '#XXXXXX')</li>
+                    </ul>
+                </dd>
+            </dl>
+            <h3>Line Chart</h3>
+            <dl class="dl-horizontal">
+                <dt>Purpose</dt>
+                <dd>for monitoring one or more data sources while keeping a history of up to 50 data points</dd>
+                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dd><code>{ key: { 'value': value, 'color': color }, ... }</code></dd>
+                <dt>Arguments</dt>
+                <dd>
+                    <ul>
+                        <li><code>key</code> is the id of the data source (any arbitrary string),</li>
+                        <li><code>value</code> is the value of the data source (any arbitrary number), and</li>
+                        <li><code>color</code> is the color used to show the data source (a color string in hex format - i.e. '#XXXXXX')</li>
+                    </ul>
+                </dd>
+            </dl>
         </div>
         <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
     </div>

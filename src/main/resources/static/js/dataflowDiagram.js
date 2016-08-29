@@ -91,7 +91,7 @@ function animateDataflow(element, type) {
     if (type == 'settings') {
         animateSettingsDataflow(callback);
     }
-    if (type != 'rest' && type != 'mq' && type != 'settings') {
+    if (type != 'rest' && type != 'mq' && type != 'p-rest' && type != 'p-mq' && type != 'settings') {
         callback();
     }
 }

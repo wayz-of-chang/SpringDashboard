@@ -46,6 +46,7 @@ $(function () {
         var dataflow_diagram = dataflowDiagram("chart_dataflow");
         $('.dataflow-description').hide();
         var datastructure_diagram = datastructureDiagram("chart_datastructure");
+        $('.fa-question-circle').tooltip();
     });
 
     $(window).resize( function() {
