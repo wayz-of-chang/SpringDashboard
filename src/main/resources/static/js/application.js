@@ -45,6 +45,7 @@ $(function () {
         document_width = $(document).width();
         var dataflow_diagram = dataflowDiagram("chart_dataflow");
         $('.dataflow-description').hide();
+        var datastructure_diagram = datastructureDiagram("chart_datastructure");
     });
 
     $(window).resize( function() {
@@ -56,6 +57,8 @@ $(function () {
             document_width = $(document).width();
             d3.selectAll("#chart_dataflow > *").remove();
             var dataflow_diagram = dataflowDiagram("chart_dataflow");
+            d3.selectAll("#chart_datastructure > *").remove();
+            var datastructure_diagram = datastructureDiagram("chart_datastructure");
         }
     });
 

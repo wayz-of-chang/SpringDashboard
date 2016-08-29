@@ -1,19 +1,22 @@
 function dataflowDiagram(elementId) {
     var g = new dagreD3.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(function() { return {}; });
 
-    g.setNode(0, { label: "Browsers", class: "type-multiple", id: "dataflow_browser" });
-    g.setNode(1, { label: "Server", class: "type-singular", id: "dataflow_server" });
-    g.setNode(2, { label: "Clients", class: "type-multiple", id: "dataflow_client" });
-    g.setNode(3, { label: "Server Log", class: "type-log", id: "dataflow_serverlog" });
-    g.setNode(4, { label: "MySQL", class: "type-store", id: "dataflow_mysql" });
-    g.setNode(5, { label: "Systems", class: "type-multiple", id: "dataflow_system" });
-    g.setNode(6, { label: "RabbitMQ", class: "type-mq", id: "dataflow_rabbitmq" });
-    g.setNode(7, { label: "Client Log", class: "type-log", id: "dataflow_clientlog" });
-    g.setNode(8, { label: "MongoDB", class: "type-store", id: "dataflow_mongodb" });
+    g.setNode(0, { label: "Browsers", class: "type-multiple", id: "dataflow_browser", title: "The user's web browser.  Multiple per server." });
+    g.setNode(1, { label: "Server", class: "type-singular", id: "dataflow_server", title: "The server." });
+    g.setNode(2, { label: "Clients", class: "type-multiple", id: "dataflow_client", title: "The client.  Multiple per server" });
+    g.setNode(3, { label: "Server Log", class: "type-log", id: "dataflow_serverlog", title: "Contains server-side logging." });
+    g.setNode(4, { label: "MySQL", class: "type-store", id: "dataflow_mysql", title: "The data store for most of the application's data." });
+    g.setNode(5, { label: "Systems", class: "type-multiple", id: "dataflow_system", title: "The source of the stats being generated." });
+    g.setNode(6, { label: "RabbitMQ", class: "type-mq", id: "dataflow_rabbitmq", title: "Message Queue." });
+    g.setNode(7, { label: "Client Log", class: "type-log", id: "dataflow_clientlog", title: "Contains client-side logging." });
+    g.setNode(8, { label: "MongoDB", class: "type-store", id: "dataflow_mongodb", title: "The data store for storing user settings." });
 
     g.nodes().forEach(function(v) {
         var node = g.node(v);
         node.rx = node.ry = 5;
+        console.log(v);
+        $('#' + v.id).tooltip('destroy');
+        $('#' + v.id).tooltip();
     });
 
     g.setEdge(0, 1, { label: "set settings", lineInterpolate: 'basis', id: "dataflow_edge_setsettings" });
@@ -58,12 +61,6 @@ function dataflowDiagram(elementId) {
     svgGroup.attr("transform", "translate(" + xCenterOffset + ", 20)" + "scale(" + scaleFactor + ", " + scaleFactor + ")").attr("class", "dataflow");
     svg.attr("height", (g.graph().height * scaleFactor) + 100);
 
-    var margin = {top: 20, right: 20, bottom: 30, left: 40};
-    //var width = parseInt(chart.style("width"));
-    //var height = parseInt(chart.style("height"));
-    //chart = chart.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    //chart.append("clipPath").attr("id", "chartBody_" + elementId).append("rect").attr("x", 0).attr("y", 0).attr("width", width - margin.left - margin.right).attr("height", height - margin.top - margin.bottom);
-
     return g;
 }
 
@@ -82,8 +79,14 @@ function animateDataflow(element, type) {
     if (type == 'rest') {
         animateRestDataflow(callback);
     }
+    if (type == 'p-rest') {
+        animatePRestDataflow(callback);
+    }
     if (type == 'mq') {
         animateMqDataflow(callback);
+    }
+    if (type == 'p-mq') {
+        animatePMqDataflow(callback);
     }
     if (type == 'settings') {
         animateSettingsDataflow(callback);
@@ -153,7 +156,67 @@ function animateRestDataflow(callback) {
     }).delay(5000).queue(function(next) {
         $('#dataflow_edge_sendstats').removeClass('active');
         $('#dataflow_browser').addClass('active');
-        $('.dataflow-description').text('The browser receives the response, parses the stats, and renders the charts accordingly.');
+        $('.dataflow-description').text('The browser receives the response, parses the stats, and renders the charts accordingly.  The end.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_browser').removeClass('active');
+        $('.dataflow-description').text('').hide();
+        callback();
+        next();
+    });
+}
+
+function animatePRestDataflow(callback) {
+    $('.dataflow-description').text('The server periodically polls clients with REST requests for stats.');
+    $('#dataflow_server').addClass('active').delay(7000).queue(function(next) {
+        $('#dataflow_server').removeClass('active');
+        $('#dataflow_edge_screst').addClass('active');
+        $('.dataflow-description').text('The server sends REST requests to clients according to the stored settings.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_edge_screst').removeClass('active');
+        $('#dataflow_client').addClass('active');
+        $('.dataflow-description').text('The client listens for the REST request, and begins processing when it receives one.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_client').removeClass('active');
+        $('#dataflow_edge_getstats').addClass('active');
+        $('.dataflow-description').text('The client queries the system for stats according to the parameters specified in the REST request.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_edge_getstats').removeClass('active');
+        $('#dataflow_system').addClass('active');
+        $('.dataflow-description').text('The system works to produce the stats, either by finding system stats, or by running a custom user-defined script.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_system').removeClass('active');
+        $('#dataflow_edge_statsresponse').addClass('active');
+        $('.dataflow-description').text('The system responds to the client.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_edge_statsresponse').removeClass('active');
+        $('#dataflow_client').addClass('active');
+        $('.dataflow-description').text('The client receives the stats and composes a message to send back.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_client').removeClass('active');
+        $('#dataflow_edge_csrest').addClass('active');
+        $('.dataflow-description').text('The client sends a response back to the server.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_edge_csrest').removeClass('active');
+        $('#dataflow_server').addClass('active');
+        $('.dataflow-description').text('The server receives the response and composes a response to send to the user\'s browser.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_server').removeClass('active');
+        $('#dataflow_edge_sendstats').addClass('active');
+        $('.dataflow-description').text('The server sends a JSON response to the browser.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_edge_sendstats').removeClass('active');
+        $('#dataflow_browser').addClass('active');
+        $('.dataflow-description').text('The browser receives the response, parses the stats, and renders the charts accordingly.  The end.');
         next();
     }).delay(5000).queue(function(next) {
         $('#dataflow_browser').removeClass('active');
@@ -243,7 +306,77 @@ function animateMqDataflow(callback) {
     }).delay(5000).queue(function(next) {
         $('#dataflow_edge_sendstats').removeClass('active');
         $('#dataflow_browser').addClass('active');
-        $('.dataflow-description').text('The browser receives the response, parses the stats, and renders the charts accordingly.');
+        $('.dataflow-description').text('The browser receives the response, parses the stats, and renders the charts accordingly.  The end.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_browser').removeClass('active');
+        $('.dataflow-description').text('').hide();
+        callback();
+        next();
+    });
+}
+
+function animatePMqDataflow(callback) {
+    $('.dataflow-description').text('The client periodically polls the system for stats.');
+    $('#dataflow_client').addClass('active').delay(7000).queue(function(next) {
+        $('#dataflow_client').removeClass('active');
+        $('#dataflow_edge_getstats').addClass('active');
+        $('.dataflow-description').text('The client queries the system.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_edge_getstats').removeClass('active');
+        $('#dataflow_system').addClass('active');
+        $('.dataflow-description').text('The system works to produce the stats, either by finding system stats, or by running a custom user-defined script.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_system').removeClass('active');
+        $('#dataflow_edge_statsresponse').addClass('active');
+        $('.dataflow-description').text('The system responds to the client.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_edge_statsresponse').removeClass('active');
+        $('#dataflow_client').addClass('active');
+        $('.dataflow-description').text('The client receives the stats and composes a message to send to the message queue.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_client').removeClass('active');
+        $('#dataflow_edge_cmq').addClass('active');
+        $('.dataflow-description').text('The client sends the stats to the message queue.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_edge_cmq').removeClass('active');
+        $('#dataflow_rabbitmq').addClass('active');
+        $('.dataflow-description').text('The message is stored in the message queue until it is consumed by the server.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_rabbitmq').removeClass('active');
+        $('#dataflow_edge_mmq').addClass('active');
+        $('.dataflow-description').text('The server consumes the message, storing it in MongoDB.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_edge_mmq').removeClass('active');
+        $('#dataflow_mongodb').addClass('active');
+        $('.dataflow-description').text('Messages are cached in MongoDB.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_mongodb').removeClass('active');
+        $('#dataflow_edge_smq').addClass('active');
+        $('.dataflow-description').text('Separately, the server periodically retrieves stored message queue messages.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_edge_smq').removeClass('active');
+        $('#dataflow_server').addClass('active');
+        $('.dataflow-description').text('The server analyzes the stored messages, and composes a response for the browser.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_server').removeClass('active');
+        $('#dataflow_edge_sendstats').addClass('active');
+        $('.dataflow-description').text('The server sends a JSON response to the browser.');
+        next();
+    }).delay(5000).queue(function(next) {
+        $('#dataflow_edge_sendstats').removeClass('active');
+        $('#dataflow_browser').addClass('active');
+        $('.dataflow-description').text('The browser receives the response, parses the stats, and renders the charts accordingly.  The end.');
         next();
     }).delay(5000).queue(function(next) {
         $('#dataflow_browser').removeClass('active');
@@ -269,7 +402,7 @@ function animateSettingsDataflow(callback) {
         $('#dataflow_server').removeClass('active');
         $('#dataflow_edge_savesettings').addClass('active');
         $('#dataflow_edge_usersettings').addClass('active');
-        $('.dataflow-description').text('The server stores the updated settings in either MySQL or MongoDB.');
+        $('.dataflow-description').text('The server stores the updated settings in either MySQL or MongoDB.  The end.');
         next();
     }).delay(5000).queue(function(next) {
         $('#dataflow_edge_savesettings').removeClass('active');

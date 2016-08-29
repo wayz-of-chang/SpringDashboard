@@ -37,6 +37,7 @@
     <script src="/js/dashboardController.js"></script>
     <script src="/js/monitorController.js"></script>
     <script src="/js/dataflowDiagram.js"></script>
+    <script src="/js/datastructureDiagram.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-default navbar-fixed-top">
@@ -275,33 +276,53 @@
                 <h1>Data Flow</h1>
             </div>
             <div class="col-xs-12 col-sm-12 hidden-md hidden-lg">
-                <select class="form-control" onchange="animateDataflow(this, $(this).val());return false;">
-                    <option value=""></option>
-                    <option value="rest">REST Client</option>
-                    <option value="mq">MQ Client</option>
-                    <option value="settings">Settings</option>
-                </select>
+                <form>
+                    <div class="form-group">
+                        <select class="form-control" onchange="animateDataflow(this, $(this).val());return false;">
+                            <option value=""></option>
+                            <option value="rest">REST Client (Initialization)</option>
+                            <option value="mq">MQ Client (Initialization)</option>
+                            <option value="settings">Settings</option>
+                            <option value="p-rest">REST Client (Periodic Updates)</option>
+                            <option value="p-mq">MQ Client (Periodic Updates)</option>
+                        </select>
+                    </div>
+                </form>
             </div>
             <div class="col-xs-12 col-sm-12 hidden-md hidden-lg">
-                <div class="well dataflow-description"></div>
+                <div class="well dataflow-description">Select an option from the drop-down to see a step-by-step guide to how the data is passed through the application.</div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
                 <svg id="chart_dataflow" width="97%" class="chart"></svg>
             </div>
             <div class="hidden-xs hidden-sm col-md-4 col-lg-4">
-                <div class="list-group">
-                    <div class="list-group-item">
-                        <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'rest'); return false;">REST Client</a>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Initialization</div>
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'rest'); return false;">REST Client</a>
+                        </div>
+                        <div class="list-group-item">
+                            <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'mq'); return false;">MQ Client</a>
+                        </div>
+                        <div class="list-group-item">
+                            <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'settings'); return false;">Settings</a>
+                        </div>
                     </div>
-                    <div class="list-group-item">
-                        <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'mq'); return false;">MQ Client</a>
-                    </div>
-                    <div class="list-group-item">
-                        <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'settings'); return false;">Settings</a>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Periodic Updates</div>
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'p-rest'); return false;">REST Client</a>
+                        </div>
+                        <div class="list-group-item">
+                            <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'p-mq'); return false;">MQ Client</a>
+                        </div>
                     </div>
                 </div>
                 <div>
-                    <div class="well dataflow-description"></div>
+                    <div class="well dataflow-description">Select an option from the drop-down to see a step-by-step guide to how the data is passed through the application.</div>
                 </div>
             </div>
         </div>
@@ -310,9 +331,18 @@
         <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
         <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8 text-center">
             <div class="page-header">
-                <h1>Data Structure</h1>
+                <h1>Data Model</h1>
             </div>
             <svg id="chart_datastructure" width="97%" class="chart"></svg>
+        </div>
+        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+    </div>
+    <div class="row">
+        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8 text-center">
+            <div class="page-header">
+                <h1>Configuration</h1>
+            </div>
         </div>
         <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
     </div>
