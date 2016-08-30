@@ -38,6 +38,7 @@
     <script src="/js/monitorController.js"></script>
     <script src="/js/dataflowDiagram.js"></script>
     <script src="/js/datastructureDiagram.js"></script>
+    <script src="/js/exampleCharts.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-default navbar-fixed-top">
@@ -369,6 +370,12 @@
             </div>
             <p>This application comes with a number of charts which hopefully covers all the common cases of intuitively displaying monitor statuses.</p>
             <h3>Status Indicator</h3>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+                    <svg id="chart_example_status" width="97%" height="97%" class="chart" onclick="return false;"></svg>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_status"></pre></div>
+            </div>
             <dl class="dl-horizontal">
                 <dt>Purpose</dt>
                 <dd>for monitoring one data source and giving color-coded status indication</dd>
@@ -383,6 +390,12 @@
                 </dd>
             </dl>
             <h3>Gauge</h3>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+                    <svg id="chart_example_gauge" width="97%" height="97%" class="chart" onclick="return false;"></svg>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_gauge"></pre></div>
+            </div>
             <dl class="dl-horizontal">
                 <dt>Purpose</dt>
                 <dd>for monitoring one data source where the value itself is important and there is a clearly-defined ceiling</dd>
@@ -400,6 +413,12 @@
                 </dd>
             </dl>
             <h3>Bar Chart</h3>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+                    <svg id="chart_example_bar" width="97%" height="97%" class="chart" onclick="return false;"></svg>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_bar"></pre></div>
+            </div>
             <dl class="dl-horizontal">
                 <dt>Purpose</dt>
                 <dd>for monitoring one or more data sources in comparison with each other</dd>
@@ -422,6 +441,12 @@
                 </dd>
             </dl>
             <h3>Pie Chart</h3>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+                    <svg id="chart_example_pie" width="97%" height="97%" class="chart" onclick="return false;"></svg>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_pie"></pre></div>
+            </div>
             <dl class="dl-horizontal">
                 <dt>Purpose</dt>
                 <dd>for monitoring one or more data sources that add up to a total amount</dd>
@@ -437,6 +462,12 @@
                 </dd>
             </dl>
             <h3>Line Chart</h3>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+                    <svg id="chart_example_line" width="97%" height="97%" class="chart" onclick="return false;"></svg>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_line"></pre></div>
+            </div>
             <dl class="dl-horizontal">
                 <dt>Purpose</dt>
                 <dd>for monitoring one or more data sources while keeping a history of up to 50 data points</dd>

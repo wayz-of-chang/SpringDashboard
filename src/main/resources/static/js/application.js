@@ -40,6 +40,7 @@ $(function () {
     });
 
     var document_width;
+    var status_interval;
 
     $(document).ready(function() {
         document_width = $(document).width();
@@ -47,6 +48,11 @@ $(function () {
         $('.dataflow-description').hide();
         var datastructure_diagram = datastructureDiagram("chart_datastructure");
         $('.fa-question-circle').tooltip();
+        loadStatus("chart_example_status", "raw_example_status");
+        loadGauge("chart_example_gauge", "raw_example_gauge");
+        loadBar("chart_example_bar", "raw_example_bar");
+        loadPie("chart_example_pie", "raw_example_pie");
+        loadLine("chart_example_line", "raw_example_line");
     });
 
     $(window).resize( function() {
@@ -60,6 +66,11 @@ $(function () {
             var dataflow_diagram = dataflowDiagram("chart_dataflow");
             d3.selectAll("#chart_datastructure > *").remove();
             var datastructure_diagram = datastructureDiagram("chart_datastructure");
+            loadStatus("chart_example_status", "raw_example_status");
+            loadGauge("chart_example_gauge", "raw_example_gauge");
+            loadBar("chart_example_bar", "raw_example_bar");
+            loadPie("chart_example_pie", "raw_example_pie");
+            loadLine("chart_example_line", "raw_example_line");
         }
     });
 

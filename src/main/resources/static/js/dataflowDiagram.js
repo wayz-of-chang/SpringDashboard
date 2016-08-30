@@ -14,7 +14,6 @@ function dataflowDiagram(elementId) {
     g.nodes().forEach(function(v) {
         var node = g.node(v);
         node.rx = node.ry = 5;
-        console.log(v);
         $('#' + v.id).tooltip('destroy');
         $('#' + v.id).tooltip();
     });
@@ -167,7 +166,7 @@ function animateRestDataflow(callback) {
 }
 
 function animatePRestDataflow(callback) {
-    $('.dataflow-description').text('The server periodically polls clients with REST requests for stats.');
+    $('.dataflow-description').show().text('The server periodically polls clients with REST requests for stats.');
     $('#dataflow_server').addClass('active').delay(7000).queue(function(next) {
         $('#dataflow_server').removeClass('active');
         $('#dataflow_edge_screst').addClass('active');
@@ -317,7 +316,7 @@ function animateMqDataflow(callback) {
 }
 
 function animatePMqDataflow(callback) {
-    $('.dataflow-description').text('The client periodically polls the system for stats.');
+    $('.dataflow-description').show().text('The client periodically polls the system for stats.');
     $('#dataflow_client').addClass('active').delay(7000).queue(function(next) {
         $('#dataflow_client').removeClass('active');
         $('#dataflow_edge_getstats').addClass('active');

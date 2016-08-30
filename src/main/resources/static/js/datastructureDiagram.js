@@ -10,7 +10,6 @@ function datastructureDiagram(elementId) {
     g.nodes().forEach(function(v) {
         var node = g.node(v);
         node.rx = node.ry = 5;
-        console.log(v);
         $('#' + v.id).tooltip('destroy');
         $('#' + v.id).tooltip();
     });

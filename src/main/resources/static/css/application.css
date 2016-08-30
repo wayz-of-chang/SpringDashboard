@@ -129,7 +129,7 @@ body {
 }
 
 .status, .status-box, .status-label {
-    transition: fill .4s ease;
+    transition: all .4s ease;
 }
 
 .status.low .status-box {
