@@ -79,7 +79,63 @@ function loadLineChart(elementId, values, config) {
     var lines = chart.selectAll(".lineChart.line").data(values).enter().append("g").attr("class", "lineChart line");
 
     function ChartUpdater(){
-        this.update = function(dates, values){
+        this.update = function(d, v){
+            var x = d;
+            var existing_chart_values = {};
+            $.each(Object.keys(v), function( index, value ) {
+                existing_chart_values[value] = false;
+            });
+
+            /* Update Line Chart Values */
+            var chart_dates = config.dates;
+            if (chart_dates.length >= config.historySize) {
+                chart_dates.shift();
+            }
+            chart_dates.push(x);
+
+            var chart_values = config.values;
+            $.each(chart_values, function( index, chart_value ) {
+                var key = chart_value.key;
+                if (v[key] != null) {
+                    existing_chart_values[key] = true;
+                    if (v[key].color != null) {
+                        chart_value.color = v[key].color;
+                    }
+                    if (chart_value.values.length >= config.historySize) {
+                        chart_value.values.shift();
+                    }
+                    chart_value.values.push({x: x, y: v[key].value});
+                } else {
+                    // Incoming data does not have existing key
+                    chart_value.values.push({x: x, y: 0});
+                }
+            });
+
+            $.each(Object.keys(existing_chart_values), function( index, value ) {
+                if (!existing_chart_values[value]) {
+                    var chart_value = {
+                        key: value,
+                        values: [{x: x, y: v[value].value}],
+                        color: v[value].color
+                    };
+                    chart_values.push(chart_value);
+                }
+            });
+
+            var all_values = [].concat.apply([], chart_values.map(function(chart_value) {
+                return chart_value.values.map(function(value) {
+                    return value.y;
+                });
+            }));
+
+            var min = Math.min.apply(null, all_values);
+            var max = Math.max.apply(null, all_values);
+            config.minValue = min;
+            config.maxValue = max;
+
+            var dates = chart_dates;
+            var values = chart_values;
+
             var x = d3.time.scale().range([0, width - margin.left - margin.right]).domain(d3.extent(dates, function(d) { return d; }));
             var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(dateFormat).ticks(ticksUnit, ticksInterval);
             chart.select(".lineChart.x.axis").transition().duration(config.transitionTime).call(xAxis);

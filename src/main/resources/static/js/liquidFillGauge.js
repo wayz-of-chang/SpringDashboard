@@ -199,6 +199,34 @@ function loadLiquidFillGauge(elementId, value, config) {
 
     function GaugeUpdater(){
         this.update = function(value){
+            var unit = config.displayUnit;
+            var mediumThreshold = config.mediumThreshold;
+            var highThreshold = config.highThreshold;
+            var max = config.maxValue;
+            if (typeof unit == 'undefined') {
+                unit = '';
+            }
+            if (typeof mediumThreshold == 'undefined') {
+                mediumThreshold = 0.5;
+            }
+            if (typeof highThreshold == 'undefined') {
+                highThreshold = 0.9;
+            }
+            var percentage = 1.0 * value / max;
+            if (percentage <= mediumThreshold) {
+                $('#' + elementId).removeClass('medium high').addClass('low');
+            }
+            if (percentage > mediumThreshold) {
+                $('#' + elementId).removeClass('low high').addClass('medium');
+            }
+            if (percentage > highThreshold) {
+                $('#' + elementId).removeClass('medium low').addClass('high');
+            }
+            if (unit == '%') {
+                value = Math.round(100 * percentage);
+                max = 100;
+                config.maxValue = max;
+            }
             var newFinalValue = parseFloat(value).toFixed(2);
             var textRounderUpdater = function(value){ return Math.round(value); };
             if(parseFloat(newFinalValue) != parseFloat(textRounderUpdater(newFinalValue))){
@@ -210,7 +238,7 @@ function loadLiquidFillGauge(elementId, value, config) {
 
             var textTween = function(){
                 var i = d3.interpolate(this.textContent, parseFloat(value).toFixed(2));
-                return function(t) { this.textContent = textRounderUpdater(i(t)) + config.displayUnit; }
+                return function(t) { this.textContent = textRounderUpdater(i(t)) + unit; }
             };
 
             text1.transition()

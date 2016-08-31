@@ -35,6 +35,18 @@ function loadBarChart(elementId, values, config) {
 
     function ChartUpdater(){
         this.update = function(values){
+            var unit = config.displayUnit;
+            var mediumThreshold = config.mediumThreshold;
+            var highThreshold = config.highThreshold;
+            if (typeof unit == 'undefined') {
+                unit = '';
+            }
+            if (typeof mediumThreshold == 'undefined') {
+                mediumThreshold = 0.5;
+            }
+            if (typeof highThreshold == 'undefined') {
+                highThreshold = 0.9;
+            }
             //x.domain(values.map(function(value) { return value.key; }));
             var x = d3.scale.ordinal().rangeRoundBands([0, width - margin.left - margin.right], .1).domain(values.map(function(value) { return value.key; }));
             var xAxis = d3.svg.axis().scale(x).orient("bottom");
@@ -54,10 +66,10 @@ function loadBarChart(elementId, values, config) {
             }
             bars.selectAll("rect").data(values).transition().duration(config.transitionTime).attr("x", function(value) { return x(value.key); }).attr("y", function(value) { return y(value.value); }).attr("fill", function(value) {
                 var color = config.lowBarColor;
-                if (value.value > config.mediumThreshold * config.maxValue) {
+                if (value.value > mediumThreshold * config.maxValue) {
                     color = config.mediumBarColor;
                 }
-                if (value.value > config.highThreshold * config.maxValue) {
+                if (value.value > highThreshold * config.maxValue) {
                     color = config.highBarColor;
                 }
                 return color;
@@ -78,10 +90,10 @@ function loadBarChart(elementId, values, config) {
                 return function(t) { this.textContent = textRounderUpdater(i(t))}
             }).attr("x", function(value) { return x(value.key) + x.rangeBand()/2; }).attr("y", function(value) { return y(value.value) - 5; }).attr("fill", function(value) {
                 var color = config.lowTextColor;
-                if (value.value > config.mediumThreshold * config.maxValue) {
+                if (value.value > mediumThreshold * config.maxValue) {
                     color = config.mediumTextColor;
                 }
-                if (value.value > config.highThreshold * config.maxValue) {
+                if (value.value > highThreshold * config.maxValue) {
                     color = config.highTextColor;
                 }
                 return color;

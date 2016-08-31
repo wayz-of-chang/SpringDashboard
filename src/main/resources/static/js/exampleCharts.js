@@ -4,6 +4,7 @@ var bar = 0;
 var pie = 0;
 var line = 0;
 
+var status_config;
 var gauge_config;
 var bar_config;
 var pie_config;
@@ -405,7 +406,8 @@ var line_interval;
 function loadStatus(id, raw) {
     clearInterval(status_interval);
     d3.selectAll("#" + id + " > *").remove();
-    var status = loadStatusIndicator(id, 'n/a');
+    status_config = {};
+    var status = loadStatusIndicator(id, 'n/a', status_config);
     status_interval = startUpdates(function(){ updateStatus(id, status, raw)});
     return status;
 }
@@ -466,16 +468,9 @@ function startUpdates(callback) {
 function updateStatus(id, chart, raw) {
     var data_point = status_states[status];
     $('#' + raw).text(JSON.stringify(data_point, null, "  "));
+
+    status_config.status = data_point.status;
     chart.update(data_point.value);
-    if (data_point.status == 'success') {
-        $('#' + id).removeClass('medium high').addClass('low');
-    }
-    if (data_point.status == 'warning') {
-        $('#' + id).removeClass('low high').addClass('medium');
-    }
-    if (data_point.status == 'failure') {
-        $('#' + id).removeClass('medium low').addClass('high');
-    }
     status = (parseInt(status) + 1) % status_states.length;
 }
 
@@ -487,32 +482,11 @@ function updateGauge(id, chart, raw) {
     var unit = data_point.unit;
     var mediumThreshold = data_point.mediumThreshold;
     var highThreshold = data_point.highThreshold;
-    if (typeof unit == 'undefined') {
-        unit = '';
-    }
-    if (typeof mediumThreshold == 'undefined') {
-        mediumThreshold = 0.5;
-    }
-    if (typeof highThreshold == 'undefined') {
-        highThreshold = 0.9;
-    }
-    var percentage = 1.0 * value / max;
-    if (percentage <= mediumThreshold) {
-        $('#' + id).removeClass('medium high').addClass('low');
-    }
-    if (percentage > mediumThreshold) {
-        $('#' + id).removeClass('low high').addClass('medium');
-    }
-    if (percentage > highThreshold) {
-        $('#' + id).removeClass('medium low').addClass('high');
-    }
-    if (unit == '%') {
-        value = Math.round(100 * percentage);
-        max = 100;
-    }
 
     gauge_config.maxValue = max;
     gauge_config.displayUnit = unit;
+    gauge_config.mediumThreshold = mediumThreshold;
+    gauge_config.highThreshold = highThreshold;
     chart.update(value);
     gauge = (parseInt(gauge) + 1) % gauge_states.length;
 }
@@ -525,15 +499,6 @@ function updateBar(id, chart, raw) {
     var unit = data_point.unit;
     var mediumThreshold = data_point.mediumThreshold;
     var highThreshold = data_point.highThreshold;
-    if (typeof unit == 'undefined') {
-        unit = '';
-    }
-    if (typeof mediumThreshold == 'undefined') {
-        mediumThreshold = 0.5;
-    }
-    if (typeof highThreshold == 'undefined') {
-        highThreshold = 0.9;
-    }
 
     bar_config.maxValue = max;
     bar_config.mediumThreshold = mediumThreshold;
@@ -546,6 +511,7 @@ function updateBar(id, chart, raw) {
 function updatePie(id, chart, raw) {
     var data_point = pie_states[pie];
     $('#' + raw).text(JSON.stringify(data_point, null, "  "));
+
     chart.update(data_point);
     pie = (parseInt(pie) + 1) % pie_states.length;
 }
@@ -555,59 +521,8 @@ function updateLine(id, chart, raw) {
     $('#' + raw).text(JSON.stringify(data_point, null, "  "));
     var values = data_point;
     var x = new Date();
-    var existing_chart_values = {};
-    $.each(Object.keys(values), function( index, value ) {
-        existing_chart_values[value] = false;
-    });
 
-    /* Update Line Chart Values */
-    var chart_dates = line_config.dates;
-    if (chart_dates.length >= line_config.historySize) {
-        chart_dates.shift();
-    }
-    chart_dates.push(x);
-
-    var chart_values = line_config.values;
-    $.each(chart_values, function( index, chart_value ) {
-        var key = chart_value.key;
-        if (values[key] != null) {
-            existing_chart_values[key] = true;
-            if (values[key].color != null) {
-                chart_value.color = values[key].color;
-            }
-            if (chart_value.values.length >= line_config.historySize) {
-                chart_value.values.shift();
-            }
-            chart_value.values.push({x: x, y: values[key].value});
-        } else {
-            // Incoming data does not have existing key
-            chart_value.values.push({x: x, y: 0});
-        }
-    });
-
-    $.each(Object.keys(existing_chart_values), function( index, value ) {
-        if (!existing_chart_values[value]) {
-            var chart_value = {
-                key: value,
-                values: [{x: x, y: values[value].value}],
-                color: values[value].color
-            };
-            chart_values.push(chart_value);
-        }
-    });
-
-    var all_values = [].concat.apply([], chart_values.map(function(chart_value) {
-        return chart_value.values.map(function(value) {
-            return value.y;
-        });
-    }));
-
-    var min = Math.min.apply(null, all_values);
-    var max = Math.max.apply(null, all_values);
-
-    line_config.minValue = min;
-    line_config.maxValue = max;
-    chart.update(chart_dates, chart_values);
+    chart.update(x, values);
     line = (parseInt(line) + 1) % line_states.length;
 }
 

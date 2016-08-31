@@ -146,8 +146,10 @@ app.controller('MonitorController', function($scope, service) {
             if ($('#chart_' + id).size() == 0) {
                 return;
             }
+            var config = {};
             d3.selectAll("#chart_" + id + " > *").remove();
-            var status = loadStatusIndicator("chart_" + id, 'n/a');
+            var status = loadStatusIndicator("chart_" + id, 'n/a', config);
+            monitor.monitors[id].chart_config = config;
             monitor.monitors[id].chart_render = status;
         } else if (monitor.monitors[id].chart == 'gauge') {
             if ($('#chart_' + id).size() == 0) {
@@ -213,19 +215,12 @@ app.controller('MonitorController', function($scope, service) {
         if (monitor.monitors[id].chart == 'status') {
             var value = data.value;
             var status = data.status;
-            if (status == 'success') {
-                $('#chart_' + id).removeClass('medium high').addClass('low');
-            }
-            if (status == 'warning') {
-                $('#chart_' + id).removeClass('low high').addClass('medium');
-            }
-            if (status == 'failure') {
-                $('#chart_' + id).removeClass('medium low').addClass('high');
-            }
+
             if (monitor.monitors[id].chart_render == null) {
                 monitor.setup_chart(id);
                 return;
             }
+            monitor.monitors[id].chart_config.status = status;
             monitor.monitors[id].chart_render.update(value);
         } else if (monitor.monitors[id].chart == 'gauge') {
             var value = data.value;
@@ -233,29 +228,6 @@ app.controller('MonitorController', function($scope, service) {
             var unit = data.unit;
             var mediumThreshold = data.mediumThreshold;
             var highThreshold = data.highThreshold;
-            if (typeof unit == 'undefined') {
-                unit = '';
-            }
-            if (typeof mediumThreshold == 'undefined') {
-                mediumThreshold = 0.5;
-            }
-            if (typeof highThreshold == 'undefined') {
-                highThreshold = 0.9;
-            }
-            var percentage = 1.0 * value / max;
-            if (percentage <= mediumThreshold) {
-                $('#chart_' + id).removeClass('medium high').addClass('low');
-            }
-            if (percentage > mediumThreshold) {
-                $('#chart_' + id).removeClass('low high').addClass('medium');
-            }
-            if (percentage > highThreshold) {
-                $('#chart_' + id).removeClass('medium low').addClass('high');
-            }
-            if (unit == '%') {
-                value = Math.round(100 * percentage);
-                max = 100;
-            }
 
             if (monitor.monitors[id].chart_config == null) {
                 monitor.setup_chart(id);
@@ -263,6 +235,8 @@ app.controller('MonitorController', function($scope, service) {
             }
             monitor.monitors[id].chart_config.maxValue = max;
             monitor.monitors[id].chart_config.displayUnit = unit;
+            monitor.monitors[id].chart_config.mediumThreshold = mediumThreshold;
+            monitor.monitors[id].chart_config.highThreshold = highThreshold;
             monitor.monitors[id].chart_render.update(value);
         } else if (monitor.monitors[id].chart == 'bar') {
             var values = data.values;
@@ -270,15 +244,6 @@ app.controller('MonitorController', function($scope, service) {
             var unit = data.unit;
             var mediumThreshold = data.mediumThreshold;
             var highThreshold = data.highThreshold;
-            if (typeof unit == 'undefined') {
-                unit = '';
-            }
-            if (typeof mediumThreshold == 'undefined') {
-                mediumThreshold = 0.5;
-            }
-            if (typeof highThreshold == 'undefined') {
-                highThreshold = 0.9;
-            }
 
             if (monitor.monitors[id].chart_config == null) {
                 monitor.setup_chart(id);
@@ -300,64 +265,12 @@ app.controller('MonitorController', function($scope, service) {
         } else if (monitor.monitors[id].chart == 'line') {
             var values = data;
             var x = date;
-            var existing_chart_values = {};
-            $.each(Object.keys(values), function( index, value ) {
-                existing_chart_values[value] = false;
-            });
 
             if (monitor.monitors[id].chart_config == null) {
                 monitor.setup_chart(id);
                 return;
             }
-
-            /* Update Line Chart Values */
-            var chart_dates = monitor.monitors[id].chart_config.dates;
-            if (chart_dates.length >= monitor.monitors[id].chart_config.historySize) {
-                chart_dates.shift();
-            }
-            chart_dates.push(x);
-
-            var chart_values = monitor.monitors[id].chart_config.values;
-            $.each(chart_values, function( index, chart_value ) {
-                var key = chart_value.key;
-                if (values[key] != null) {
-                    existing_chart_values[key] = true;
-                    if (values[key].color != null) {
-                        chart_value.color = values[key].color;
-                    }
-                    if (chart_value.values.length >= monitor.monitors[id].chart_config.historySize) {
-                        chart_value.values.shift();
-                    }
-                    chart_value.values.push({x: x, y: values[key].value});
-                } else {
-                    // Incoming data does not have existing key
-                    chart_value.values.push({x: x, y: 0});
-                }
-            });
-
-            $.each(Object.keys(existing_chart_values), function( index, value ) {
-                if (!existing_chart_values[value]) {
-                    var chart_value = {
-                        key: value,
-                        values: [{x: x, y: values[value].value}],
-                        color: values[value].color
-                    };
-                    chart_values.push(chart_value);
-                }
-            });
-
-            var all_values = [].concat.apply([], chart_values.map(function(chart_value) {
-                return chart_value.values.map(function(value) {
-                    return value.y;
-                });
-            }));
-
-            var min = Math.min.apply(null, all_values);
-            var max = Math.max.apply(null, all_values);
-
-            monitor.monitors[id].chart_config.minValue = min;
-            monitor.monitors[id].chart_config.maxValue = max;
-            monitor.monitors[id].chart_render.update(chart_dates, chart_values);
+            monitor.monitors[id].chart_render.update(x, values);
         } else {
             monitor.monitors[id].show_raw = true;
         }

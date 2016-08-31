@@ -1,5 +1,5 @@
 
-function loadStatusIndicator(elementId, value) {
+function loadStatusIndicator(elementId, value, config) {
     var status = d3.select("#" + elementId);
     var margin = {top: 20, right: 20, bottom: 20, left: 20};
     var width = parseInt(status.style("width"));
@@ -11,6 +11,16 @@ function loadStatusIndicator(elementId, value) {
 
     function StatusUpdater(){
         this.update = function(value){
+            var s = config.status;
+            if (s == 'success') {
+                $('#' + elementId).removeClass('medium high').addClass('low');
+            }
+            if (s == 'warning') {
+                $('#' + elementId).removeClass('low high').addClass('medium');
+            }
+            if (s == 'failure') {
+                $('#' + elementId).removeClass('medium low').addClass('high');
+            }
             status.selectAll("text").text(value);
         }
     }
