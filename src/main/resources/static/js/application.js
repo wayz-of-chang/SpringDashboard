@@ -74,11 +74,16 @@ $(function () {
         }
     });
 
-    var cookie = JSON.parse($.cookie('csrf'));
-    var csrf = cookie.csrf;
-    cookie = JSON.parse($.cookie('remember_me'));
-    var remember_me;
+    var csrf = null;
+    var remember_me = null;
+    var cookie = $.cookie('csrf');
     if (cookie != null) {
+        cookie = JSON.parse(cookie);
+        csrf = cookie.csrf;
+    }
+    cookie = $.cookie('remember_me');
+    if (cookie != null) {
+        cookie = JSON.parse(cookie);
         remember_me = cookie.remember_me;
     }
     if (csrf > "" && remember_me) {

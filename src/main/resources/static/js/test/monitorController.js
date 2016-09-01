@@ -164,12 +164,16 @@ describe('MonitorController', function() {
                             returnValue = value;
                             return;
                         }
+                    },
+                    chart_config: {
+                        status: 'warning'
                     }
                 }
             };
             var date = (new Date()).toString();
             monitorController.update_chart(13, {value: 123, status: 'success'});
             assert.equal(123, returnValue);
+            assert.equal('success', monitorController.monitors[13].chart_config.status);
             assert.equal(date, monitorController.last_updated[13]);
         }));
 
@@ -212,8 +216,8 @@ describe('MonitorController', function() {
             };
             date = (new Date()).toString();
             monitorController.update_chart(13, {value: 234, max: 1000, unit: '%', mediumThreshold: 500, highThreshold: 800});
-            assert.equal(23, returnValue);
-            assert.equal(100, monitorController.monitors[13].chart_config.maxValue);
+            assert.equal(234, returnValue);
+            assert.equal(1000, monitorController.monitors[13].chart_config.maxValue);
             assert.equal('%', monitorController.monitors[13].chart_config.displayUnit);
             assert.equal(date, monitorController.last_updated[13]);
         }));
@@ -303,9 +307,8 @@ describe('MonitorController', function() {
                 13: {
                     chart: 'line',
                     chart_render: {
-                        update: function(dates, values) {
-                            returnDate = dates;
-                            console.log(values);
+                        update: function(date, values) {
+                            returnDate = date;
                             returnValue = values;
                             return;
                         }
@@ -318,16 +321,13 @@ describe('MonitorController', function() {
             };
             var date = (new Date()).toString();
             monitorController.update_chart(13, {'a': {value: 1, color: 'red'},'b': {value: 2, color: 'green'},'c': {value: 3, color: 'blue'}});
-            assert.equal(date.toString(), returnDate[0].toString());
-            assert.equal('red', returnValue[0].color);
-            assert.equal('a', returnValue[0].key);
-            assert.equal(1, returnValue[0].values[0].y);
-            assert.equal('green', returnValue[1].color);
-            assert.equal('b', returnValue[1].key);
-            assert.equal(2, returnValue[1].values[0].y);
-            assert.equal('blue', returnValue[2].color);
-            assert.equal('c', returnValue[2].key);
-            assert.equal(3, returnValue[2].values[0].y);
+            assert.equal(date.toString(), returnDate.toString());
+            assert.equal('red', returnValue['a'].color);
+            assert.equal(1, returnValue['a'].value);
+            assert.equal('green', returnValue['b'].color);
+            assert.equal(2, returnValue['b'].value);
+            assert.equal('blue', returnValue['c'].color);
+            assert.equal(3, returnValue['c'].value);
             assert.equal(date, monitorController.last_updated[13]);
 
             monitorController.last_updated = {
@@ -335,16 +335,13 @@ describe('MonitorController', function() {
             };
             var date = (new Date()).toString();
             monitorController.update_chart(13, {'a': {value: 4, color: 'red'},'b': {value: 5, color: 'green'},'c': {value: 6, color: 'blue'}});
-            assert.equal(date.toString(), returnDate[1].toString());
-            assert.equal('red', returnValue[0].color);
-            assert.equal('a', returnValue[0].key);
-            assert.equal(4, returnValue[0].values[1].y);
-            assert.equal('green', returnValue[1].color);
-            assert.equal('b', returnValue[1].key);
-            assert.equal(5, returnValue[1].values[1].y);
-            assert.equal('blue', returnValue[2].color);
-            assert.equal('c', returnValue[2].key);
-            assert.equal(6, returnValue[2].values[1].y);
+            assert.equal(date.toString(), returnDate.toString());
+            assert.equal('red', returnValue['a'].color);
+            assert.equal(4, returnValue['a'].value);
+            assert.equal('green', returnValue['b'].color);
+            assert.equal(5, returnValue['b'].value);
+            assert.equal('blue', returnValue['c'].color);
+            assert.equal(6, returnValue['c'].value);
             assert.equal(date, monitorController.last_updated[13]);
         }));
 
