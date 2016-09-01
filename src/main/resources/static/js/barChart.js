@@ -34,7 +34,12 @@ function loadBarChart(elementId, values, config) {
     var bars = chart.selectAll(".barChart.bar").data(values).enter().append("g").attr("class", "barChart bar");
 
     function ChartUpdater(){
-        this.update = function(values){
+        this.update = function(v){
+            var values = [];
+            $.each(Object.keys(v), function( index, value ) {
+                v[value].key = value;
+                values.push(v[value]);
+            });
             var unit = config.displayUnit;
             var mediumThreshold = config.mediumThreshold;
             var highThreshold = config.highThreshold;

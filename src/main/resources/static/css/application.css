@@ -319,6 +319,13 @@ body {
     pointer-events: none;
 }
 
+.chart .edgeLabel text {
+    text-shadow: 2px  2px 1px #FFF,
+                -2px -2px 1px #FFF,
+                 2px -2px 1px #FFF,
+                -2px  2px 1px #FFF;
+}
+
 @keyframes pulsate {
     100% { fill: rgba(200, 200, 255, 255); stroke-width: 3px; stroke: #99F; }
 }

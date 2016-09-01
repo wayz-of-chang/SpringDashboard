@@ -57,7 +57,12 @@ function loadPieChart(elementId, values, config) {
 
     function ChartUpdater(){
         // create function to update pie-chart. This will be used by histogram.
-        this.update = function(values){
+        this.update = function(v){
+            var values = [];
+            $.each(Object.keys(v), function( index, value ) {
+                v[value].key = value;
+                values.push(v[value]);
+            });
             var pieChunk = chart.selectAll("g").data(pie(values)).enter().append("g");
             pieChunk.append("path").attr("d", arc).each(function(d) { this._current = d; }).style("fill", function(d) { return d.data.color; });
             chart.selectAll("path").data(pie(values)).transition().duration(config.transitionTime)

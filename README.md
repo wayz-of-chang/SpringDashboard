@@ -110,7 +110,7 @@ The script should be placed in a `scripts` directory that is on the same level a
 The chart type includes many various types, which are explained in more detail in the **Chart Types** section.  If none is specified, the raw JSON response will be printed.
 
 ### Output Parser
-This is an inline JS function that is evaluated every time the monitor response is available.  What is returned here is the value used to update the chart.  Thus, it is the job of this function to return something in a format that is valid to the chart type being used.  Each chart type has a specific format, which is explained in more detail in the **Chart Types** section.  **Note: The maximum length of the output parser is 1023 characters long.**  This number was chosen both as a sane number large enough for accomplishing the job of massaging the data to fit the inputs for the charts, and small enough to not negatively impact performance too much and to discourage potential security exploits (where cusom JS is run, there is the potential it can cause harm to the user's system).
+This is an inline JS function that is evaluated every time the monitor response is available.  What is returned here is the value used to update the chart.  Thus, it is the job of this function to return something in a format that is valid to the chart type being used.  Each chart type has a specific format, which is explained in more detail in the **Chart Types** section.  **Note: The maximum length of the output parser is 1023 characters long.**  This number was chosen both as a sane number large enough for accomplishing the job of massaging the data to fit the inputs for the charts, and small enough to not negatively impact performance too much and to discourage potential security exploits (where custom JS is run, there is the potential it can cause harm to the user's system).
 
 ### Protocol
 There are two main data flows supported by this application - REST and MQ (Message Queue via RabbitMQ).  When REST is selected, the server will periodically send REST webservice requests to clients.  Clients will respond with JSON responses, which will then be sent to the browser.  This is the simplest data flow.  When MQ is selected, the server will periodically send REST webservice requests to clients to start the clients.  Clients will then periodically send messages to the message queue, which the server will listen for.  Once a message appears in the message queue, the server will consume it by parsing the message, and persisting it in MongoDB.  Concurrently, the server will be returning responses found in MongoDB within the last 5 seconds (every 5 seconds) to the browser.  With MQ, the data flow is significantly more complex, with quite a few extra moving pieces, as follows: 
@@ -119,81 +119,3 @@ There are two main data flows supported by this application - REST and MQ (Messa
 - Messages older than 1 minute old are cleared from MongoDB.
 
 
-
-## Chart Types
-This application comes with a number of charts which hopefully covers all the common cases of intuitively displaying monitor statuses.
-
-### Status Indicator
-**Purpose:** for monitoring one data source and giving color-coded status indication
-
-**Return format:** `{'value': value, 'status': status}`
-
-**Arguments:** 
-
-`value` is any arbitrary string, and 
-
-`status` can be "success", "warning", or "failure" where its value determines the color (green, yellow, or red) shown
-
-### Gauge
-**Purpose:** for monitoring one data source with level information and giving color-coded status indication
-
-**Return format:** `{'value': value, 'max': max, 'unit': displayUnit, 'mediumThreshold': mediumThreshold, 'highThreshold': highThreshold}`
-
-**Arguments:** 
-
-`value` is the value of the data source (any arbitrary number), 
-
-`max` is the maximum number allowed (any arbitrary number), 
-
-`unit` is the unit to be displayed next to value (any arbitrary string, preferably 2 characters or less), 
-
-`mediumThreshold` is the ratio of value to max at which the color turns yellow (any number between 0 and 1), and 
-
-`highThreshold` is the ratio of value to max at which the color turns red (any number between `mediumThreshold` and 1); if the ratio of value to max is under `mediumThreshold`, then the color is green
-
-### Bar Chart
-**Purpose:** for monitoring one or more data sources in comparison with each other
-
-**Return format:** `{ 'values': values, 'max': max, 'unit': displayUnit, 'mediumThreshold': mediumThreshold, 'highThreshold': highThreshold}`
-
-**Arguments:** 
-
-`values` is an array of `{'key': key, 'value': value}` objects (i.e. `[{'key': key, 'value': value}, ...]`), where 
-
-&nbsp;&nbsp;`key` is the id of the data source (any arbitrary string), and 
-
-&nbsp;&nbsp;`value` is the value of the data source (any arbitrary number), 
-
-`max` is the maximum number allowed (any arbitrary number), 
-
-`unit` is the unit to be displayed for the y axis (any arbitrary string), 
-
-`mediumThreshold` is the ratio of value to max at which the color for the bar turns yellow (any number between 0 and 1), and 
-
-`highThreshold` is the ratio of value to max at which the color turns red (any number between `mediumThreshold` and 1); if the ratio of value to max is under `mediumThreshold`, then the color is green
-
-### Pie Chart
-**Purpose:** for monitoring one or more data sources that add up to a total amount
-
-**Return format:** `[{'key': key, 'value': value, 'color': color}, ...]`
-
-**Arguments:** 
-
-`key` is the id of the data source (any arbitrary string), 
-
-`value` is the value of the data source (any arbitrary number), and 
-
-`color` is the color used to show the data source (a color string in hex format - i.e. '#XXXXXX')
-
-### Line Chart
-**Purpose:** for monitoring one or more data sources while keeping its history up to 50 points
-
-**Return format:** `{key: {'value': value, 'color': color}, ...}`
-
-**Arguments:** 
-
-`key` is the id of the data source (any arbitrary string), 
-
-`value` is the value of the data source (any arbitrary number), and 
-
-`color` is the color used to show the data source (a color string in hex format - i.e. '#XXXXXX')

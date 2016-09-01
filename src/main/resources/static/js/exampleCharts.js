@@ -84,120 +84,102 @@ var gauge_states = [
 
 var bar_states = [
     {
-        values: [
-            {
-                key: 'aaa',
+        values: {
+            'aaa': {
                 value: 0
             },
-            {
-                key: 'bbbb',
+            'bbbb': {
                 value: 20
             },
-            {
-                key: 'cc',
+            'cc': {
                 value: 30
             }
-        ],
+        },
         max: 100,
         unit: '%',
         mediumThreshold: 0.3,
         highThreshold: 0.9
     },
     {
-        values: [
-            {
-                key: 'aaa',
+        values: {
+            'aaa': {
                 value: 10
             },
-            {
-                key: 'bbbb',
+            'bbbb': {
                 value: 40
             },
-            {
-                key: 'cc',
+            'cc': {
                 value: 100
             }
-        ],
+        },
         max: 100,
         unit: '%',
         mediumThreshold: 0.3,
         highThreshold: 0.9
     },
     {
-        values: [
-            {
-                key: 'aaa',
+        values: {
+            'aaa': {
                 value: 95
             },
-            {
-                key: 'bbbb',
+            'bbbb': {
                 value: 20
             },
-            {
-                key: 'cc',
+            'cc': {
                 value: 50
             }
-        ],
+        },
         max: 100,
         unit: '%',
         mediumThreshold: 0.3,
         highThreshold: 0.9
     },
     {
-        values: [
-            {
-                key: 'aaa',
+        values: {
+            'aaa': {
                 value: 0
             },
-            {
-                key: 'bbbb',
+            'bbbb': {
                 value: 20
             },
-            {
-                key: 'cc',
+            'cc': {
                 value: 50
             }
-        ],
+        },
         max: 100,
         unit: 'MB',
         mediumThreshold: 0.1,
         highThreshold: 0.9
     },
     {
-        values: [
-            {
-                key: 'aaa',
+        values: {
+            'aaa': {
                 value: 0
             },
-            {
-                key: 'bbbb',
+            'bbbb': {
                 value: 20
             },
-            {
-                key: 'cc',
+            'cc': {
                 value: 50
             }
-        ],
+        },
         max: 50,
         unit: 'anything',
         mediumThreshold: 0.3,
         highThreshold: 0.7
     },
     {
-        values: [
-            {
-                key: 'aaa',
+        values: {
+            'aaa': {
                 value: 0
             },
-            {
-                key: 'bbbb',
+            'bbbb': {
                 value: 20
             },
-            {
-                key: 'cc',
+            'cc': {
                 value: 50
             }
-        ],
+        },
         max: 100,
         unit: '%',
         mediumThreshold: 0.8,
@@ -206,108 +188,90 @@ var bar_states = [
 ];
 
 var pie_states = [
-    [
-        {
-            key: 'aaa',
+    {
+        'aaa': {
             value: 0,
             color: '#FF0000'
         },
-        {
-            key: 'bbbb',
+        'bbbb': {
             value: 20,
             color: '#00FF00'
         },
-        {
-            key: 'cc',
+        'cc': {
             value: 30,
             color: '#0000FF'
         }
-    ],
-    [
-        {
-            key: 'aaa',
+    },
+    {
+        'aaa': {
             value: 10,
             color: '#FF0000'
         },
-        {
-            key: 'bbbb',
+        'bbbb': {
             value: 40,
             color: '#00FF00'
         },
-        {
-            key: 'cc',
+        'cc': {
             value: 100,
             color: '#0000FF'
         }
-    ],
-    [
-        {
-            key: 'aaa',
+    },
+    {
+        'aaa': {
             value: 95,
             color: '#FF0000'
         },
-        {
-            key: 'bbbb',
+        'bbbb': {
             value: 20,
             color: '#00FF00'
         },
-        {
-            key: 'cc',
+        'cc': {
             value: 50,
             color: '#0000FF'
         }
-    ],
-    [
-        {
-            key: 'aaa',
+    },
+    {
+        'aaa': {
             value: 0,
             color: '#FF0000'
         },
-        {
-            key: 'bbbb',
+        'bbbb': {
             value: 20,
             color: '#00FF00'
         },
-        {
-            key: 'cc',
+        'cc': {
             value: 50,
             color: '#0000FF'
         }
-    ],
-    [
-        {
-            key: 'aaa',
+    },
+    {
+        'aaa': {
             value: 0,
             color: '#FF0000'
         },
-        {
-            key: 'bbbb',
+        'bbbb': {
             value: 20,
             color: '#00FF00'
         },
-        {
-            key: 'cc',
+        'cc': {
             value: 50,
             color: '#0000FF'
         }
-    ],
-    [
-        {
-            key: 'aaa',
+    },
+    {
+        'aaa': {
             value: 0,
             color: '#FF0000'
         },
-        {
-            key: 'bbbb',
+        'bbbb': {
             value: 20,
             color: '#00FF00'
         },
-        {
-            key: 'cc',
+        'cc': {
             value: 50,
             color: '#0000FF'
         }
-    ]
+    }
 ];
 
 var line_states = [

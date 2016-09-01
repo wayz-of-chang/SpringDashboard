@@ -79,11 +79,15 @@ $(function () {
     var cookie = $.cookie('csrf');
     if (cookie != null) {
         cookie = JSON.parse(cookie);
+    }
+    if (cookie != null) {
         csrf = cookie.csrf;
     }
     cookie = $.cookie('remember_me');
     if (cookie != null) {
         cookie = JSON.parse(cookie);
+    }
+    if (cookie != null) {
         remember_me = cookie.remember_me;
     }
     if (csrf > "" && remember_me) {

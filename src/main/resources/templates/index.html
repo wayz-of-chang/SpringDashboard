@@ -436,7 +436,7 @@
                 <dt>Arguments</dt>
                 <dd>
                     <ul>
-                        <li><code>values</code> is an array of <code>{'key': key, 'value': value}</code> objects (i.e. <code>[{'key': key, 'value': value}, ...]</code>), where
+                        <li><code>values</code> is a hash of <code>{ 'value': value }</code> objects (i.e. <code>{ key: {'value': value}, ... ]</code>), where
                             <ul>
                                 <li><code>key</code> is the id of the data source (any arbitrary string), and</li>
                                 <li><code>value</code> is the value of the data source (any arbitrary number),</li>
@@ -460,7 +460,7 @@
                 <dt>Purpose</dt>
                 <dd>for monitoring one or more data sources that add up to a total amount</dd>
                 <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
-                <dd><code>[{ 'key': key, 'value': value, 'color': color }, ...]</code></dd>
+                <dd><code>{ key: { 'value': value, 'color': color }, ... }</code></dd>
                 <dt>Arguments</dt>
                 <dd>
                     <ul>
