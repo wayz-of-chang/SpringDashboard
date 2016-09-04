@@ -3,7 +3,8 @@ describe('DashboardController', function() {
     beforeEach(module('dashboardApp'));
 
     describe('create_new_dashboard()', function() {
-        it('should be able to create new dashboards', inject(function($rootScope, $controller) {
+        it('should be able to create new dashboards', inject(["$rootScope", "$controller", function($rootScope,
+        $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -37,9 +38,9 @@ describe('DashboardController', function() {
             assert.equal("Successfully created dashboard: abc", dashboardController.new_dashboard.success_message);
             assert.equal(false, dashboardController.new_dashboard.error);
             assert.equal(false, dashboardController.new_dashboard.error_message);
-        }));
+        }]));
 
-        it('should handle server errors properly', inject(function($rootScope, $controller) {
+        it('should handle server errors properly', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -71,11 +72,11 @@ describe('DashboardController', function() {
             assert.equal(null, dashboardController.new_dashboard.success_message);
             assert.equal(true, dashboardController.new_dashboard.error);
             assert.equal("error status: error message", dashboardController.new_dashboard.error_message);
-        }));
+        }]));
     });
 
     describe('update()', function() {
-        it('should be able to update dashboards', inject(function($rootScope, $controller) {
+        it('should be able to update dashboards', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -112,9 +113,9 @@ describe('DashboardController', function() {
             assert.equal("Successfully updated dashboard: def", dashboardController.edit_dashboard.success_message);
             assert.equal(false, dashboardController.edit_dashboard.error);
             assert.equal(false, dashboardController.edit_dashboard.error_message);
-        }));
+        }]));
 
-        it('should handle server errors properly', inject(function($rootScope, $controller) {
+        it('should handle server errors properly', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -149,11 +150,11 @@ describe('DashboardController', function() {
             assert.equal('', dashboardController.edit_dashboard.success_message);
             assert.equal(true, dashboardController.edit_dashboard.error);
             assert.equal("error status: error message", dashboardController.edit_dashboard.error_message);
-        }));
+        }]));
     });
 
     describe('delete()', function() {
-        it('should be able to delete dashboards', inject(function($rootScope, $controller) {
+        it('should be able to delete dashboards', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -190,9 +191,9 @@ describe('DashboardController', function() {
             assert.equal("Successfully deleted dashboard: def", dashboardController.delete_dashboard.success_message);
             assert.equal(false, dashboardController.delete_dashboard.error);
             assert.equal(false, dashboardController.delete_dashboard.error_message);
-        }));
+        }]));
 
-        it('should handle server errors properly', inject(function($rootScope, $controller) {
+        it('should handle server errors properly', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -227,6 +228,6 @@ describe('DashboardController', function() {
             assert.equal('', dashboardController.delete_dashboard.success_message);
             assert.equal(true, dashboardController.delete_dashboard.error);
             assert.equal("error status: error message", dashboardController.delete_dashboard.error_message);
-        }));
+        }]));
     });
 });

@@ -3,7 +3,7 @@ describe('MonitorController', function() {
     beforeEach(module('dashboardApp'));
 
     describe('add_monitor()', function() {
-        it('should be able to add new monitors', inject(function($rootScope, $controller) {
+        it('should be able to add new monitors', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -36,9 +36,9 @@ describe('MonitorController', function() {
             assert.equal("Successfully created monitor", monitorController.new_monitor.success_message);
             assert.equal(false, monitorController.new_monitor.error);
             assert.equal(false, monitorController.new_monitor.error_message);
-        }));
+        }]));
 
-        it('should handle server errors properly', inject(function($rootScope, $controller) {
+        it('should handle server errors properly', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -69,11 +69,11 @@ describe('MonitorController', function() {
             assert.equal('', monitorController.new_monitor.success_message);
             assert.equal(true, monitorController.new_monitor.error);
             assert.equal("error status: error message", monitorController.new_monitor.error_message);
-        }));
+        }]));
     });
 
     describe('copy_monitor()', function() {
-        it('should be able to copy monitors', inject(function($rootScope, $controller) {
+        it('should be able to copy monitors', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -106,9 +106,9 @@ describe('MonitorController', function() {
             assert.equal("Successfully copied monitor", monitorController.new_monitor.success_message);
             assert.equal(false, monitorController.new_monitor.error);
             assert.equal(false, monitorController.new_monitor.error_message);
-        }));
+        }]));
 
-        it('should handle server errors properly', inject(function($rootScope, $controller) {
+        it('should handle server errors properly', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -139,11 +139,11 @@ describe('MonitorController', function() {
             assert.equal('', monitorController.new_monitor.success_message);
             assert.equal(true, monitorController.new_monitor.error);
             assert.equal("error status: error message", monitorController.new_monitor.error_message);
-        }));
+        }]));
     });
 
     describe('update_chart()', function() {
-        it('should be able to update status value', inject(function($rootScope, $controller) {
+        it('should be able to update status value', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -175,9 +175,9 @@ describe('MonitorController', function() {
             assert.equal(123, returnValue);
             assert.equal('success', monitorController.monitors[13].chart_config.status);
             assert.equal(date, monitorController.last_updated[13]);
-        }));
+        }]));
 
-        it('should be able to update gauge value', inject(function($rootScope, $controller) {
+        it('should be able to update gauge value', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -220,9 +220,9 @@ describe('MonitorController', function() {
             assert.equal(1000, monitorController.monitors[13].chart_config.maxValue);
             assert.equal('%', monitorController.monitors[13].chart_config.displayUnit);
             assert.equal(date, monitorController.last_updated[13]);
-        }));
+        }]));
 
-        it('should be able to update bar values', inject(function($rootScope, $controller) {
+        it('should be able to update bar values', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -255,9 +255,9 @@ describe('MonitorController', function() {
             assert.equal(1000, monitorController.monitors[13].chart_config.maxValue);
             assert.equal('aaa', monitorController.monitors[13].chart_config.displayUnit);
             assert.equal(date, monitorController.last_updated[13]);
-        }));
+        }]));
 
-        it('should be able to update pie values', inject(function($rootScope, $controller) {
+        it('should be able to update pie values', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -287,9 +287,9 @@ describe('MonitorController', function() {
             monitorController.update_chart(13, [1,2,3]);
             assert.equal([1,2,3].toString(), returnValue.toString());
             assert.equal(date, monitorController.last_updated[13]);
-        }));
+        }]));
 
-        it('should be able to update line values', inject(function($rootScope, $controller) {
+        it('should be able to update line values', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -343,9 +343,9 @@ describe('MonitorController', function() {
             assert.equal('blue', returnValue['c'].color);
             assert.equal(6, returnValue['c'].value);
             assert.equal(date, monitorController.last_updated[13]);
-        }));
+        }]));
 
-        it('should be able to update raw value', inject(function($rootScope, $controller) {
+        it('should be able to update raw value', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -375,11 +375,11 @@ describe('MonitorController', function() {
             monitorController.update_chart(13, [1,2,3]);
             assert.equal(true, monitorController.monitors[13].show_raw);
             assert.equal(date, monitorController.last_updated[13]);
-        }));
+        }]));
     });
 
     describe('delete()', function() {
-        it('should be able to delete monitors', inject(function($rootScope, $controller) {
+        it('should be able to delete monitors', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -412,9 +412,9 @@ describe('MonitorController', function() {
             assert.equal("Successfully deleted monitor: def", monitorController.delete_monitor.success_message);
             assert.equal(false, monitorController.delete_monitor.error);
             assert.equal(false, monitorController.delete_monitor.error_message);
-        }));
+        }]));
 
-        it('should handle server errors properly', inject(function($rootScope, $controller) {
+        it('should handle server errors properly', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -445,6 +445,6 @@ describe('MonitorController', function() {
             assert.equal('', monitorController.delete_monitor.success_message);
             assert.equal(true, monitorController.delete_monitor.error);
             assert.equal("error status: error message", monitorController.delete_monitor.error_message);
-        }));
+        }]));
     });
 });

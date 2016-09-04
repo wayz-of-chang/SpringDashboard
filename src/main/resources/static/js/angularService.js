@@ -1,4 +1,5 @@
-app.factory('service', function($http, $rootScope) {
+var app = angular.module('dashboardApp');
+app.factory('service', ["$http", "$rootScope", function($http, $rootScope) {
     var service = {};
 
     service.user = {
@@ -580,4 +581,4 @@ app.factory('service', function($http, $rootScope) {
     };
 
     return service;
-});
+}]);

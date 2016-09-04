@@ -1,4 +1,5 @@
-app.controller('MonitorController', function($scope, service) {
+var app = angular.module('dashboardApp');
+app.controller('MonitorController', ["$scope", "service", function($scope, service) {
     var monitor = this;
     monitor.current = "1";
     monitor.monitoring = false;
@@ -349,4 +350,4 @@ app.controller('MonitorController', function($scope, service) {
     $scope.$watch(function(scope) { return service.get_monitor_order(); },
         function(new_val, old_val) { monitor.ordered_monitors(); }
     );
-});
+}]);

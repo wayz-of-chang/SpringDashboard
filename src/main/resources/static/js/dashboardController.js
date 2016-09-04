@@ -1,4 +1,5 @@
-app.controller('DashboardController', function($scope, service) {
+var app = angular.module('dashboardApp');
+app.controller('DashboardController', [ "$scope", "service", function($scope, service) {
     var dashboard = this;
     dashboard.current = "1";
     dashboard.dashboards = {};
@@ -147,4 +148,4 @@ app.controller('DashboardController', function($scope, service) {
     $scope.$watch(function(scope) { return service.get_user_settings().current_dashboard; },
         function(new_val, old_val) { dashboard.current = new_val; }
     );
-});
+}]);

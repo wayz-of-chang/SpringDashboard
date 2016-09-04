@@ -1,4 +1,5 @@
-app.controller('UserController', function($scope, $window, service) {
+var app = angular.module('dashboardApp');
+app.controller('UserController', ["$scope", "$window", "service", function($scope, $window, service) {
     var user = this;
     user.show_password = false;
     user.confirm_password = "";
@@ -144,4 +145,4 @@ app.controller('UserController', function($scope, $window, service) {
     $scope.$watch(function(scope) { return service.get_login_status(); },
         function(new_val, old_val) { user.logged_in = new_val; }
     );
-});
+}]);

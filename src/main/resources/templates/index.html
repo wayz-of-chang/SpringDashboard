@@ -5,43 +5,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/bootstrap-theme.min.css" />
-    <link rel="stylesheet" href="/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="/css/application.css" />
-    <script src="/js/vendor/jquery-1.12.4.js"></script>
-    <script src="/js/vendor/jquery.cookie.js"></script>
-    <script src="/js/vendor/jquery-ui.js"></script>
-    <script src="/js/vendor/jquery.iframe-transport.js"></script>
-    <script src="/js/vendor/jquery.fileupload.js"></script>
-    <script src="/js/vendor/sockjs-1.1.1.js"></script>
-    <script src="/js/vendor/stomp.js"></script>
-    <script src="/js/vendor/angular.js"></script>
-    <script src="/js/vendor/angular-touch.js"></script>
-    <script src="/js/vendor/bootstrap.js"></script>
-    <script src="/js/vendor/d3.js"></script>
-    <script src="/js/vendor/dagre.js"></script>
-    <script src="/js/vendor/dagre-d3.js"></script>
-    <script src="/js/statusIndicator.js"></script>
-    <script src="/js/liquidFillGauge.js"></script>
-    <script src="/js/barChart.js"></script>
-    <script src="/js/lineChart.js"></script>
-    <script src="/js/pieChart.js"></script>
-    <script type="text/javascript">
-        app = angular.module('dashboardApp', []);
-    </script>
-    <script src="/js/application.js"></script>
-    <script src="/js/angularDirectives.js"></script>
-    <script src="/js/angularService.js"></script>
-    <script src="/js/userController.js"></script>
-    <script src="/js/dashboardController.js"></script>
-    <script src="/js/monitorController.js"></script>
-    <script src="/js/dataflowDiagram.js"></script>
-    <script src="/js/datastructureDiagram.js"></script>
-    <script src="/js/exampleCharts.js"></script>
+    <link rel="stylesheet" href="/build/urim.min.css" />
+    <script src="/build/urim.min.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav class="navbar navbar-default navbar-fixed-top ng-cloak">
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav" aria-expanded="false">
@@ -124,7 +92,8 @@
     </div>
 </nav>
 
-<div class="container-fluid" ng-controller="MonitorController as monitor" id="dashboard_content" ng-show="monitor.current_dashboard() > ''">
+<div class="container-fluid ng-cloak" ng-controller="MonitorController as monitor" id="dashboard_content"
+     ng-show="monitor.current_dashboard() > ''">
     <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript!  Websocket relies on Javascript being enabled.  Please enable Javascript and reload this page!</h2></noscript>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 sortable" ng-repeat="mon in monitor.ordered_monitors()" repeat-final="" id="monitor_{{mon.id}}" data-id="{{mon.id}}">
         <div class="panel panel-default monitor">
@@ -233,7 +202,8 @@
     </div>
 </div>
 
-<div class="container-fluid" id="intro_content" ng-controller="DashboardController as dashboard" ng-hide="dashboard.logged_in()">
+<div class="container-fluid ng-cloak" id="intro_content" ng-controller="DashboardController as dashboard"
+     ng-hide="dashboard.logged_in()">
     <div class="row">
         <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
         <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8 text-center">

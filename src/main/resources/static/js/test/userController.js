@@ -3,7 +3,7 @@ describe('UserController', function() {
     beforeEach(module('dashboardApp'));
 
     describe('register()', function() {
-        it('should be able to register new users', inject(function($rootScope, $controller) {
+        it('should be able to register new users', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -38,9 +38,9 @@ describe('UserController', function() {
             assert.equal(true, userController.success);
             assert.equal(false, userController.error);
             assert.equal(true, userController.mode.register);
-        }));
+        }]));
 
-        it('should handle server errors properly', inject(function($rootScope, $controller) {
+        it('should handle server errors properly', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -74,9 +74,9 @@ describe('UserController', function() {
             assert.equal(true, userController.error);
             assert.equal("error status: error message", userController.error_message);
             assert.equal(true, userController.mode.register);
-        }));
+        }]));
 
-        it('should validate that username and password are specified', inject(function($rootScope, $controller) {
+        it('should validate that username and password are specified', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -120,9 +120,9 @@ describe('UserController', function() {
             assert.equal(true, userController.error);
             assert.equal("Username and Password cannot be blank.", userController.error_message);
             assert.equal(true, userController.mode.register);
-        }));
+        }]));
 
-        it('should validate that email and role are specified', inject(function($rootScope, $controller) {
+        it('should validate that email and role are specified', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -166,9 +166,9 @@ describe('UserController', function() {
             assert.equal(true, userController.error);
             assert.equal("Email and Role cannot be blank.", userController.error_message);
             assert.equal(true, userController.mode.register);
-        }));
+        }]));
 
-        it('should validate that password matches confirm password', inject(function($rootScope, $controller) {
+        it('should validate that password matches confirm password', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -200,11 +200,11 @@ describe('UserController', function() {
             assert.equal(true, userController.error);
             assert.equal("Please make sure the password matches.", userController.error_message);
             assert.equal(true, userController.mode.register);
-        }));
+        }]));
     });
 
     describe('login()', function() {
-        it('should be able to login users', inject(function($rootScope, $controller) {
+        it('should be able to login users', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -233,9 +233,9 @@ describe('UserController', function() {
             assert.equal(false, userController.error);
             assert.equal(false, userController.mode.register);
             assert.equal(true, userController.mode.login);
-        }));
+        }]));
 
-        it('should handle server errors properly', inject(function($rootScope, $controller) {
+        it('should handle server errors properly', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -266,9 +266,9 @@ describe('UserController', function() {
             assert.equal(true, userController.error);
             assert.equal("error status: error message", userController.error_message);
             assert.equal(true, userController.mode.login);
-        }));
+        }]));
 
-        it('should validate that username and password are specified', inject(function($rootScope, $controller) {
+        it('should validate that username and password are specified', inject(["$rootScope", "$controller", function($rootScope, $controller) {
             var scope = $rootScope.$new();
             var window = {};
             var service = {};
@@ -306,6 +306,6 @@ describe('UserController', function() {
             assert.equal(true, userController.error);
             assert.equal("Username and Password cannot be blank.", userController.error_message);
             assert.equal(true, userController.mode.login);
-        }));
+        }]));
     });
 });

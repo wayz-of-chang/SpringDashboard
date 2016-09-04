@@ -1,4 +1,6 @@
+var app = angular.module('dashboardApp', []);
 $(function () {
+
     $('#login_dropdown_button').click(function() {
         setTimeout(function() { $('#login_username_input').focus(); }, 10);
     });

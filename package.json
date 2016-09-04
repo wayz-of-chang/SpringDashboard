@@ -1,0 +1,15 @@
+{
+  "name": "urim",
+  "version": "1.0.0",
+  "description": "An extensible dashboard application",
+  "author": "David Chang <david@dchang.no-ip.org>",
+  "dependencies": {
+    "gulp": "*",
+    "gulp-concat": "*",
+    "gulp-strip-debug": "*",
+    "gulp-rename": "*",
+    "gulp-uglify": "*",
+    "run-sequence": "*",
+    "gulp-clean-css": "*"
+  }
+}
