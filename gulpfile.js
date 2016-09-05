@@ -43,7 +43,11 @@ gulp.task('build-js', function() {
         .pipe(concat('urim.js'))
         .pipe(gulp.dest(DEST))
         .pipe(stripDebug())
-        .pipe(uglify())
+        .pipe(uglify({
+            compress: {
+                drop_console: true
+            }
+        }))
         .pipe(rename({ extname: '.min.js' }))
         .pipe(gulp.dest(DEST));
 });
@@ -82,7 +86,11 @@ gulp.task('build-test-js', function() {
         .pipe(concat('urim-test.js'))
         .pipe(gulp.dest(DEST))
         .pipe(stripDebug())
-        .pipe(uglify())
+        .pipe(uglify({
+             compress: {
+                 drop_console: true
+             }
+        }))
         .pipe(rename({ extname: '.min.js' }))
         .pipe(gulp.dest(DEST));
 });

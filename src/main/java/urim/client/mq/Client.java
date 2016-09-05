@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import urim.Message;
@@ -51,7 +52,7 @@ class Client {
         system, script, ping
     }
 
-    @RequestMapping("/start")
+    @RequestMapping(value = "/start", method = RequestMethod.GET)
     public Message start(@RequestParam(value="key", defaultValue="ping") String key, @RequestParam(value="interval", defaultValue="5000") String interval, @RequestParam(value="type", defaultValue="ping") String type, @RequestParam(value="name", defaultValue="ping") String name) {
         if (schedulers.containsKey(key) && intervals.get(key) != Long.parseLong(interval)) {
             stop(key, schedulers.get(key));
@@ -84,7 +85,7 @@ class Client {
         return new Message(counter.incrementAndGet(), String.format("started monitoring, %s", key), name, new Parameters(key, "start", this.name, ""));
     }
 
-    @RequestMapping("/stop")
+    @RequestMapping(value = "/stop", method = RequestMethod.GET)
     public Message stop(@RequestParam(value="key", defaultValue="ping") String key) {
         if (schedulers.containsKey(key)) {
             stop(key, schedulers.get(key));
