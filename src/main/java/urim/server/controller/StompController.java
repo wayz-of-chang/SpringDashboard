@@ -50,6 +50,7 @@ public class StompController {
     private final MonitorMessageService monitorMessageService;
     private HashMap<Long, ScheduledFuture> schedulers = new HashMap<Long, ScheduledFuture>();
     private HashMap<Long, Long> offsets = new HashMap<Long, Long>();
+    private HashMap<Long, Long> ttl = new HashMap<Long, Long>();
 
     private static final Logger log = LoggerFactory.getLogger(StompController.class);
 
@@ -197,8 +198,18 @@ public class StompController {
                     try {
                         long offset = offsets.get(dashboardId).longValue();
                         offsets.put(dashboardId, new Long((offset + 5000) % 86400000));
-                        Dashboard dashboard = dashboardService.getDashboardById(dashboardId).get();
                         HashMap<Long, Message> responses = new HashMap<Long, Message>();
+                        Dashboard dashboard = dashboardService.getDashboardById(dashboardId).get();
+                        if (ttl.get(dashboardId).longValue() <= 0L) {
+                            responses.put(0L, stopMonitoring(parameters));
+                            template.convertAndSend("/results/" + dashboardId + "/instant", new Message
+                                    (counter.incrementAndGet(), responses, String.format
+                                    ("monitoring expired for %s (%s)", dashboard.getName(), Long.toString
+                                            (dashboardId)), new MonitorParameters()));
+                            return;
+                        } else {
+                            ttl.put(dashboardId, ttl.get(dashboardId) - 1L);
+                        }
                         getRestStats(dashboardId, new RestTemplate(), responses, dashboard, offset);
                         getMqStats(dashboardId, new RestTemplate(), responses, dashboard, offset);
                         template.convertAndSend("/results/" + dashboardId + "/instant", new Message(counter.incrementAndGet(), responses, String.format("monitor results for %s (%s)", dashboard.getName(), Long.toString(dashboardId)), new MonitorParameters()));
@@ -209,7 +220,8 @@ public class StompController {
                 }
             }, 5000);
             schedulers.put(dashboardId, future);
-            offsets.put(dashboardId, new Long(0));
+            offsets.put(dashboardId, 0L);
+            keepAlive(parameters);
         }
         return new Message(counter.incrementAndGet(), String.format("started monitoring, %s", Long.toString(parameters.getDashboardId())), parameters.getName(), parameters);
     }
@@ -223,8 +235,21 @@ public class StompController {
             future.cancel(false);
             schedulers.remove(dashboardId);
             offsets.remove(dashboardId);
+            ttl.remove(dashboardId);
         }
         return new Message(counter.incrementAndGet(), String.format("stopped monitoring, %s", Long.toString(parameters.getDashboardId())), parameters.getName(), parameters);
+    }
+
+    @MessageMapping("/heartbeat")
+    @SendTo("/results/instant")
+    public Message keepAlive(MonitorParameters parameters) throws Exception {
+        long dashboardId = parameters.getDashboardId();
+        if (schedulers.containsKey(dashboardId)) {
+            log.info("Received heartbeat for dashboard: " + dashboardId);
+            ttl.put(dashboardId, 10L);
+        }
+        return new Message(counter.incrementAndGet(), String.format("continue monitoring, %s", Long.toString(parameters
+                .getDashboardId())), parameters.getName(), parameters);
     }
 
     @Bean

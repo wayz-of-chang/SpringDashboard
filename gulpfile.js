@@ -2,6 +2,7 @@
 
 var gulp = require('gulp');
 var concat = require('gulp-concat');
+var changed = require('gulp-changed');
 var stripDebug = require('gulp-strip-debug');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
@@ -41,13 +42,10 @@ gulp.task('build-js', function() {
             "src/main/resources/static/js/exampleCharts.js"
         ])
         .pipe(concat('urim.js'))
+        .pipe(changed(DEST))
         .pipe(gulp.dest(DEST))
         .pipe(stripDebug())
-        .pipe(uglify({
-            compress: {
-                drop_console: true
-            }
-        }))
+        .pipe(uglify())
         .pipe(rename({ extname: '.min.js' }))
         .pipe(gulp.dest(DEST));
 });
@@ -84,13 +82,10 @@ gulp.task('build-test-js', function() {
             "src/main/resources/static/js/test/monitorController.js"
         ])
         .pipe(concat('urim-test.js'))
+        .pipe(changed(DEST))
         .pipe(gulp.dest(DEST))
         .pipe(stripDebug())
-        .pipe(uglify({
-             compress: {
-                 drop_console: true
-             }
-        }))
+        .pipe(uglify())
         .pipe(rename({ extname: '.min.js' }))
         .pipe(gulp.dest(DEST));
 });
@@ -103,6 +98,7 @@ gulp.task('build-css', function() {
             "src/main/resources/static/css/application.css"
         ])
         .pipe(concat('urim.css'))
+        .pipe(changed(DEST))
         .pipe(gulp.dest(DEST))
         .pipe(cleanCss())
         .pipe(rename({ extname: '.min.css' }))
@@ -114,6 +110,7 @@ gulp.task('build-test-css', function() {
             "src/main/resources/static/css/mocha.css"
         ])
         .pipe(concat('urim-test.css'))
+        .pipe(changed(DEST))
         .pipe(gulp.dest(DEST))
         .pipe(cleanCss())
         .pipe(rename({ extname: '.min.css' }))
@@ -127,5 +124,17 @@ gulp.task('build', function() {
         'build-css',
         'build-test-css'
     )
+});
+
+gulp.task('watch', ['build-js', 'build-test-js', 'build-css', 'build-test-css'], function() {
+    gulp.watch('src/main/resources/static/js/*.js', function() {
+        gulp.run('build-js');
+        gulp.run('build-test-js');
+    });
+
+    gulp.watch('src/main/resources/static/js/*.js', function() {
+        gulp.run('build-css');
+        gulp.run('build-test-css');
+    });
 });
 

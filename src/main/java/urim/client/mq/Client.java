@@ -63,7 +63,7 @@ class Client {
                 @Override
                 public void run() {
                     try {
-                        if (ttl.get(key) <= 0) {
+                        if (ttl.get(key) <= 0L) {
                             stop(key, schedulers.get(key));
                         } else {
                             ttl.put(key, ttl.get(key) - Long.parseLong(interval));

@@ -33,6 +33,7 @@ app.factory('service', ["$http", "$rootScope", function($http, $rootScope) {
         monitor_order: {}
     };
     service.stompClient = null;
+    service.heartbeat = null;
     service.session_status = 'expired';
     service.logged_in = false;
 
@@ -531,6 +532,10 @@ app.factory('service', ["$http", "$rootScope", function($http, $rootScope) {
         var socket = new SockJS('/monitor_socket');
         service.connection_attempts += 1;
         service.stompClient = Stomp.over(socket);
+
+        //Comment out to enable Stomp message console output
+        service.stompClient.debug = null;
+
         service.stompClient.connect({'X-CSRF-TOKEN': cookie.csrf}, function(frame) {
             console.log('Connected: ' + frame);
             service.monitoring = true;
@@ -540,6 +545,8 @@ app.factory('service', ["$http", "$rootScope", function($http, $rootScope) {
                 $rootScope.$apply();
             });
             service.stompClient.send("/monitoring/connect", {}, JSON.stringify({ 'name': name, 'dashboardId': service.user_settings.current_dashboard }));
+            service.heartbeat = setInterval(function() { service.stompClient.send("/monitoring/heartbeat", {}, JSON
+            .stringify({ 'name': name, 'dashboardId': service.user_settings.current_dashboard })); }, 20000);
             service.automatic_reconnect = true;
             service.connection_attempts -= 1;
         }, function(message) {
@@ -560,6 +567,7 @@ app.factory('service', ["$http", "$rootScope", function($http, $rootScope) {
     service.disconnect_monitors = function() {
         if (service.stompClient != null) {
             service.monitoring = false;
+            clearInterval(service.heartbeat);
             service.stompClient.send("/monitoring/disconnect", {}, JSON.stringify({ 'name': name, 'dashboardId': service.user_settings.current_dashboard }));
             service.stompClient.disconnect();
         }
