@@ -198,8 +198,8 @@ public class StompController {
                     try {
                         long offset = offsets.get(dashboardId).longValue();
                         offsets.put(dashboardId, new Long((offset + 5000) % 86400000));
-                        HashMap<Long, Message> responses = new HashMap<Long, Message>();
                         Dashboard dashboard = dashboardService.getDashboardById(dashboardId).get();
+                        HashMap<Long, Message> responses = new HashMap<Long, Message>();
                         if (ttl.get(dashboardId).longValue() <= 0L) {
                             responses.put(0L, stopMonitoring(parameters));
                             template.convertAndSend("/results/" + dashboardId + "/instant", new Message
