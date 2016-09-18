@@ -1,5 +1,5 @@
 var app = angular.module('dashboardApp');
-app.controller('UserController', ["$scope", "$window", "service", function($scope, $window, service) {
+app.controller('UserController', ["$scope", "$window", "$mdDialog", "service", function($scope, $window, $mdDialog, service) {
     var user = this;
     user.show_password = false;
     user.confirm_password = "";
@@ -108,10 +108,10 @@ app.controller('UserController', ["$scope", "$window", "service", function($scop
         return true;
     };
     user.open_settings_popup = function() {
-        $('#user_settings_modal').modal('show');
+        $mdDialog.show({contentElement: '#user_settings_modal', parent: angular.element(document.body)});
     };
     user.close_settings_popup = function() {
-        $('#user_settings_modal').modal('hide');
+        $mdDialog.hide();
     };
 
     user.user_settings = function() {

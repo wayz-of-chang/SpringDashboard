@@ -30,6 +30,7 @@ app.factory('service', ["$http", "$rootScope", function($http, $rootScope) {
     };
     service.user_settings = {
         current_dashboard: '',
+        theme: '',
         monitor_order: {}
     };
     service.stompClient = null;
@@ -137,6 +138,7 @@ app.factory('service', ["$http", "$rootScope", function($http, $rootScope) {
         var data = {
             userId: service.user.id,
             currentDashboard: service.user_settings.current_dashboard,
+            theme: service.user_settings.theme,
             monitorOrder: service.user_settings.monitor_order
         };
         return $http.post('/users/update_settings', data, {headers: {'X-CSRF-TOKEN': cookie.csrf}}).then(function(response) {
@@ -149,6 +151,12 @@ app.factory('service', ["$http", "$rootScope", function($http, $rootScope) {
             service.update_session_status(response.headers('X-CSRF-TOKEN'));
             return callback(response);
         });
+    };
+
+    service.update_theme = function(theme) {
+        var cookie = JSON.parse($.cookie('csrf'));
+        service.user_settings.theme = theme;
+        service.save_user_settings(function() { window.location.replace("/"); });
     };
 
     service.export_user = function(callback) {
@@ -173,6 +181,7 @@ app.factory('service', ["$http", "$rootScope", function($http, $rootScope) {
         service.user.email = data.email;
         service.user.role = data.role;
         service.user_settings.current_dashboard = data.userSetting.currentDashboard;
+        service.user_settings.theme = data.userSetting.theme;
         if (data.userSetting.monitorOrder == null) {
             service.user_settings.monitor_order = {};
         } else {

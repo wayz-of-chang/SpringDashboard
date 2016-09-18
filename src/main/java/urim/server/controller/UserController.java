@@ -75,6 +75,11 @@ public class UserController {
         try {
             UserSetting userSetting = userSettingService.getUserSettingByUserId(parameters.getUserId()).orElse(new UserSetting(parameters.getUserId()));
             userSetting.setCurrentDashboard(parameters.getCurrentDashboard());
+            if (parameters.getTheme() != null && UserSetting.Theme.valueOf(parameters.getTheme()) != null) {
+                userSetting.setTheme(UserSetting.Theme.valueOf(parameters.getTheme()));
+            } else {
+                userSetting.setTheme(UserSetting.Theme.BOOTSTRAP);
+            }
             userSetting.setMonitorOrder(parameters.getMonitorOrder());
             userSetting = userSettingService.save(userSetting);
             return new Message(counter.incrementAndGet(), userSetting, "update user settings", parameters);

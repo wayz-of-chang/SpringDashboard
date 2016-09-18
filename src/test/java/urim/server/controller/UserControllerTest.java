@@ -174,7 +174,7 @@ public class UserControllerTest extends BaseTest {
             @Override
             public Optional<UserSetting> answer(InvocationOnMock invocation) {
                 HashMap<Long, ArrayList<Long>> monitorOrder = new HashMap<Long, ArrayList<Long>>();
-                UserSetting userSetting = new UserSetting(1, 2, monitorOrder);
+                UserSetting userSetting = new UserSetting(1, 2, UserSetting.Theme.ANGULAR, monitorOrder);
                 Optional<UserSetting> returnUserSetting = Optional.of(userSetting);
                 return Optional.ofNullable(returnUserSetting.orElse(null));
             }
@@ -190,6 +190,8 @@ public class UserControllerTest extends BaseTest {
             .andExpect(content().string(containsString("id")))
             .andExpect(content().string(containsString("currentDashboard")))
             .andExpect(content().string(containsString("5")))
+            .andExpect(content().string(containsString("theme")))
+            .andExpect(content().string(containsString("BOOTSTRAP")))
             .andExpect(content().string(containsString("monitorOrder")))
             .andExpect(content().string(containsString("{\"3\":[4,5,6],\"7\":[8,9,10,11,12,13,14]}}")))
             .andExpect(content().string(containsString("source")))
