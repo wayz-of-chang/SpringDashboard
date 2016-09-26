@@ -44,6 +44,16 @@ public class HomeController {
         return "index";
     }
 
+    @RequestMapping(value = "/bs", method = RequestMethod.GET)
+    public String indexbs(Model model) {
+        return "index";
+    }
+
+    @RequestMapping(value = "/ng", method = RequestMethod.GET)
+    public String indexng(Model model) {
+        return "index-ng";
+    }
+
     @RequestMapping(value = "/csrf", method = RequestMethod.GET)
     public String csrf(Model model) {
         return "csrf";
