@@ -64,6 +64,7 @@ gulp.task('build-ng-js', function() {
             "src/main/resources/static/js/vendor/angular-aria.js",
             "src/main/resources/static/js/vendor/angular-messages.js",
             "src/main/resources/static/js/vendor/angular-material.js",
+            "src/main/resources/static/js/vendor/ngDraggable.js",
             "src/main/resources/static/js/vendor/d3.js",
             "src/main/resources/static/js/vendor/dagre.js",
             "src/main/resources/static/js/vendor/dagre-d3.js",

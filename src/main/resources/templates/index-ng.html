@@ -76,7 +76,7 @@
                             <input type="email" ng-model="user.user.email" placeholder="Email" />
                         </md-input-container>
                         <md-input-container ng-show="user.mode.register">
-                            <md-select ng-model="user.user.role">
+                            <md-select ng-model="user.user.role" aria-label="Role">
                                 <md-option value="R_USER">Regular User</md-option>
                                 <md-option value="RW_USER">Power User</md-option>
                             </md-select>
@@ -84,35 +84,32 @@
                         <md-input-container ng-show="user.mode.login">
                                 <md-checkbox class="md-primary" type="checkbox" ng-model="user.remember_me" aria-label="Remember Me"> Remember Me</md-checkbox>
                         </md-input-container>
-                        <md-button type="submit" ng-click="user.login()" ng-class="{'md-primary': user.mode.login}" class="md-raised pull-right" ng-hide="user.logged_in">Log in</md-button>&nbsp;
-                        <md-button type="submit" ng-click="user.register()" ng-class="{'md-primary': user.mode.register}" class="md-raised pull-right" ng-hide="user.logged_in">Register</md-button>
-                        <md-button type="submit" ng-click="user.logout()" class="md-raised md-primary pull-right" ng-show="user.logged_in">Log out</md-button>
+                        <md-button type="submit" ng-click="user.login()" ng-class="{'md-primary': user.mode.login}" class="md-raised pull-right" ng-hide="user.logged_in" aria-label="Login">Log in</md-button>&nbsp;
+                        <md-button type="submit" ng-click="user.register()" ng-class="{'md-primary': user.mode.register}" class="md-raised pull-right" ng-hide="user.logged_in" aria-label="Register">Register</md-button>
+                        <md-button type="submit" ng-click="user.logout()" class="md-raised md-primary pull-right" ng-show="user.logged_in" aria-label="Log out">Log out</md-button>
                     </form>
                 </md-content>
             </md-menu-content>
         </md-menu>
         <md-button ng-controller="UserController as user" ng-show="user.logged_in"
-                   ng-click="user.open_settings_popup()"><i class="fa fa-cog" aria-hidden="true" title="Settings"></i>
+                   ng-click="user.open_settings_popup()"><i class="fa fa-cog" aria-hidden="true" title="Settings" aria-label="Settings"></i>
         </md-button>
-        <md-button ng-controller="UserController as user" ng-hide="user.logged_in"><a href="/bs"><i class="fa fa-paint-brush" aria-hidden="true" title="Switch to Bootstrap Theme"></i></a></md-button>
-        <md-button ng-controller="UserController as user" ng-show="user.logged_in"><a href="" ng-click="user.change_theme('BOOTSTRAP')"><i class="fa fa-paint-brush" aria-hidden="true" title="Switch to Bootstrap Theme"></i></a></md-button>
+        <md-button ng-controller="UserController as user" ng-hide="user.logged_in" aria-label="Switch Themes"><a href="/bs"><i class="fa fa-paint-brush" aria-hidden="true" title="Switch to Bootstrap Theme"></i></a></md-button>
+        <md-button ng-controller="UserController as user" ng-show="user.logged_in" aria-label="Switch Themes"><a href="" ng-click="user.change_theme('BOOTSTRAP')"><i class="fa fa-paint-brush" aria-hidden="true" title="Switch to Bootstrap Theme"></i></a></md-button>
     </md-menu-bar>
 </md-toolbar>
 
 <md-content class="ng-cloak" ng-controller="MonitorController as monitor" id="dashboard_content"
      ng-show="monitor.current_dashboard() > ''" layout="column" flex="">
     <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript!  Websocket relies on Javascript being enabled.  Please enable Javascript and reload this page!</h2></noscript>
-    <md-grid-list md-cols-xs="2" md-cols-sm="2" md-cols-md="4" md-cols-gt-md="6" md-row-height="1:1.24" md-gutter="12px"
-                  flex="">
-        <md-grid-tile md-rowspan="1" md-colspan="2" class="sortable" ng-repeat="mon in monitor.ordered_monitors()"
-                      repeat-final=""
-                      id="monitor_{{mon.id}}" data-id="{{mon.id}}" layout="column">
-            <md-card class="monitor" layout="row" flex="100">
-                <md-toolbar class="clearfix small-caps">
+    <md-grid-list md-cols-xs="2" md-cols-sm="2" md-cols-md="4" md-cols-gt-md="6" md-row-height="1:1.24" md-gutter="12px" flex="">
+        <md-grid-tile md-rowspan="1" md-colspan="2" ng-repeat="mon in monitor.ordered_monitors()" repeat-final="" id="monitor_{{mon.id}}" data-id="{{mon.id}}" layout="column" ng-drop="true" ng-drop-success="alert('hi')">
+            <md-card class="monitor" layout="row" flex="100" ng-drag="true" ng-drag-data="mon" ng-drag-success="drag_success($index, $data, $event)" ng-drag-stop="alert('bye')">
+                <md-toolbar class="clearfix small-caps" ng-drag-handle="true">
                     <div class="md-toolbar-tools">
                         <span class="md-title md-background" flex="">{{mon.name ? mon.name : "Unnamed"}}</span>
-                        <md-button type="button" class="md-icon-button" id="monitor_error_{{mon.id}}" ng-show="monitor.has_errors[mon.id]" data-placement="bottom"><md-tooltip>{{monitor.errors[mon.id]}}</md-tooltip><i class="fa fa-warning warning"></i></md-button>
-                        <md-button type="button" ng-click="monitor.flip_monitor(mon.id);" class="md-icon-button" ng-class="{'md-background': !monitor.flipped[mon.id], 'md-accent': monitor.flipped[mon.id]}"><i class="fa" ng-class="{'fa-cog': !monitor.flipped[mon.id], 'fa-check-circle': monitor.flipped[mon.id]}"></i></md-button>
+                        <md-button type="button" class="md-icon-button" id="monitor_error_{{mon.id}}" ng-show="monitor.has_errors[mon.id]" data-placement="bottom" aria-label="Warning"><md-tooltip>{{monitor.errors[mon.id]}}</md-tooltip><i class="fa fa-warning warning"></i></md-button>
+                        <md-button type="button" ng-click="monitor.flip_monitor(mon.id);" class="md-icon-button" ng-class="{'md-background': !monitor.flipped[mon.id], 'md-accent': monitor.flipped[mon.id]}" aria-label="Settings"><i class="fa" ng-class="{'fa-cog': !monitor.flipped[mon.id], 'fa-check-circle': monitor.flipped[mon.id]}"></i></md-button>
                     </div>
                 </md-toolbar>
                 <md-card-content class="flex" flex="">
@@ -276,7 +273,7 @@
             <div hide-md="" hide-lg="">
                 <form>
                     <div class="form-group">
-                        <md-select class="form-control" onchange="animateDataflow(this, $(this).val());return false;" ng-model="dataflowSelect">
+                        <md-select class="form-control" onchange="animateDataflow(this, $(this).val());return false;" ng-model="dataflowSelect" aria-label="Dataflow Selection">
                             <md-option value=""></md-option>
                             <md-option value="rest">REST Client (Initialization)</md-option>
                             <md-option value="mq">MQ Client (Initialization)</md-option>

@@ -1,4 +1,4 @@
-var app = angular.module('dashboardApp', ['ngAnimate', 'ngAria', 'ngMessages', 'ngMaterial']);
+var app = angular.module('dashboardApp', ['ngAnimate', 'ngAria', 'ngMessages', 'ngMaterial', 'ngDraggable']);
 $(function () {
 
     $('#login_dropdown_button').click(function() {
@@ -10,16 +10,6 @@ $(function () {
     $('#edit_dashboard_modal').on('shown.bs.modal', function () {
         $('#edit_dashboard_name').focus();
     })
-    $('#dashboard_content').sortable({
-        containment: '#dashboard_content',
-        items: '.sortable',
-        handle: '.panel-heading',
-        cursor: 'move',
-        placeholder: 'col-xs-12 col-sm-6 col-md-4 col-lg-2 panel panel-default droppable monitor',
-        update: function(event, ui) {
-            angular.element($('#dashboard_modals_container')).scope().dashboard.update_monitor_order();
-        }
-    });
     $('#user_upload').fileupload({
         dataType: 'json',
         headers: {'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')},

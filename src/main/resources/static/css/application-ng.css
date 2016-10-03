@@ -37,7 +37,7 @@ md-icon .fa {
     word-wrap: break-word;
 }
 
-.sortable .panel-heading {
+[ng-drag-handle] {
     cursor: move;
 }
 
@@ -120,9 +120,13 @@ md-icon .fa {
 	transform: rotateY(180deg);
 }
 
-.droppable {
+[ng-drop].drag-enter {
     border: 1px solid #777777;
     border-style: dashed;
+}
+
+[ng-drag].dragging {
+    opacity: 0.5;
 }
 
 .disabled {

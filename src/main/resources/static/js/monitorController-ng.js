@@ -88,6 +88,15 @@ app.controller('MonitorController', ["$scope", "$mdDialog", "service", function(
     monitor.current_dashboard = function() {
         return service.get_user_settings().current_dashboard;
     };
+    monitor.update_monitor_order = function(index, obj, event) {
+        console.log(index);
+        console.log(obj);
+        console.log(event);
+        console.log(monitor.monitors);
+    };
+    monitor.drag_success = function() {
+        console.log('a');
+    };
     monitor.get_results = function(id) {
         if (monitor.stats) {
             if (monitor.monitors[id].parser_function && monitor.stats[id] && monitor.stats[id].data) {
