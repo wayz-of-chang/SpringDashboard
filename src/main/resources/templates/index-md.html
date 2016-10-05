@@ -1,0 +1,679 @@
+<!DOCTYPE HTML>
+<html ng-app="dashboardApp" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Urim - Dashboard</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta th:name="${_csrf.parameterName}" th:content="${_csrf.token}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="/build/urim-md.min.css" />
+    <script src="/build/urim-md.min.js"></script>
+    <style>
+        [ng\:cloak], [ng-cloak], .ng-cloak {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+<div class="navbar-fixed">
+    <nav class="ng-cloak">
+        <div class="nav-wrapper">
+            <ul>
+                <li>
+                    <a class="brand-logo small-caps" href="#">Urim</a>
+                </li>
+                <li>
+                    <a href="#" class="button-collapse" data-activates="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="right" ng-controller="UserController as user">
+                <li>
+                    <a id="login_dropdown_button" href="#" class="dropdown-button small-caps" data-activates="login-dropdown" data-constrainwidth="false" data-gutter="10">{{user.logged_in ? user.user.username : "Log In"}} <span class="caret"></span></a>
+                    <ul class="dropdown-content" id="login-dropdown" style="min-width:200px;" data-gutter="10px">
+                        <li class="container">
+                            <div class="alert alert-danger" ng-show="user.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{user.error_message}}</div>
+                            <div class="alert alert-success" ng-show="user.success" role="alert">{{user.success_message}}</div>
+                            <form>
+                                <div class="form-group">
+                                    <input id="login_username_input" type="text" ng-model="user.user.username" class="form-control" placeholder="Username" />
+                                </div>
+                                <div class="form-group" ng-hide="user.show_password">
+                                    <input type="password" ng-model="user.user.password" class="form-control" placeholder="Password" />
+                                </div>
+                                <div class="form-group" ng-show="user.show_password">
+                                    <input type="text" ng-model="user.user.password" class="form-control" placeholder="Password" />
+                                </div>
+                                <div class="form-group" ng-show="user.mode.register &amp;&amp; !user.show_password">
+                                    <input type="password" ng-model="user.confirm_password" class="form-control" placeholder="Repeat Password" />
+                                </div>
+                                <div class="form-group" ng-show="user.mode.register &amp;&amp; user.show_password">
+                                    <input type="text" ng-model="user.confirm_password" class="form-control" placeholder="Repeat Password" />
+                                </div>
+                                <div class="form-group checkbox pull-right clear">
+                                    <input type="checkbox" ng-model="user.show_password" id="login_show_password_checkbox"/>
+                                    <label for="login_show_password_checkbox">Show Password</label>
+                                </div>
+                                <div class="form-group" ng-show="user.mode.register">
+                                    <input type="email" ng-model="user.user.email" class="form-control" placeholder="Email" />
+                                </div>
+                                <div class="form-group" ng-show="user.mode.register">
+                                    <select ng-model="user.user.role" class="form-control">
+                                        <option value="R_USER">Regular User</option>
+                                        <option value="RW_USER">Power User</option>
+                                    </select>
+                                </div>
+                                <div class="form-group checkbox pull-right clear" ng-show="user.mode.login">
+                                    <input type="checkbox" ng-model="user.remember_me" id="login_remember_me_checkbox"/>
+                                    <label for="login_remember_me_checkbox">Remember Me</label>
+                                </div>
+                                <div class="form-group clear btn-toolbar">
+                                    <button type="submit" ng-click="user.login()" ng-class="{'btn-primary': user.mode.login, 'btn-default': user.mode.register}" class="btn pull-right" ng-hide="user.logged_in">Log in</button>&nbsp;
+                                    <button type="submit" ng-click="user.register()" ng-class="{'btn-primary': user.mode.register, 'btn-default': user.mode.login}" class="btn pull-right" ng-hide="user.logged_in">Register</button>
+                                    <button type="submit" ng-click="user.logout()" class="btn btn-primary pull-right" ng-show="user.logged_in">Log out</button>
+                                </div>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+                <li ng-show="user.logged_in"><a href="" ng-click="user.open_settings_popup()"><i class="fa fa-cog" aria-hidden="true" title="Settings"></i></a></li>
+                <li ng-hide="user.logged_in"><a href="/"><i class="fa fa-paint-brush" aria-hidden="true" title="Switch to Bootstrap Theme"></i></a></li>
+                <li ng-show="user.logged_in"><a href="" ng-click="user.change_theme('BOOTSTRAP')"><i class="fa fa-paint-brush" aria-hidden="true" title="Switch to Bootstrap Theme"></i></a></li>
+            </ul>
+            <ul class="right" ng-controller="DashboardController as dashboard" ng-show="dashboard.logged_in()">
+                <li>
+                    <a href="#" class="dropdown-button small-caps" data-activates="dashboard-dropdown" data-constrainwidth="false">{{dashboard.dashboards[dashboard.current].name || "None"}}<span class="sr-only">(current)</span><span class="caret"></span></a>
+                    <ul class="dropdown-content" id="dashboard-dropdown">
+                        <li ng-repeat="board in dashboard.unselected()"><a class="small-caps" href="" ng-click="dashboard.select(board)">{{dashboard.dashboards[board].name}}</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="" ng-click="dashboard.open_new_popup()"><i class="fa fa-plus fa-fw"></i> New Dashboard</a></li>
+                        <li><a href="" ng-click="dashboard.copy()"><i class="fa fa-clone fa-fw"></i> Copy Dashboard</a></li>
+                        <li><a href="" ng-click="dashboard.open_edit_popup()"><i class="fa fa-edit fa-fw"></i> Edit Dashboard</a></li>
+                        <li><a href="" ng-click="dashboard.confirm_delete_popup()"><i class="fa fa-minus fa-fw"></i> Delete Dashboard</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<div class="row ng-cloak" ng-controller="MonitorController as monitor" id="dashboard_content"
+     ng-show="monitor.current_dashboard() > ''">
+    <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript!  Websocket relies on Javascript being enabled.  Please enable Javascript and reload this page!</h2></noscript>
+    <div class="col s12 m6 l4 sortable" ng-repeat="mon in monitor.ordered_monitors()" repeat-final="" id="monitor_{{mon.id}}" data-id="{{mon.id}}">
+        <div class="card hoverable monitor">
+            <nav>
+                <div class="panel-heading clearfix small-caps nav-wrapper">
+                    <ul>
+                        <li><span class="brand-logo">{{mon.name ? mon.name : "Unnamed"}}</span></li>
+                        <li class="right"><a ng-click="monitor.flip_monitor(mon.id);" class="waves-effect waves-light btn" ng-class="{'btn-default': !monitor.flipped[mon.id], 'btn-success': monitor.flipped[mon.id]}"><i class="fa" ng-class="{'fa-cog': !monitor.flipped[mon.id], 'fa-check-circle': monitor.flipped[mon.id]}"></i></a></li>
+                        <li class="right"><i class="tooltipped fa fa-warning warning" id="monitor_error_{{mon.id}}" ng-show="monitor.has_errors[mon.id]" data-toggle="tooltip" data-position="bottom" data-tooltip="{{monitor.errors[mon.id]}}"></i></li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="card-content flex">
+                <div class="flip-container flex" ng-class="{'settings': monitor.flipped[mon.id]}">
+                    <div class="flipper flex">
+                        <div class="col s12 front monitor-content" ng-click="monitor.flip_monitor(mon.id);">
+                            <div class="fill-height" ng-show="mon.show_raw &amp;&amp; !monitor.flipped[mon.id]">
+                                {{mon.url}}&nbsp;{{mon.monitorType}}&nbsp;{{mon.statType}}&nbsp;{{mon.parser}}&nbsp;{{mon.chart}}&nbsp;{{mon.protocol}}&nbsp;{{mon.interval}}<br />{{monitor.get_results(mon.id)}}
+                            </div>
+                            <div class="fill-height" ng-hide="mon.show_raw">
+                                <svg id="chart_{{mon.id}}" width="97%" height="97%" class="chart" onclick="return false;"></svg>
+                            </div>
+                        </div>
+                        <div class="col s12 back monitor-content">
+                            <form>
+                                <div class="form-group">
+                                    <input id="monitor_name_{{mon.id}}" type="text" class="form-control input-sm" placeholder="Monitor Name" title="Monitor Name" ng-model="mon.name" />
+                                </div>
+                                <div class="form-group">
+                                    <input id="monitor_url_{{mon.id}}" type="text" class="form-control input-sm" placeholder="URL" title="URL" ng-model="mon.url" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="monitor_type_{{mon.id}}">Monitor Type</label>
+                                    <select id="monitor_type_{{mon.id}}" class="form-control input-sm" title="Monitor Type" ng-model="mon.monitorType">
+                                        <option value="system">System</option>
+                                        <option value="script">Script</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" ng-show="mon.monitorType == 'system'">
+                                    <label for="monitor_stat_{{mon.id}}">System Stat</label>
+                                    <select id="monitor_stat_{{mon.id}}" class="form-control input-sm" title="System Stat" ng-model="mon.statType">
+                                        <option value="cpu">CPU</option>
+                                        <option value="ram">Memory</option>
+                                        <option value="fs">Disk Space</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" ng-show="mon.monitorType == 'script'">
+                                    <input id="monitor_script_{{mon.id}}" type="text" class="form-control input-sm" placeholder="Script Name" title="Script Name" ng-model="mon.script" />
+                                </div>
+                                <div class="form-group" ng-show="mon.monitorType == 'script'">
+                                    <label for="monitor_parser_{{mon.id}}">Output Parser</label>
+                                    <textarea id="monitor_parser_{{mon.id}}" class="form-control input-sm" title="Output Parser" ng-model="mon.parser">
+                                    </textarea>
+                                </div>
+                                <div class="form-group" ng-show="mon.monitorType == 'script'">
+                                    <label for="monitor_chart_{{mon.id}}">Chart Type</label>
+                                    <select id="monitor_chart_{{mon.id}}" class="form-control input-sm" title="Chart Type" ng-model="mon.chart">
+                                        <option value="status">Status</option>
+                                        <option value="gauge">Gauge</option>
+                                        <option value="bar">Bar Chart</option>
+                                        <option value="line">Line Chart</option>
+                                        <option value="pie">Pie Chart</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="monitor_protocol_{{mon.id}}">Protocol</label>
+                                    <select id="monitor_protocol_{{mon.id}}" class="form-control input-sm" title="Protocol" ng-model="mon.protocol">
+                                        <option value="rest">REST</option>
+                                        <option value="mq">MQ</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="monitor_interval_{{mon.id}}">Interval</label>
+                                    <select id="monitor_interval_{{mon.id}}" class="form-control input-sm" title="Interval" ng-model="mon.interval">
+                                        <option value="s5">5 seconds</option>
+                                        <option value="s10">10 seconds</option>
+                                        <option value="s30">30 seconds</option>
+                                        <option value="m1">1 minute</option>
+                                        <option value="m5">5 minutes</option>
+                                        <option value="m15">15 minutes</option>
+                                        <option value="m30">30 minutes</option>
+                                        <option value="h1">1 hour</option>
+                                        <option value="h2">2 hours</option>
+                                        <option value="d1">1 day</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-default" ng-click="monitor.copy_monitor(mon.id)"><i class="fa fa-clone"></i> Copy Monitor</button>
+                                    <button type="button" class="btn btn-danger" ng-click="monitor.confirm_delete_popup(mon.id, mon.name)"><i class="fa fa-minus"></i> Remove Monitor</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col s12 m4 l2" >
+        <div class="card hoverable monitor">
+            <nav>
+                <div class="panel-heading clearfix small-caps nav-wrapper">
+                    <ul>
+                        <li><span class="brand-logo center">Monitor Actions</span></li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="card-content flex">
+                <button type="button" ng-click="monitor.add_monitor()" class="btn btn-default"><i class="fa fa-plus-circle"></i> Add Monitor</button>
+                <button type="button" ng-click="monitor.toggle_monitoring()" class="btn" ng-class="{'btn-success': !monitor.monitoring, 'btn-danger': monitor.monitoring}"><i class="fa" ng-class="{'fa-play-circle': !monitor.monitoring, 'fa-stop-circle': monitor.monitoring}"></i> {{monitor.monitoring ? "Stop Monitoring" : "Start Monitoring"}}</button>
+                <div class="center">
+                    <i class="fa fa-refresh fa-2x" ng-class="{'fa-pulse': !monitor.monitoring &amp;&amp; monitor.automatic_reconnect, 'success': monitor.monitoring &amp;&amp; monitor.automatic_reconnect, 'disabled': !monitor.automatic_reconnect}" title="Monitoring Status"></i>
+                    <i class="fa fa-exclamation-circle fa-2x" ng-class="{'failure': monitor.session_expired, 'disabled': !monitor.session_expired}" title="Session Status"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid ng-cloak" id="intro_content" ng-controller="DashboardController as dashboard"
+     ng-hide="dashboard.logged_in()">
+    <div class="row">
+        <div class="hide-on-small-only col m1 l2"></div>
+        <div class="col s12 m10 l8 text-center">
+            <h1>Introducing Urim</h1>
+            <p>A flexible and extensible dashboard application</p>
+            <div class="control-group">
+                <a class="btn btn-default btn-lg" href="https://github.com/wayz-of-chang/Urim" role="button"><i class="fa fa-download"></i> Download Urim</a>
+            </div>
+            <p>&nbsp;</p>
+        </div>
+        <div class="hide-on-small-only col m1 l2"></div>
+    </div>
+    <div class="row bg-info">
+        <div class="hide-on-small-only col m1 l2"></div>
+        <div class="col s12 m10 l8 text-center">
+            <div class="page-header">
+                <h1>Features</h1>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <a class="list-group-item-heading" role="button" data-toggle="collapse" href="" aria-expanded="false" aria-controls="features_open_source" data-target="#features_open_source">100% free and open-source</a>
+                    <div class="collapse list-group-item-text" id="features_open_source">
+                        This application is licensed under the MIT License.  Third-party libraries used include: Spring Boot, jQuery, AngularJS, D3, StompJS, SockJS, Mocha, Chai, Bootstrap, and a modified Liquid Fill Gauge (by Curtis Bratton), all of which are also free and open-source.
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <a class="list-group-item-heading" role="button" data-toggle="collapse" href="" aria-expanded="false" aria-controls="features_customization" data-target="#features_customization">Multiple levels of customization</a>
+                    <div class="collapse list-group-item-text" id="features_customization">
+                        Using the distributable Jar file, as-is, allows for specifying execution scripts, chart types, and output parsers - the moving pieces that need to be versatile.  Or, rolling your own by downloading the source code, making any desired customization, and compiling the application allows for any modification.  Just be warned that should you choose to go down this path, the author does not claim any responsibility for the consequences that result.
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <a class="list-group-item-heading" role="button" data-toggle="collapse" href="" aria-expanded="false" aria-controls="features_dataflow" data-target="#features_dataflow">Straightforward design</a>
+                    <div class="collapse list-group-item-text" id="features_dataflow">
+                        Both the data flow and architecture use very basic designs that make the application easy to use and understand.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hide-on-small-only col m1 l2"></div>
+    </div>
+    <div class="row">
+        <div class="col s12 text-center">
+            <div class="page-header">
+                <a id="data_flow"></a>
+                <h1>Data Flow</h1>
+            </div>
+            <div class="col s12 hide-on-med-and-up">
+                <form>
+                    <div class="form-group">
+                        <select class="form-control" onchange="animateDataflow(this, $(this).val());return false;">
+                            <option value=""></option>
+                            <option value="rest">REST Client (Initialization)</option>
+                            <option value="mq">MQ Client (Initialization)</option>
+                            <option value="settings">Settings</option>
+                            <option value="p-rest">REST Client (Periodic Updates)</option>
+                            <option value="p-mq">MQ Client (Periodic Updates)</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="col s12 hide-on-med-and-up">
+                <div class="well dataflow-description">Select an option from the drop-down to see a step-by-step guide to how the data is passed through the application.</div>
+            </div>
+            <div class="col s12 m8 l8">
+                <svg id="chart_dataflow" width="97%" class="chart"></svg>
+            </div>
+            <div class="hidden-xs hidden-sm col-md-4 col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Initialization</div>
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'rest'); return false;">REST Client</a>
+                        </div>
+                        <div class="list-group-item">
+                            <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'mq'); return false;">MQ Client</a>
+                        </div>
+                        <div class="list-group-item">
+                            <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'settings'); return false;">Settings</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Periodic Updates</div>
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'p-rest'); return false;">REST Client</a>
+                        </div>
+                        <div class="list-group-item">
+                            <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'p-mq'); return false;">MQ Client</a>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="well dataflow-description">Select an option from the drop-down to see a step-by-step guide to how the data is passed through the application.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row bg-info">
+        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8 text-center">
+            <div class="page-header">
+                <h1>Data Model</h1>
+            </div>
+            <svg id="chart_datastructure" width="97%" class="chart"></svg>
+        </div>
+        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+    </div>
+    <div class="row">
+        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
+            <div class="page-header text-center">
+                <h1>Monitor Settings</h1>
+            </div>
+            <p>Each monitor is able to display stats from a system on a separate client.  The following are the details for each parameter that can be specified.</p>
+            <h3>Monitor Name</h3>
+            <p>The name of the monitor.  This field is displayed in the heading of the monitor, and serves to identify the monitor for the user.  It does not need to be unique; multiple monitors may have the same name, though that doesn't make much sense.</p>
+            <h3>URL</h3>
+            <p>The HTTP address of the client machine, as accessible by the server.  This may or may not be the same as the address as accessible by the user's web browser.  The HTTP address must be available to the server in order for the monitor to be able to retrieve the desired stats.</p>
+            <h3>Monitor Type</h3>
+            <p>The type of monitoring to perform.  Depending on the selection chosen, <code>System</code> or <code>Script</code>, this determines the other settings are available.</p>
+            <dl class="dl-horizontal">
+                <dt>System</dt>
+                <dd>This will monitor a system stat (<code>CPU</code>, <code>RAM</code>, or <code>Disk Space</code>) depending on the <code>System Stat</code> setting, and display the results as a <code>Gauge</code>.</dd>
+                <dt>Script</dt>
+                <dd>This will monitor any custom script specified by the <code>Script Name</code> setting, parse the output generated by the script with the specified <code>Output Parser</code> setting (a blob of javascript), and render the output of the Output Parser with the specified <code>Chart Type</code> setting (<code>Status</code>, <code>Gauge</code>, <code>Bar Chart</code>, <code>Pie Chart</code>, or <code>Line Chart</code> - see the <a href="#chart_types">Chart Types</a> section for more information).</dd>
+            </dl>
+            <h3>Protocol</h3>
+            <p>The way the data is sent back and forth in the application.  Two choices are supported: <code>REST</code> and <code>MQ</code>.  See the <a href="#data_flow">Data Flow</a> section for the differences between the two choices.</p>
+            <h3>Interval</h3>
+            <p>The time between updates.  Choices range from <code>5 seconds</code> to <code>1 day</code>.</p>
+            <p>More details concerning the <code>Script</code>, <code>Chart Type</code>, <code>Output Parser</code>, and <code>Protocol</code> can be found under the <a href="#configuration">Configuration</a> section.</p>
+        </div>
+        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+    </div>
+    <div class="row bg-info">
+        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
+            <div class="page-header text-center">
+                <a id="chart_types"></a>
+                <h1>Chart Types</h1>
+            </div>
+            <p>This application comes with a number of charts which hopefully covers all the common cases of intuitively displaying monitor statuses.</p>
+            <h3>Status Indicator</h3>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+                    <svg id="chart_example_status" width="97%" height="97%" class="chart" onclick="return false;"></svg>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_status"></pre></div>
+            </div>
+            <dl class="dl-horizontal">
+                <dt>Purpose</dt>
+                <dd>for monitoring one data source and giving color-coded status indication</dd>
+                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dd><code>{ 'value': value, 'status': status }</code></dd>
+                <dt>Arguments</dt>
+                <dd>
+                    <ul>
+                        <li><code>value</code> is any arbitrary string, and</li>
+                        <li><code>status</code> is one of the following: "success", "warning", or "failure", where its value determines the color (green, yellow, or red, respectively) shown</li>
+                    </ul>
+                </dd>
+            </dl>
+            <h3>Gauge</h3>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+                    <svg id="chart_example_gauge" width="97%" height="97%" class="chart" onclick="return false;"></svg>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_gauge"></pre></div>
+            </div>
+            <dl class="dl-horizontal">
+                <dt>Purpose</dt>
+                <dd>for monitoring one data source where the value itself is important and there is a clearly-defined ceiling</dd>
+                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dd><code>{ 'value': value, 'max': max, 'unit': displayUnit, 'mediumThreshold': mediumThreshold, 'highThreshold': highThreshold }</code></dd>
+                <dt>Arguments</dt>
+                <dd>
+                    <ul>
+                        <li><code>value</code> is the value of the data source (any arbitrary number),</li>
+                        <li><code>max</code> is the maximum number allowed (any arbitrary number),</li>
+                        <li><code>unit</code> is the unit to be displayed next to value (any arbitrary string, preferably 2 characters or less),</li>
+                        <li><code>mediumThreshold</code> is the ratio of value to max at which the color turns yellow (any number between 0 and 1), and</li>
+                        <li><code>highThreshold</code> is the ratio of value to max at which the color turns red (any number between <code>mediumThreshold</code> and 1); if the ratio of value to max is under <code>mediumThreshold</code>, then the color is green</li>
+                    </ul>
+                </dd>
+            </dl>
+            <h3>Bar Chart</h3>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+                    <svg id="chart_example_bar" width="97%" height="97%" class="chart" onclick="return false;"></svg>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_bar"></pre></div>
+            </div>
+            <dl class="dl-horizontal">
+                <dt>Purpose</dt>
+                <dd>for monitoring one or more data sources in comparison with each other</dd>
+                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dd><code>{ 'values': values, 'max': max, 'unit': displayUnit, 'mediumThreshold': mediumThreshold, 'highThreshold': highThreshold }</code></dd>
+                <dt>Arguments</dt>
+                <dd>
+                    <ul>
+                        <li><code>values</code> is a hash of <code>{ 'value': value }</code> objects (i.e. <code>{ key: {'value': value}, ... ]</code>), where
+                            <ul>
+                                <li><code>key</code> is the id of the data source (any arbitrary string), and</li>
+                                <li><code>value</code> is the value of the data source (any arbitrary number),</li>
+                            </ul>
+                        </li>
+                        <li><code>max</code> is the maximum number allowed (any arbitrary number),</li>
+                        <li><code>unit</code> is the unit to be displayed for the y axis (any arbitrary string),</li>
+                        <li><code>mediumThreshold</code> is the ratio of value to max at which the color for the bar turns yellow (any number between 0 and 1), and</li>
+                        <li><code>highThreshold</code> is the ratio of value to max at which the color turns red (any number between <code>mediumThreshold</code> and 1); if the ratio of value to max is under <code>mediumThreshold</code>, then the color is green</li>
+                    </ul>
+                </dd>
+            </dl>
+            <h3>Pie Chart</h3>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+                    <svg id="chart_example_pie" width="97%" height="97%" class="chart" onclick="return false;"></svg>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_pie"></pre></div>
+            </div>
+            <dl class="dl-horizontal">
+                <dt>Purpose</dt>
+                <dd>for monitoring one or more data sources that add up to a total amount</dd>
+                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dd><code>{ key: { 'value': value, 'color': color }, ... }</code></dd>
+                <dt>Arguments</dt>
+                <dd>
+                    <ul>
+                        <li><code>key</code> is the id of the data source (any arbitrary string),</li>
+                        <li><code>value</code> is the value of the data source (any arbitrary number), and</li>
+                        <li><code>color</code> is the color used to show the data source (a color string in hex format - i.e. '#XXXXXX')</li>
+                    </ul>
+                </dd>
+            </dl>
+            <h3>Line Chart</h3>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+                    <svg id="chart_example_line" width="97%" height="97%" class="chart" onclick="return false;"></svg>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_line"></pre></div>
+            </div>
+            <dl class="dl-horizontal">
+                <dt>Purpose</dt>
+                <dd>for monitoring one or more data sources while keeping a history of up to 50 data points</dd>
+                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dd><code>{ key: { 'value': value, 'color': color }, ... }</code></dd>
+                <dt>Arguments</dt>
+                <dd>
+                    <ul>
+                        <li><code>key</code> is the id of the data source (any arbitrary string),</li>
+                        <li><code>value</code> is the value of the data source (any arbitrary number), and</li>
+                        <li><code>color</code> is the color used to show the data source (a color string in hex format - i.e. '#XXXXXX')</li>
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+    </div>
+    <div class="row">
+        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
+            <div class="page-header text-center">
+                <a id="configuration"></a>
+                <h1>Configuration</h1>
+            </div>
+            <p>While there are many dashboard applications out there, this particular application aims to strike the perfect balance between customization and simplicity, by providing a solid data flow while exposing key parts of the application for customization.  The intention is that users will not be compelled to have to introduce hacks in order to extend needed functionality to this application, though should the user wish to do so, that is also possible.  To accomplish this goal, a few crucial handles are exposed: the name of a script to be run on the client, the chart type, and the output parser. This allows the user to specify the data (s)he wishes to monitor, set the chart type to appropriately render the information, and also to massage the data so that the chart type can process and render the results.</p>
+            <h3>Script</h3>
+            <p>The script should be placed in a <code>scripts</code> directory that is on the same level as the <code>.jar</code> file. Some examples are present when extracting the distribution <code>.zip</code> file. Currently, Windows <code>.bat</code> files and Linux/Mac OSX <code>.sh</code> files are supported. On Linux and/or Mac OSX systems, the executable permission may need to be set explicitly on the script file. What the output of the script is supposed to be is open-ended.  It is up to the user what (s)he wants to return from this script.  Whatever the output is, the client will return to the server, and the server will return to the browser.  It is then the output parser's job to parse the output and extract the information.</p>
+            <h3>Chart Type</h3>
+            <p>The chart type includes many various types, which are explained in more detail in the <a href="#chart_types">Chart Types</a> section. If none is specified, the raw JSON response will be printed.</p>
+            <h3>Output Parser</h3>
+            <p>This is an inline JS function that is evaluated every time the monitor response is available. What is returned here is the value used to update the chart. Thus, it is the job of this function to return something in a format that is valid to the chart type being used. Each chart type has a specific format, which is explained in more detail in the <a href="#chart_types">Chart Types</a> section. <b>Note: The maximum length of the output parser is 1023 characters long.</b> This number was chosen both as a sane number large enough for accomplishing the job of massaging the data to fit the inputs for the charts, and small enough to not negatively impact performance too much and to discourage potential security exploits (where custom JS is run, there is the potential it can cause harm to the user's system).</p>
+            <h3>Protocol</h3>
+            <p>There are two main data flows supported by this application - REST and MQ (Message Queue via RabbitMQ). When REST is selected, the server will periodically send REST webservice requests to clients. Clients will respond with JSON responses, which will then be sent to the browser. This is the simplest data flow. When MQ is selected, the server will periodically send REST webservice requests to clients to start the clients. Clients will then periodically send messages to the message queue, which the server will listen for. Once a message appears in the message queue, the server will consume it by parsing the message, and persisting it in MongoDB. Concurrently, the server will be returning responses found in MongoDB within the last 5 seconds (every 5 seconds) to the browser. With MQ, the data flow is significantly more complex, with quite a few extra moving pieces, as follows:</p>
+            <ul>
+                <li>Every time a client receives a start REST request to start the MQ, the client will send a maximum of 10 messages before stopping.</li>
+                <li>In order to keep the client running, the server sends periodic start REST requests every four messages, which will reset the client's remaining message count.</li>
+                <li>Messages older than 1 minute old are cleared from MongoDB.  Messages stored this way is meant to be a cache, as opposed to a permanent storage place.</li>
+            </ul>
+        </div>
+        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+    </div>
+</div>
+
+<div id="dashboard_modals_container" ng-controller="DashboardController as dashboard">
+    <div id="new_dashboard_modal" class="modal fade" tabindex="-1">
+        <nav>
+            <div class="nav-wrapper">
+                <ul>
+                    <li><span class="brand-logo">Create a New Dashboard</span></li>
+                    <li class="right"><a href="" class="modal-action modal-close btn btn-raised deep-orange darken-1" aria-label="Close"><i class="fa fa-times"></i></a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="modal-content">
+            <div class="alert alert-danger" ng-show="dashboard.new_dashboard.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{dashboard.new_dashboard.error_message}}</div>
+            <div class="alert alert-success" ng-show="dashboard.new_dashboard.success" role="alert">{{dashboard.new_dashboard.success_message}}</div>
+            <form>
+                <div class="form-group">
+                    <input id="new_dashboard_name" type="text" ng-model="dashboard.new_dashboard.name" class="form-control" placeholder="Name" />
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-flat pull-right" ng-click="dashboard.create_new_dashboard()">Create</button>&nbsp;
+            <button type="button" class="btn btn-flat pull-right" data-dismiss="modal" ng-click="dashboard.cancel_new_dashboard_modal()">Cancel</button>
+        </div>
+    </div>
+    <div id="edit_dashboard_modal" class="modal fade" tabindex="-1" role="dialog">
+        <nav>
+            <div class="nav-wrapper">
+                <ul>
+                    <li><span class="brand-logo">Edit Dashboard</span></li>
+                    <li class="right"><a href="" class="modal-action modal-close btn btn-raised deep-orange darken-1" aria-label="Close"><i class="fa fa-times"></i></a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="modal-content">
+            <div class="alert alert-danger" ng-show="dashboard.edit_dashboard.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{dashboard.edit_dashboard.error_message}}</div>
+            <div class="alert alert-success" ng-show="dashboard.edit_dashboard.success" role="alert">{{dashboard.edit_dashboard.success_message}}</div>
+            <form>
+                <div class="form-group">
+                    <input type="hidden" id="edit_dashboard_id" ng-model="dashboard.current" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="text" id="edit_dashboard_name" ng-model="dashboard.dashboards[dashboard.current].name" class="form-control" placeholder="Name" />
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-flat pull-right" ng-click="dashboard.update()">Edit</button>&nbsp;
+            <button type="button" class="btn btn-flat pull-right" data-dismiss="modal" ng-click="dashboard.cancel_edit_dashboard_modal()">Cancel</button>
+        </div>
+    </div>
+    <div id="delete_dashboard_modal" class="modal fade" tabindex="-1" role="dialog">
+        <nav>
+            <div class="nav-wrapper">
+                <ul>
+                    <li><span class="brand-logo">Delete Dashboard</span></li>
+                    <li class="right"><a href="" class="modal-action modal-close btn btn-raised deep-orange darken-1" aria-label="Close"><i class="fa fa-times"></i></a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="modal-content">
+            <div class="alert alert-danger" ng-show="dashboard.delete_dashboard.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{dashboard.delete_dashboard.error_message}}</div>
+            <div class="alert alert-success" ng-show="dashboard.delete_dashboard.success" role="alert">{{dashboard.delete_dashboard.success_message}}</div>
+            <form>
+                <div class="form-group">
+                    <input type="hidden" id="delete_dashboard_id" ng-model="dashboard.current" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <h4 ng-show="dashboard.current">Delete <span id="delete_dashboard_name">{{dashboard.dashboards[dashboard.current].name}}</span>?</h4>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-flat pull-right" ng-click="dashboard.delete()">Delete</button>&nbsp;
+            <button type="button" class="btn btn-flat pull-right" data-dismiss="modal" ng-click="dashboard.cancel_delete_dashboard_modal()">Cancel</button>
+        </div>
+    </div>
+</div>
+<div id="monitor_modals_container" ng-controller="MonitorController as monitor">
+    <div id="delete_monitor_modal" class="modal fade" tabindex="-1" role="dialog">
+        <nav>
+            <div class="nav-wrapper">
+                <ul>
+                    <li><span class="brand-logo">Delete Monitor</span></li>
+                    <li class="right"><a href="" class="modal-action modal-close btn btn-raised deep-orange darken-1" aria-label="Close"><i class="fa fa-times"></i></a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="modal-content">
+            <div class="alert alert-danger" ng-show="monitor.delete_monitor.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{monitor.delete_monitor.error_message}}</div>
+            <div class="alert alert-success" ng-show="monitor.delete_monitor.success" role="alert">{{monitor.delete_monitor.success_message}}</div>
+            <form>
+                <div class="form-group">
+                    <input type="hidden" id="delete_monitor_id" value="{{monitor.delete_monitor.id}}" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <h4 ng-show="monitor.delete_monitor.id">Delete <span id="delete_monitor_name">{{monitor.delete_monitor.name}}</span>?</h4>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-flat pull-right" ng-click="monitor.delete(monitor.delete_monitor.id)">Delete</button>&nbsp;
+            <button type="button" class="btn btn-flat pull-right" data-dismiss="modal" ng-click="monitor.cancel_delete_monitor_modal()">Cancel</button>
+        </div>
+    </div>
+</div>
+<div id="user_modals_container" ng-controller="UserController as user">
+    <div id="user_settings_modal" class="modal fade" tabindex="-1" role="dialog">
+        <nav>
+            <div class="nav-wrapper">
+                <ul>
+                    <li><span class="brand-logo">User Settings</span></li>
+                    <li class="right"><a href="" class="modal-action modal-close btn btn-raised deep-orange darken-1" aria-label="Close"><i class="fa fa-times"></i></a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="modal-content">
+           <form>
+                <div class="form-group">
+                    <h4 ng-show="user.user_settings().current_dashboard">Current Dashboard: {{user.dashboards()[user.user_settings().current_dashboard + ""].name}}
+                        <!--<select id="user_settings_current_dashboard" ng-model="user.user_settings().current_dashboard">
+                            <option ng-repeat="option in user.dashboard_keys()" value="{{option}}">{{user.dashboards()[option].name}}</option>
+                        </select>-->
+                    </h4>
+                    <h4>Monitors:</h4>
+                    <div class="table-responsive" ng-repeat="mon in user.monitor_order()">
+                        <h5><strong>{{user.monitors()[mon].name}}</strong></h5>
+                        <table class="table">
+                            <tr>
+                                <td class="text-right">URL</td><td>{{user.monitors()[mon].url}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">Monitor Type</td><td class="small-caps capitalize">{{user.monitors()[mon].monitorType}}</td>
+                            </tr>
+                            <tr ng-show="user.monitors()[mon].monitorType == 'system'">
+                                <td class="text-right">Stat Type</td><td class="small-caps caps">{{user.monitors()[mon].statType}}</td>
+                            </tr>
+                            <tr ng-show="user.monitors()[mon].monitorType == 'script'">
+                                <td class="text-right">Script Name</td><td class="small-caps">{{user.monitors()[mon].script}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">Interval</td><td class="small-caps capitalize">{{user.monitors()[mon].interval}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">Protocol</td><td class="small-caps caps">{{user.monitors()[mon].protocol}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">Chart Type</td><td class="small-caps capitalize">{{user.monitors()[mon].chart || "json"}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">Output Parser</td><td>{{user.monitors()[mon].parser}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-flat pull-right" data-dismiss="modal" ng-click="user.close_settings_popup()">Close</button>
+            <button type="button" class="btn btn-flat pull-right"
+                    ng-click="user.change_theme('BOOTSTRAP')">Use Bootstrap Theme</button>&nbsp;
+            <a type="button" class="btn btn-flat pull-right" href="/swagger-ui.html">View Backend API</a>&nbsp;
+            <button type="submit" class="btn btn-flat pull-right" ng-click="user.export()">Export Data</button>&nbsp;
+            <label class="btn btn-flat btn-file pull-right"><span>Import Data</span><input id="user_upload" type="file" name="file" data-url="/users/import" class="hidden" /></label>&nbsp;
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

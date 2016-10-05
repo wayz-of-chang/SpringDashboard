@@ -1,5 +1,5 @@
 var app = angular.module('dashboardApp');
-app.controller('MonitorController', ["$scope", "$mdDialog", "service", function($scope, $mdDialog, service) {
+app.controller('MonitorController', ["$scope", "service", function($scope, service) {
     var monitor = this;
     monitor.current = "1";
     monitor.monitoring = false;
@@ -82,6 +82,8 @@ app.controller('MonitorController', ["$scope", "$mdDialog", "service", function(
                     //monitor.setup_chart(id);
                 });
             }, 1000);
+        } else {
+            $('div[data-id=monitor_' + id + '] select').material_select();
         }
         monitor.flipped[id] = !monitor.flipped[id];
     };
@@ -91,14 +93,17 @@ app.controller('MonitorController', ["$scope", "$mdDialog", "service", function(
     monitor.get_results = function(id) {
         if (monitor.stats) {
             if (monitor.monitors[id].parser_function && monitor.stats[id] && monitor.stats[id].data) {
+                $('#monitor_error_' + id).tooltip('remove');
                 if (monitor.stats[id].data.errorMessage != null) {
                     monitor.has_errors[id] = true;
                     monitor.errors[id] = monitor.stats[id].data.errorMessage;
+                    $('#monitor_error_' + id).tooltip();
                     return;
                 } else {
                     if (monitor.monitors[id].monitorType == 'script' && monitor.stats[id].data.error != null && monitor.stats[id].data.error.length != 0) {
                         monitor.has_errors[id] = true;
                         monitor.errors[id] = monitor.stats[id].data.error.join("<br />");
+                        $('#monitor_error_' + id).tooltip();
                         return;
                     } else {
                         monitor.has_errors[id] = false;
@@ -275,7 +280,7 @@ app.controller('MonitorController', ["$scope", "$mdDialog", "service", function(
     };
     monitor.confirm_delete_popup = function(id, name) {
         service.update_delete_monitor(id, name);
-        $mdDialog.show({contentElement: '#delete_monitor_modal', parent: angular.element(document.body)});
+        $('#delete_monitor_modal').openModal();
     };
     monitor.delete = function(id) {
         var data = {
@@ -291,7 +296,7 @@ app.controller('MonitorController', ["$scope", "$mdDialog", "service", function(
                 monitor.delete_monitor.id = '';
                 setTimeout(function() {
                     monitor.delete_monitor.success = false;
-                    $mdDialog.hide();
+                    $('#delete_monitor_modal').closeModal();
                     service.update_monitor_order();
                 }, 3000);
             } else {
@@ -302,7 +307,7 @@ app.controller('MonitorController', ["$scope", "$mdDialog", "service", function(
         });
     };
     monitor.cancel_delete_monitor_modal = function() {
-        $mdDialog.hide();
+        $('#delete_monitor_modal').closeModal();
     };
 
     monitor.toggle_monitoring = function() {

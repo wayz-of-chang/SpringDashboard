@@ -103,8 +103,8 @@
      ng-show="monitor.current_dashboard() > ''" layout="column" flex="">
     <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript!  Websocket relies on Javascript being enabled.  Please enable Javascript and reload this page!</h2></noscript>
     <md-grid-list md-cols-xs="2" md-cols-sm="2" md-cols-md="4" md-cols-gt-md="6" md-row-height="1:1.24" md-gutter="12px" flex="">
-        <md-grid-tile md-rowspan="1" md-colspan="2" ng-repeat="mon in monitor.ordered_monitors()" repeat-final="" id="monitor_{{mon.id}}" data-id="{{mon.id}}" layout="column" ng-drop="true" ng-drop-success="alert('hi')">
-            <md-card class="monitor" layout="row" flex="100" ng-drag="true" ng-drag-data="mon" ng-drag-success="drag_success($index, $data, $event)" ng-drag-stop="alert('bye')">
+        <md-grid-tile md-rowspan="1" md-colspan="2" ng-repeat="mon in monitor.ordered_monitors()" repeat-final="" id="monitor_{{mon.id}}" data-id="{{mon.id}}" layout="column" ng-drop="true">
+            <md-card class="monitor" layout="row" flex="100" ng-drag="true" ng-drag-data="mon">
                 <md-toolbar class="clearfix small-caps" ng-drag-handle="true">
                     <div class="md-toolbar-tools">
                         <span class="md-title md-background" flex="">{{mon.name ? mon.name : "Unnamed"}}</span>

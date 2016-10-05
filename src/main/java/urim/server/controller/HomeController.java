@@ -54,6 +54,11 @@ public class HomeController {
         return "index-ng";
     }
 
+    @RequestMapping(value = "/md", method = RequestMethod.GET)
+    public String indexmd(Model model) {
+        return "index-md";
+    }
+
     @RequestMapping(value = "/csrf", method = RequestMethod.GET)
     public String csrf(Model model) {
         return "csrf";

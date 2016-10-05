@@ -1,0 +1,346 @@
+.monitor {
+    display: flex;
+    flex-flow: column;
+    height: 300px;
+}
+
+.fill-height {
+    height: 100%;
+}
+
+.flex {
+    display: flex;
+    flex-flow: column;
+    flex: 1 0 auto;
+}
+
+.monitor-content {
+    height: 100%;
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
+.nav-wrapper a.btn i {
+    line-height: inherit;
+}
+
+.btn {
+    margin: 0.3em;
+}
+
+.brand-logo {
+    margin: 0px 15px;
+}
+
+.brand-logo.center {
+    margin: auto;
+}
+
+.sortable .panel-heading {
+    cursor: move;
+}
+
+.panel-body .btn {
+    margin-bottom: 5px;
+}
+
+.right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
+
+.hidden {
+    display: none;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.caps {
+    text-transform: uppercase;
+}
+
+/* entire container, keeps perspective */
+.flip-container {
+	perspective: 1000px;
+}
+
+/* flip the pane when hovered */
+/*.flip-container:hover .flipper, .flip-container.hover .flipper {*/
+.flip-container.settings .flipper {
+    transform: rotateY(180deg);
+}
+
+/*.flip-container, .front, .back {
+	width: 320px;
+	height: 480px;
+}*/
+
+/* flip speed goes here */
+.flipper {
+	transition: 0.6s;
+	transform-style: preserve-3d;
+
+	position: relative;
+}
+
+/* hide back of pane during swap */
+.front, .back {
+	backface-visibility: hidden;
+	background: white;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+/* front pane, placed above back */
+.front {
+	z-index: 2;
+	/* for firefox 31 */
+	transform: rotateY(0deg);
+}
+
+/* back, initially hidden pane */
+.back {
+	transform: rotateY(180deg);
+}
+
+.droppable {
+    border: 1px solid #777777;
+    border-style: dashed;
+}
+
+.disabled {
+    opacity: 0.5;
+}
+
+.success {
+    color: #77DD77;
+}
+
+.warning {
+    color: #F0AD4E;
+}
+
+.failure {
+    color: #DD7777;
+}
+
+.status, .status-box, .status-label {
+    transition: all .4s ease;
+}
+
+.status.low .status-box {
+    fill: #CCDDCC;
+    stroke-width: 5;
+    stroke: #77DD77;
+}
+
+.status.low .status-label {
+    fill: #99FF99;
+}
+
+.status.medium .status-box {
+    fill: #DDDDCC;
+    stroke-width: 5;
+    stroke: #DDDD77;
+}
+
+.status.medium .status-label {
+    fill: #FFFF99;
+}
+
+.status.high .status-box {
+    fill: #FFDDDD;
+    stroke-width: 5;
+    stroke: #FF7777;
+}
+
+.status.high .status-label {
+    fill: #FF9999;
+}
+
+.chart, .liquidFillGaugeCircle, .liquidFillGaugeText, .liquidFillGaugeWaveText, .liquidFillGaugeWave {
+    transition: fill .4s ease;
+}
+
+.chart.low .liquidFillGaugeCircle {
+    fill: #77DD77;
+}
+.chart.low .liquidFillGaugeText {
+    fill: #44DD44;
+}
+.chart.low .liquidFillGaugeWaveText {
+    fill: #99FF99;
+}
+.chart.low .liquidFillGaugeWave {
+    fill: #CCDDCC;
+}
+
+.chart.medium .liquidFillGaugeCircle {
+    fill: #DDDD77;
+}
+.chart.medium .liquidFillGaugeText {
+    fill: #DDDD44;
+}
+.chart.medium .liquidFillGaugeWaveText {
+    fill: #FFFF99;
+}
+.chart.medium .liquidFillGaugeWave {
+    fill: #DDDDCC;
+}
+
+.chart.high .liquidFillGaugeCircle {
+    fill: #FF7777;
+}
+.chart.high .liquidFillGaugeText {
+    fill: #FF4444;
+}
+.chart.high .liquidFillGaugeWaveText {
+    fill: #FF9999;
+}
+.chart.high .liquidFillGaugeWave {
+    fill: #FFDDDD;
+}
+
+.chart .barChart.bar {
+    fill: black;
+}
+
+.chart .axis {
+    font: 10px sans-serif;
+}
+
+.chart .barChart.axis path, .barChart.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.chart .barChart.x.axis path {
+    display: none;
+}
+
+.chart .pieChart path {
+    stroke: #FFF;
+}
+
+.chart .lineChart.axis path, .lineChart.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.chart .lineChart.line {
+    fill: none;
+    stroke-width: 2;
+}
+
+.chart .dataflow .node rect {
+    stroke: #999;
+    fill: #fff;
+    stroke-width: 1.5px;
+}
+
+.chart .dataflow .node.type-multiple rect {
+    stroke-width: 3px;
+    stroke: #333;
+}
+
+.chart .dataflow .node.type-singular rect {
+    stroke: #333;
+}
+
+.chart .dataflow .node text {
+    pointer-events: none;
+}
+
+.chart .dataflow .edgeLabel text {
+    pointer-events: none;
+}
+
+.chart .dataflow .edgePath path {
+    stroke: #333;
+    stroke-width: 1.5px;
+    pointer-events: none;
+}
+
+.chart .dataflow .edgePath.dotted {
+    stroke-dasharray: 5, 5;
+}
+
+.chart .dataflow .node.active rect {
+    animation-name: pulsate;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
+
+.chart .dataflow .edgePath.active path {
+    animation-name: pulsate-edge;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
+
+.chart .dataflow .edgePath.active marker {
+    animation-name: pulsate-marker;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
+
+.chart .datastructure .node rect {
+    stroke: #999;
+    fill: #fff;
+    stroke-width: 1.5px;
+}
+
+.chart .datastructure .node.type-mongo rect {
+    fill: #999;
+}
+
+.chart .datastructure .node text {
+    pointer-events: none;
+}
+
+.chart .datastructure .edgeLabel text {
+    pointer-events: none;
+}
+
+.chart .datastructure .edgePath path {
+    stroke: #333;
+    stroke-width: 1.5px;
+    pointer-events: none;
+}
+
+.chart .edgeLabel text {
+    text-shadow: 2px  2px 1px #FFF,
+                -2px -2px 1px #FFF,
+                 2px -2px 1px #FFF,
+                -2px  2px 1px #FFF;
+}
+
+@keyframes pulsate {
+    100% { fill: rgba(200, 200, 255, 255); stroke-width: 3px; stroke: #99F; }
+}
+
+@keyframes pulsate-edge {
+    100% { stroke-width: 2px; stroke: rgba(200, 200, 255, 255); }
+}
+
+@keyframes pulsate-marker {
+    100% { stroke-width: 1px; fill: rgba(200, 200, 255, 255); }
+}
