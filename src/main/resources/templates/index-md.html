@@ -17,73 +17,19 @@
 <div class="navbar-fixed">
     <nav class="ng-cloak">
         <div class="nav-wrapper">
-            <ul>
+            <a class="brand-logo small-caps" href="#">Urim</a>
+            <a href="#" class="button-collapse top-nav" data-activates="mobile-menu">
+                <i class="fa fa-bars"></i>
+            </a>
+            <ul class="hide-on-small-only right" ng-controller="UserController as user">
                 <li>
-                    <a class="brand-logo small-caps" href="#">Urim</a>
-                </li>
-                <li>
-                    <a href="#" class="button-collapse" data-activates="mobile-menu" aria-expanded="false">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </a>
-                </li>
-            </ul>
-            <ul class="right" ng-controller="UserController as user">
-                <li>
-                    <a id="login_dropdown_button" href="#" class="dropdown-button small-caps" data-activates="login-dropdown" data-constrainwidth="false" data-gutter="10">{{user.logged_in ? user.user.username : "Log In"}} <span class="caret"></span></a>
-                    <ul class="dropdown-content" id="login-dropdown" style="min-width:200px;" data-gutter="10px">
-                        <li class="container">
-                            <div class="alert alert-danger" ng-show="user.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{user.error_message}}</div>
-                            <div class="alert alert-success" ng-show="user.success" role="alert">{{user.success_message}}</div>
-                            <form>
-                                <div class="form-group">
-                                    <input id="login_username_input" type="text" ng-model="user.user.username" class="form-control" placeholder="Username" />
-                                </div>
-                                <div class="form-group" ng-hide="user.show_password">
-                                    <input type="password" ng-model="user.user.password" class="form-control" placeholder="Password" />
-                                </div>
-                                <div class="form-group" ng-show="user.show_password">
-                                    <input type="text" ng-model="user.user.password" class="form-control" placeholder="Password" />
-                                </div>
-                                <div class="form-group" ng-show="user.mode.register &amp;&amp; !user.show_password">
-                                    <input type="password" ng-model="user.confirm_password" class="form-control" placeholder="Repeat Password" />
-                                </div>
-                                <div class="form-group" ng-show="user.mode.register &amp;&amp; user.show_password">
-                                    <input type="text" ng-model="user.confirm_password" class="form-control" placeholder="Repeat Password" />
-                                </div>
-                                <div class="form-group checkbox pull-right clear">
-                                    <input type="checkbox" ng-model="user.show_password" id="login_show_password_checkbox"/>
-                                    <label for="login_show_password_checkbox">Show Password</label>
-                                </div>
-                                <div class="form-group" ng-show="user.mode.register">
-                                    <input type="email" ng-model="user.user.email" class="form-control" placeholder="Email" />
-                                </div>
-                                <div class="form-group" ng-show="user.mode.register">
-                                    <select ng-model="user.user.role" class="form-control">
-                                        <option value="R_USER">Regular User</option>
-                                        <option value="RW_USER">Power User</option>
-                                    </select>
-                                </div>
-                                <div class="form-group checkbox pull-right clear" ng-show="user.mode.login">
-                                    <input type="checkbox" ng-model="user.remember_me" id="login_remember_me_checkbox"/>
-                                    <label for="login_remember_me_checkbox">Remember Me</label>
-                                </div>
-                                <div class="form-group clear btn-toolbar">
-                                    <button type="submit" ng-click="user.login()" ng-class="{'btn-primary': user.mode.login, 'btn-default': user.mode.register}" class="btn pull-right" ng-hide="user.logged_in">Log in</button>&nbsp;
-                                    <button type="submit" ng-click="user.register()" ng-class="{'btn-primary': user.mode.register, 'btn-default': user.mode.login}" class="btn pull-right" ng-hide="user.logged_in">Register</button>
-                                    <button type="submit" ng-click="user.logout()" class="btn btn-primary pull-right" ng-show="user.logged_in">Log out</button>
-                                </div>
-                            </form>
-                        </li>
-                    </ul>
+                    <a id="login_dropdown_button" href="" ng-click="user.open_login_popup()" class="dropdown-button small-caps">{{user.logged_in ? user.user.username : "Log In"}} <span class="caret"></span></a>
                 </li>
                 <li ng-show="user.logged_in"><a href="" ng-click="user.open_settings_popup()"><i class="fa fa-cog" aria-hidden="true" title="Settings"></i></a></li>
                 <li ng-hide="user.logged_in"><a href="/"><i class="fa fa-paint-brush" aria-hidden="true" title="Switch to Bootstrap Theme"></i></a></li>
                 <li ng-show="user.logged_in"><a href="" ng-click="user.change_theme('BOOTSTRAP')"><i class="fa fa-paint-brush" aria-hidden="true" title="Switch to Bootstrap Theme"></i></a></li>
             </ul>
-            <ul class="right" ng-controller="DashboardController as dashboard" ng-show="dashboard.logged_in()">
+            <ul class="hide-on-small-only right" ng-controller="DashboardController as dashboard" ng-show="dashboard.logged_in()">
                 <li>
                     <a href="#" class="dropdown-button small-caps" data-activates="dashboard-dropdown" data-constrainwidth="false">{{dashboard.dashboards[dashboard.current].name || "None"}}<span class="sr-only">(current)</span><span class="caret"></span></a>
                     <ul class="dropdown-content" id="dashboard-dropdown">
@@ -93,6 +39,29 @@
                         <li><a href="" ng-click="dashboard.copy()"><i class="fa fa-clone fa-fw"></i> Copy Dashboard</a></li>
                         <li><a href="" ng-click="dashboard.open_edit_popup()"><i class="fa fa-edit fa-fw"></i> Edit Dashboard</a></li>
                         <li><a href="" ng-click="dashboard.confirm_delete_popup()"><i class="fa fa-minus fa-fw"></i> Delete Dashboard</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul id="mobile-menu" class="side-nav">
+                <li>
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li ng-controller="DashboardController as dashboard" ng-show="dashboard.logged_in()">
+                            <a href="" class="collapsible-header small-caps">{{dashboard.dashboards[dashboard.current].name || "None"}}<span class="sr-only">(current)</span><span class="caret"></span></a>
+                            <div class="collapsible-body">
+                                <div ng-repeat="board in dashboard.unselected()"><a class="collection-item small-caps" href="" ng-click="dashboard.select(board)">{{dashboard.dashboards[board].name}}</a></div>
+                                <div role="separator" class="divider"></div>
+                                <div class="collection-item"><a href="" ng-click="dashboard.open_new_popup()"><i class="fa fa-plus fa-fw"></i> New Dashboard</a></div>
+                                <div class="collection-item"><a href="" ng-click="dashboard.copy()"><i class="fa fa-clone fa-fw"></i> Copy Dashboard</a></div>
+                                <div class="collection-item"><a href="" ng-click="dashboard.open_edit_popup()"><i class="fa fa-edit fa-fw"></i> Edit Dashboard</a></div>
+                                <div class="collection-item"><a href="" ng-click="dashboard.confirm_delete_popup()"><i class="fa fa-minus fa-fw"></i> Delete Dashboard</a></div>
+                            </div>
+                        </li>
+                        <li ng-controller="UserController as user">
+                            <div><a id="mobile_login_dropdown_button" href="" ng-click="user.open_login_popup()" class="collapsible-header small-caps">{{user.logged_in ? user.user.username : "Log In"}} <span class="caret"></span></a></div>
+                            <div><a href="" ng-show="user.logged_in" ng-click="user.open_settings_popup()"><i class="fa fa-cog" aria-hidden="true"></i> Settings</a></div>
+                            <div><a href="/" ng-hide="user.logged_in"><i class="fa fa-paint-brush" aria-hidden="true"></i> Use Bootstrap Theme</a></div>
+                            <div><a href="" ng-show="user.logged_in" ng-click="user.change_theme('BOOTSTRAP')"><i class="fa fa-paint-brush" aria-hidden="true"></i> Use Bootstrap Theme</a></div>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -224,7 +193,7 @@
      ng-hide="dashboard.logged_in()">
     <div class="row">
         <div class="hide-on-small-only col m1 l2"></div>
-        <div class="col s12 m10 l8 text-center">
+        <div class="col s12 m10 l8 center-align">
             <h1>Introducing Urim</h1>
             <p>A flexible and extensible dashboard application</p>
             <div class="control-group">
@@ -236,24 +205,24 @@
     </div>
     <div class="row bg-info">
         <div class="hide-on-small-only col m1 l2"></div>
-        <div class="col s12 m10 l8 text-center">
-            <div class="page-header">
+        <div class="col s12 m10 l8 center-align">
+            <div class="center-align">
                 <h1>Features</h1>
             </div>
-            <div class="list-group">
-                <div class="list-group-item">
+            <div class="row">
+                <div class="col s12 m6 l4">
                     <a class="list-group-item-heading" role="button" data-toggle="collapse" href="" aria-expanded="false" aria-controls="features_open_source" data-target="#features_open_source">100% free and open-source</a>
                     <div class="collapse list-group-item-text" id="features_open_source">
                         This application is licensed under the MIT License.  Third-party libraries used include: Spring Boot, jQuery, AngularJS, D3, StompJS, SockJS, Mocha, Chai, Bootstrap, and a modified Liquid Fill Gauge (by Curtis Bratton), all of which are also free and open-source.
                     </div>
                 </div>
-                <div class="list-group-item">
+                <div class="col s12 m6 l4">
                     <a class="list-group-item-heading" role="button" data-toggle="collapse" href="" aria-expanded="false" aria-controls="features_customization" data-target="#features_customization">Multiple levels of customization</a>
                     <div class="collapse list-group-item-text" id="features_customization">
                         Using the distributable Jar file, as-is, allows for specifying execution scripts, chart types, and output parsers - the moving pieces that need to be versatile.  Or, rolling your own by downloading the source code, making any desired customization, and compiling the application allows for any modification.  Just be warned that should you choose to go down this path, the author does not claim any responsibility for the consequences that result.
                     </div>
                 </div>
-                <div class="list-group-item">
+                <div class="col s12 m6 l4">
                     <a class="list-group-item-heading" role="button" data-toggle="collapse" href="" aria-expanded="false" aria-controls="features_dataflow" data-target="#features_dataflow">Straightforward design</a>
                     <div class="collapse list-group-item-text" id="features_dataflow">
                         Both the data flow and architecture use very basic designs that make the application easy to use and understand.
@@ -264,8 +233,8 @@
         <div class="hide-on-small-only col m1 l2"></div>
     </div>
     <div class="row">
-        <div class="col s12 text-center">
-            <div class="page-header">
+        <div class="col s12 center-align">
+            <div class="center-align">
                 <a id="data_flow"></a>
                 <h1>Data Flow</h1>
             </div>
@@ -284,57 +253,69 @@
                 </form>
             </div>
             <div class="col s12 hide-on-med-and-up">
-                <div class="well dataflow-description">Select an option from the drop-down to see a step-by-step guide to how the data is passed through the application.</div>
+                <div class="card dataflow-description">Select an option from the drop-down to see a step-by-step guide to how the data is passed through the application.</div>
             </div>
             <div class="col s12 m8 l8">
                 <svg id="chart_dataflow" width="97%" class="chart"></svg>
             </div>
-            <div class="hidden-xs hidden-sm col-md-4 col-lg-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Initialization</div>
-                    <div class="list-group">
-                        <div class="list-group-item">
+            <div class="hide-on-small-only col m4 l4">
+                <div class="card">
+                    <nav>
+                        <div class="nav-wrapper center-align">
+                            <ul>
+                                <li><span class="brand-logo">Initialization</span></li>
+                            </ul>
+                        </div>
+                    </nav>
+                    <ul class="collection">
+                        <li class="collection-item">
                             <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'rest'); return false;">REST Client</a>
-                        </div>
-                        <div class="list-group-item">
+                        </li>
+                        <li class="collection-item">
                             <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'mq'); return false;">MQ Client</a>
-                        </div>
-                        <div class="list-group-item">
+                        </li>
+                        <li class="collection-item">
                             <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'settings'); return false;">Settings</a>
-                        </div>
-                    </div>
+                        </li>
+                    </ul>
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">Periodic Updates</div>
-                    <div class="list-group">
-                        <div class="list-group-item">
+                <div class="card">
+                    <nav>
+                        <div class="nav-wrapper center-align">
+                            <ul>
+                                <li><span class="brand-logo">Periodic Updates</span></li>
+                            </ul>
+                        </div>
+                    </nav>
+                    <ul class="collection">
+                        <li class="collection-item">
                             <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'p-rest'); return false;">REST Client</a>
-                        </div>
-                        <div class="list-group-item">
+                        </li>
+                        <li class="collection-item">
                             <a class="list-group-item-heading" role="button" href="" onclick="animateDataflow(this, 'p-mq'); return false;">MQ Client</a>
-                        </div>
-                    </div>
+                        </li>
+                    </ul>
                 </div>
                 <div>
-                    <div class="well dataflow-description">Select an option from the drop-down to see a step-by-step guide to how the data is passed through the application.</div>
+                    <div class="card dataflow-description">Select an option from the drop-down to see a step-by-step guide to how the data is passed through the application.</div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row bg-info">
-        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
-        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8 text-center">
+        <div class="hide-on-small-only col m1 l2"></div>
+        <div class="col s12 m10 l8 center-align">
             <div class="page-header">
                 <h1>Data Model</h1>
             </div>
             <svg id="chart_datastructure" width="97%" class="chart"></svg>
         </div>
-        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+        <div class="hide-on-small-only col m1 l2"></div>
     </div>
     <div class="row">
-        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
-        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
-            <div class="page-header text-center">
+        <div class="hide-on-small-only col m1 l2"></div>
+        <div class="col s12 m10 l8">
+            <div class="page-header center-align">
                 <h1>Monitor Settings</h1>
             </div>
             <p>Each monitor is able to display stats from a system on a separate client.  The following are the details for each parameter that can be specified.</p>
@@ -356,27 +337,27 @@
             <p>The time between updates.  Choices range from <code>5 seconds</code> to <code>1 day</code>.</p>
             <p>More details concerning the <code>Script</code>, <code>Chart Type</code>, <code>Output Parser</code>, and <code>Protocol</code> can be found under the <a href="#configuration">Configuration</a> section.</p>
         </div>
-        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+        <div class="hide-on-small-only col m1 l2"></div>
     </div>
     <div class="row bg-info">
-        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
-        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
-            <div class="page-header text-center">
+        <div class="hide-on-small-only col m1 l2"></div>
+        <div class="col s12 m10 l8">
+            <div class="page-header center-align">
                 <a id="chart_types"></a>
                 <h1>Chart Types</h1>
             </div>
             <p>This application comes with a number of charts which hopefully covers all the common cases of intuitively displaying monitor statuses.</p>
             <h3>Status Indicator</h3>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+            <div class="col s12 m12 l12">
+                <div class="col s12 m8 l6 monitor">
                     <svg id="chart_example_status" width="97%" height="97%" class="chart" onclick="return false;"></svg>
                 </div>
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_status"></pre></div>
+                <div class="col s12 m4 l6"><pre id="raw_example_status"></pre></div>
             </div>
             <dl class="dl-horizontal">
                 <dt>Purpose</dt>
                 <dd>for monitoring one data source and giving color-coded status indication</dd>
-                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dt>Return format <i class="fa fa-question-circle tooltipped" data-tooltip="This is what the format of the output parser should be"></i></dt>
                 <dd><code>{ 'value': value, 'status': status }</code></dd>
                 <dt>Arguments</dt>
                 <dd>
@@ -387,16 +368,16 @@
                 </dd>
             </dl>
             <h3>Gauge</h3>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+            <div class="col s12 m12 l12">
+                <div class="col s12 m8 l6 monitor">
                     <svg id="chart_example_gauge" width="97%" height="97%" class="chart" onclick="return false;"></svg>
                 </div>
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_gauge"></pre></div>
+                <div class="col s12 m4 l6"><pre id="raw_example_gauge"></pre></div>
             </div>
             <dl class="dl-horizontal">
                 <dt>Purpose</dt>
                 <dd>for monitoring one data source where the value itself is important and there is a clearly-defined ceiling</dd>
-                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dt>Return format <i class="fa fa-question-circle tooltipped" data-tooltip="This is what the format of the output parser should be"></i></dt>
                 <dd><code>{ 'value': value, 'max': max, 'unit': displayUnit, 'mediumThreshold': mediumThreshold, 'highThreshold': highThreshold }</code></dd>
                 <dt>Arguments</dt>
                 <dd>
@@ -410,16 +391,16 @@
                 </dd>
             </dl>
             <h3>Bar Chart</h3>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+            <div class="col s12 m12 l12">
+                <div class="col s12 m8 l6 monitor">
                     <svg id="chart_example_bar" width="97%" height="97%" class="chart" onclick="return false;"></svg>
                 </div>
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_bar"></pre></div>
+                <div class="col s12 m4 l6"><pre id="raw_example_bar"></pre></div>
             </div>
             <dl class="dl-horizontal">
                 <dt>Purpose</dt>
                 <dd>for monitoring one or more data sources in comparison with each other</dd>
-                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dt>Return format <i class="fa fa-question-circle tooltipped" data-tooltip="This is what the format of the output parser should be"></i></dt>
                 <dd><code>{ 'values': values, 'max': max, 'unit': displayUnit, 'mediumThreshold': mediumThreshold, 'highThreshold': highThreshold }</code></dd>
                 <dt>Arguments</dt>
                 <dd>
@@ -438,16 +419,16 @@
                 </dd>
             </dl>
             <h3>Pie Chart</h3>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+            <div class="col s12 m12 l12">
+                <div class="col s12 m8 l6 monitor">
                     <svg id="chart_example_pie" width="97%" height="97%" class="chart" onclick="return false;"></svg>
                 </div>
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_pie"></pre></div>
+                <div class="col s12 m4 l6"><pre id="raw_example_pie"></pre></div>
             </div>
             <dl class="dl-horizontal">
                 <dt>Purpose</dt>
                 <dd>for monitoring one or more data sources that add up to a total amount</dd>
-                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dt>Return format <i class="fa fa-question-circle tooltipped" data-tooltip="This is what the format of the output parser should be"></i></dt>
                 <dd><code>{ key: { 'value': value, 'color': color }, ... }</code></dd>
                 <dt>Arguments</dt>
                 <dd>
@@ -459,16 +440,16 @@
                 </dd>
             </dl>
             <h3>Line Chart</h3>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 monitor">
+            <div class="col s12 m12 l12">
+                <div class="col s12 m8 l6 monitor">
                     <svg id="chart_example_line" width="97%" height="97%" class="chart" onclick="return false;"></svg>
                 </div>
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6"><pre id="raw_example_line"></pre></div>
+                <div class="col s12 m4 l6"><pre id="raw_example_line"></pre></div>
             </div>
             <dl class="dl-horizontal">
                 <dt>Purpose</dt>
                 <dd>for monitoring one or more data sources while keeping a history of up to 50 data points</dd>
-                <dt>Return format <i class="fa fa-question-circle" title="This is what the format of the output parser should be"></i></dt>
+                <dt>Return format <i class="fa fa-question-circle tooltipped" data-tooltip="This is what the format of the output parser should be"></i></dt>
                 <dd><code>{ key: { 'value': value, 'color': color }, ... }</code></dd>
                 <dt>Arguments</dt>
                 <dd>
@@ -480,12 +461,12 @@
                 </dd>
             </dl>
         </div>
-        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+        <div class="hide-on-small-only col m1 l2"></div>
     </div>
     <div class="row">
-        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
-        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
-            <div class="page-header text-center">
+        <div class="hide-on-small-only col m1 l2"></div>
+        <div class="col s12 m10 l8">
+            <div class="page-header center-align">
                 <a id="configuration"></a>
                 <h1>Configuration</h1>
             </div>
@@ -504,7 +485,7 @@
                 <li>Messages older than 1 minute old are cleared from MongoDB.  Messages stored this way is meant to be a cache, as opposed to a permanent storage place.</li>
             </ul>
         </div>
-        <div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+        <div class="hide-on-small-only col m1 l2"></div>
     </div>
 </div>
 
@@ -614,7 +595,60 @@
     </div>
 </div>
 <div id="user_modals_container" ng-controller="UserController as user">
-    <div id="user_settings_modal" class="modal fade" tabindex="-1" role="dialog">
+    <div id="login_modal" class="modal fade" tabindex="-1">
+        <nav>
+            <div class="nav-wrapper">
+                <ul>
+                    <li><span class="brand-logo">{{ user.logged_in ? 'Logout' : (user.mode.register ? 'Register' : 'Login') }}</span></li>
+                    <li class="right"><a href="" class="modal-action modal-close btn btn-raised deep-orange darken-1" aria-label="Close"><i class="fa fa-times"></i></a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="modal-content">
+            <div class="alert alert-danger" ng-show="user.error" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>{{user.error_message}}</div>
+            <div class="alert alert-success" ng-show="user.success" role="alert">{{user.success_message}}</div>
+            <form>
+                <div class="row">
+                    <input id="login_username_input" type="text" ng-model="user.user.username" class="form-control" placeholder="Username" />
+                </div>
+                <div class="row" ng-hide="user.show_password">
+                    <input type="password" ng-model="user.user.password" class="form-control" placeholder="Password" />
+                </div>
+                <div class="row" ng-show="user.show_password">
+                    <input type="text" ng-model="user.user.password" class="form-control" placeholder="Password" />
+                </div>
+                <div class="row" ng-show="user.mode.register &amp;&amp; !user.show_password">
+                    <input type="password" ng-model="user.confirm_password" class="form-control" placeholder="Repeat Password" />
+                </div>
+                <div class="row" ng-show="user.mode.register &amp;&amp; user.show_password">
+                    <input type="text" ng-model="user.confirm_password" class="form-control" placeholder="Repeat Password" />
+                </div>
+                <div class="row">
+                    <input class="right" type="checkbox" ng-model="user.show_password" id="login_show_password_checkbox"/>
+                    <label for="login_show_password_checkbox">Show Password</label>
+                </div>
+                <div class="row" ng-show="user.mode.register">
+                    <input type="email" ng-model="user.user.email" class="form-control" placeholder="Email" />
+                </div>
+                <div class="row" ng-show="user.mode.register">
+                    <select ng-model="user.user.role" class="form-control">
+                        <option value="R_USER">Regular User</option>
+                        <option value="RW_USER">Power User</option>
+                    </select>
+                </div>
+                <div class="row" ng-show="user.mode.login">
+                    <input class="right" type="checkbox" ng-model="user.remember_me" id="login_remember_me_checkbox"/>
+                    <label for="login_remember_me_checkbox">Remember Me</label>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" ng-click="user.login()" ng-class="{'btn-primary': user.mode.login, 'btn-default': user.mode.register}" class="btn btn-flat pull-right" ng-hide="user.logged_in">Log in</button>&nbsp;
+            <button type="submit" ng-click="user.register()" ng-class="{'btn-primary': user.mode.register, 'btn-default': user.mode.login}" class="btn btn-flat pull-right" ng-hide="user.logged_in">Register</button>
+            <button type="submit" ng-click="user.logout()" class="btn btn-flat pull-right" ng-show="user.logged_in">Log out</button>
+        </div>
+    </div>
+    <div id="user_settings_modal" class="modal fade" tabindex="-1">
         <nav>
             <div class="nav-wrapper">
                 <ul>

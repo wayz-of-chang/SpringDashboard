@@ -112,7 +112,7 @@ gulp.task('build-md-js', function() {
             "src/main/resources/static/js/barChart.js",
             "src/main/resources/static/js/lineChart.js",
             "src/main/resources/static/js/pieChart.js",
-            "src/main/resources/static/js/application.js",
+            "src/main/resources/static/js/application-md.js",
             "src/main/resources/static/js/angularDirectives.js",
             "src/main/resources/static/js/angularService.js",
             "src/main/resources/static/js/userController-md.js",

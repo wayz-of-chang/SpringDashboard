@@ -107,6 +107,9 @@ app.controller('UserController', ["$scope", "$window", "service", function($scop
         }
         return true;
     };
+    user.open_login_popup = function() {
+        $('#login_modal').openModal();
+    }
     user.open_settings_popup = function() {
         $('#user_settings_modal').openModal();
     };

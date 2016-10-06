@@ -15,7 +15,7 @@ $(function () {
         items: '.sortable',
         handle: '.panel-heading',
         cursor: 'move',
-        placeholder: 'col-xs-12 col-sm-6 col-md-4 col-lg-2 panel panel-default droppable monitor',
+        placeholder: 'col s12 m6 l4 droppable monitor',
         update: function(event, ui) {
             angular.element($('#dashboard_modals_container')).scope().dashboard.update_monitor_order();
         }
@@ -56,6 +56,8 @@ $(function () {
         loadPie("chart_example_pie", "raw_example_pie");
         loadLine("chart_example_line", "raw_example_line");
         $('select').material_select();
+        $('.button-collapse').sideNav();
+        $('.collapsible').collapsible();
     });
 
     $(window).resize( function() {

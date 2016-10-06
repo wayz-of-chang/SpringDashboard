@@ -33,7 +33,7 @@ public class HomeController {
             UserSetting userSetting = userSettingService.getUserSettingByUserId(user.getId()).get();
             switch (userSetting.getTheme()) {
                 case ANGULAR:
-                    return "index-ng";
+                    return "index-md";
                 case BOOTSTRAP:
                     return "index";
                 default:
