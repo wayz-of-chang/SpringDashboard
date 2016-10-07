@@ -65,6 +65,31 @@ $(function () {
         }
     });
 
+    var monitoring_state;
+    var paused = false;
+    $(window).blur(function() {
+        if (paused) {
+            return false;
+        }
+        paused = true;
+        var service = angular.element(document.body).injector().get('service');
+        monitoring_state = service.monitoring;
+        if (monitoring_state) {
+            service.disconnect_monitors();
+        }
+    });
+
+    $(window).focus(function() {
+        if (!paused) {
+            return false;
+        }
+        paused = false;
+        var service = angular.element(document.body).injector().get('service');
+        if (monitoring_state) {
+            service.connect_monitors();
+        }
+    });
+
     var csrf = null;
     var remember_me = null;
     var cookie = $.cookie('csrf');
